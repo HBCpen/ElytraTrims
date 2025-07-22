@@ -88,14 +88,14 @@ publishMods {
     modrinth {
         projectId = property("publish.modrinth") as String
         accessToken = mr
-        minecraftVersions.add(stonecutter.current.version)
+        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
         optional("kotlin-for-forge", "kotlin-lang-forge")
     }
 
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = cf
-        minecraftVersions.add(stonecutter.current.version)
+        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
         optional("kotlin-for-forge", "kotlinlangforge")
     }
 }
