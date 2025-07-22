@@ -1,4 +1,4 @@
-package dev.kikugie.elytratrims.api;
+package dev.kikugie.elytratrims.api.render;
 
 /**
  * Represents when the corresponding {@link ETDecorator} is invoked.

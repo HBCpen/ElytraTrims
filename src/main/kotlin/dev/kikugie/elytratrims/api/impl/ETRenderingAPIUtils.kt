@@ -3,8 +3,8 @@ package dev.kikugie.elytratrims.api.impl
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import dev.kikugie.elytratrims.Identifier
-import dev.kikugie.elytratrims.api.ETDecorator
-import dev.kikugie.elytratrims.api.ETRenderParameters
+import dev.kikugie.elytratrims.api.render.ETDecorator
+import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.item.ETFlag
 import dev.kikugie.elytratrims.item.flags
 import net.minecraft.client.model.Model

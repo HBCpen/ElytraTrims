@@ -1,10 +1,10 @@
 package dev.kikugie.elytratrims.api.impl
 
-import dev.kikugie.elytratrims.api.ETDecorator
-import dev.kikugie.elytratrims.api.ETRenderMethod
-import dev.kikugie.elytratrims.api.ETRenderParameters
-import dev.kikugie.elytratrims.api.ETRendererID
-import dev.kikugie.elytratrims.api.ETRenderingAPI
+import dev.kikugie.elytratrims.api.render.ETDecorator
+import dev.kikugie.elytratrims.api.render.ETRenderMethod
+import dev.kikugie.elytratrims.api.render.ETRenderParameters
+import dev.kikugie.elytratrims.api.render.ETRendererID
+import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 import org.jetbrains.annotations.ApiStatus
 import java.util.function.BiConsumer
 import java.util.function.Function

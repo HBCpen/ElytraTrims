@@ -1,11 +1,11 @@
 package dev.kikugie.elytratrims.render.impl
 
 import dev.kikugie.elytratrims.Identifier
-import dev.kikugie.elytratrims.api.ETDecorator
-import dev.kikugie.elytratrims.api.ETRenderingAPI
-import dev.kikugie.elytratrims.api.ETRenderMethod
-import dev.kikugie.elytratrims.api.ETRenderParameters
-import dev.kikugie.elytratrims.api.ETRendererID
+import dev.kikugie.elytratrims.api.render.ETDecorator
+import dev.kikugie.elytratrims.api.render.ETRenderingAPI
+import dev.kikugie.elytratrims.api.render.ETRenderMethod
+import dev.kikugie.elytratrims.api.render.ETRenderParameters
+import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.ifTrue

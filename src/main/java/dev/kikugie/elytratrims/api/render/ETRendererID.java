@@ -1,4 +1,4 @@
-package dev.kikugie.elytratrims.api;
+package dev.kikugie.elytratrims.api.render;
 
 import net.minecraft.resources.ResourceLocation;
 

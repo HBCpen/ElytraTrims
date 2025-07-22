@@ -1,6 +1,5 @@
 package dev.kikugie.elytratrims.render.impl
 
-import dev.kikugie.elytratrims.api.*
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.ifTrue
@@ -8,6 +7,11 @@ import dev.kikugie.elytratrims.item.ETFlag
 import dev.kikugie.elytratrims.item.flags
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.api.impl.renderToBuffer
+import dev.kikugie.elytratrims.api.render.ETDecorator
+import dev.kikugie.elytratrims.api.render.ETRenderMethod
+import dev.kikugie.elytratrims.api.render.ETRenderParameters
+import dev.kikugie.elytratrims.api.render.ETRendererID
+import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 
 object ETGatewayRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)

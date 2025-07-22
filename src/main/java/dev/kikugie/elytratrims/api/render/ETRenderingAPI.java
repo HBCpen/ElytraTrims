@@ -1,4 +1,4 @@
-package dev.kikugie.elytratrims.api;
+package dev.kikugie.elytratrims.api.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
