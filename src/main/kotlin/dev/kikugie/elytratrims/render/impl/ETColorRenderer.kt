@@ -1,16 +1,16 @@
 package dev.kikugie.elytratrims.render.impl
 
 import dev.kikugie.elytratrims.Identifier
+import dev.kikugie.elytratrims.api.impl.copy
+import dev.kikugie.elytratrims.api.impl.getEffectiveLight
+import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.ifTrue
 import dev.kikugie.elytratrims.item.color
-import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
@@ -28,8 +28,10 @@ object ETColorRenderer : ETDecorator {
         val custom = when {
             stack.displayName.tryCollapseToString() == "jeb_" ->
                 Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
+
             stack.color.value.isVisible() ->
                 stack.color.value
+
             else ->
                 return@with parameters.copy(color = 0)
         }
@@ -39,7 +41,7 @@ object ETColorRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-       (color != 0).ifTrue { renderToBuffer() }
+        (color != 0).ifTrue { renderToBuffer() }
     }
 
     override fun reset() {
