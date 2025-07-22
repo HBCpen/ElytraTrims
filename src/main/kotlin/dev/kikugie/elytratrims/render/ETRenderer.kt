@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-val RENDER_LOGGER: Logger = LoggerFactory.getLogger("ETRenderer")
+@JvmField val RENDER_LOGGER: Logger = LoggerFactory.getLogger("ETRenderer")
 
 val TextureAtlasSprite.isMissing
     get() = contents().name() == MissingTextureAtlasSprite.getLocation()

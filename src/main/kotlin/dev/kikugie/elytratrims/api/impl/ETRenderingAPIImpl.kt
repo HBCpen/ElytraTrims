@@ -5,6 +5,7 @@ import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI
+import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import org.jetbrains.annotations.ApiStatus
 import java.util.function.BiConsumer
 import java.util.function.Function
@@ -21,15 +22,15 @@ object ETRenderingAPIImpl {
         renderersByMethod.values.flatten()
 
     @JvmStatic fun registerDecorator(
-        type: ETRendererID,
         renderer: ETDecorator,
         adder: BiConsumer<MutableList<ETDecorator>, ETDecorator>
-    ): ETRendererID = type.also {
-        val list = renderersByMethod.getOrPut(type.method, ::mutableListOf)
+    ): ETRendererID = renderer.type.apply {
+        val list = renderersByMethod.getOrPut(method) { mutableListOf() }
         if (list.isNotEmpty()) {
-            val match = list.find { it.type.identifier == type.identifier }
-            require(match == null) { "Decorator ${type.identifier} is already registered as ${match!!::class.qualifiedName}" }
+            val match = list.find { it.type.identifier == identifier }
+            require(match == null) { "Decorator $identifier is already registered as ${match!!::class.qualifiedName}" }
         }
+        RENDER_LOGGER.info("Registering decorator ${renderer.type}")
         adder.accept(list, renderer)
     }
 

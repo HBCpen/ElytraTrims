@@ -13,12 +13,12 @@ import java.util.function.UnaryOperator;
 
 /**
  * Renderer for the elytra decorations.
- * Instances should be registered in {@link ETRenderingAPI#registerDecorator(ETRendererID, ETDecorator)}
+ * Instances should be registered in {@link ETRenderingAPI#registerDecorator(ETDecorator)}
  * as singletons.
  */
 public interface ETDecorator {
     /**
-     * The renderer type as registered in {@link ETRenderingAPI#registerDecorator(ETRendererID, ETDecorator)}.
+     * The renderer type as registered in {@link ETRenderingAPI#registerDecorator(ETDecorator)}.
      */
     @NotNull ETRendererID getType();
 

@@ -33,34 +33,32 @@ public interface ETRenderingAPI {
     /**
      * @return Immutable copy of the registered decorators map.
      */
-    static @NotNull List<@NotNull ETDecorator> registeredDecorators() {
+    static @NotNull List<ETDecorator> registeredDecorators() {
         return ETRenderingAPIImpl.getDecorators();
     }
 
     /**
      * Registers the decoration layer renderer if it's not already present.
      *
-     * @param type The unique identifier for this decorator.
      * @param instance The decorator instance. It's recommended for it to be a singleton.
      * @throws IllegalArgumentException If the provided type is already registered.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecorator(@NotNull ETRendererID type, @NotNull ETDecorator instance) {
-        return ETRenderingAPIImpl.registerDecorator(type, instance, List::addLast);
+    static @NotNull ETRendererID registerDecorator(@NotNull ETDecorator instance) {
+        return ETRenderingAPIImpl.registerDecorator(instance, List::addLast);
     }
 
     /**
      * Registers the decoration layer renderer before the specified one.
      *
-     * @param type The unique identifier for this decorator.
      * @param instance The decorator instance. It's recommended for it to be a singleton.
      * @throws IllegalArgumentException If the provided type is already registered.
      * @throws IllegalStateException If the required decorator is not registered yet,
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETRendererID type, @NotNull ETDecorator instance, ResourceLocation before) {
-        return ETRenderingAPIImpl.registerDecorator(type, instance, (list, it) -> {
+    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, ResourceLocation before) {
+        return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, before);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(before));
             else list.add(index, it);
@@ -70,15 +68,14 @@ public interface ETRenderingAPI {
     /**
      * Registers the decoration layer renderer after the specified one.
      *
-     * @param type The unique identifier for this decorator.
      * @param instance The decorator instance. It's recommended for it to be a singleton.
      * @throws IllegalArgumentException If the provided type is already registered.
      * @throws IllegalStateException If the required decorator is not registered yet,
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETRendererID type, @NotNull ETDecorator instance, ResourceLocation after) {
-        return ETRenderingAPIImpl.registerDecorator(type, instance, (list, it) -> {
+    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, ResourceLocation after) {
+        return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, after);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(after));
             else if (index == list.size() - 1) list.addLast(it);
@@ -92,7 +89,7 @@ public interface ETRenderingAPI {
      * @param parameters Parameter modification function
      * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, ItemStack, PoseStack, MultiBufferSource, TextureAtlasSprite, ResourceLocation, int, int, Function)
      */
-    static void wrapRenderParameters(@NotNull UnaryOperator<@NotNull ETRenderParameters> parameters) {
+    static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters> parameters) {
         for (ETDecorator renderer : registeredDecorators()) wrapRenderParameters(renderer.getType(), parameters);
     }
 
@@ -102,7 +99,7 @@ public interface ETRenderingAPI {
      * @param parameters Parameter modification function
      * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, ItemStack, PoseStack, MultiBufferSource, TextureAtlasSprite, ResourceLocation, int, int, Function)
      */
-    static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<@NotNull ETRenderParameters> parameters) {
+    static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<ETRenderParameters> parameters) {
         ETRenderingAPIImpl.wrapRenderParameters(type, parameters);
     }
 

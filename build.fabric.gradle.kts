@@ -64,6 +64,11 @@ fletchingTable {
     mixins.register("main") {
         mixin("default", "elytratrims.mixins.json")
     }
+
+    fabric {
+        entrypointMappings.put("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
+        entrypointMappings.put("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
+    }
 }
 
 publishMods {

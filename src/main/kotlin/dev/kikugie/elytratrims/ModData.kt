@@ -21,8 +21,8 @@ object ModData : ModDataSpec {
 //?} else {
 /*object ModData : ModDataSpec {
     override val isDevEnv: Boolean get() = false
-    override val isClient: Boolean get() = net.neoforged.fml.loading.FMLLoader.getDist().isClient
-    override val isServer: Boolean get() = net.neoforged.fml.loading.FMLLoader.getDist().isDedicatedServer
+    override val isClient: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT
+    override val isServer: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.DEDICATED_SERVER
     override val gameDir: Path get() = TODO("Not yet implemented")
 }
 *///?}

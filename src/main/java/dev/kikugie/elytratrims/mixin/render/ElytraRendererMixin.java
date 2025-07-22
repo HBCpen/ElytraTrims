@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -9,23 +10,33 @@ import dev.kikugie.elytratrims.api.render.ETRenderMethod;
 import dev.kikugie.elytratrims.api.render.ETRenderParameters;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
+import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+import java.util.function.Function;
+
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
-@Mixin(net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer.class)
+@Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
+    @Shadow @Final
+    private Function<EquipmentLayerRenderer.LayerTextureKey, ResourceLocation> layerTextureLookup;
+
     @Unique
     private static final String RENDER_METHOD = "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
         "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/world/item/ItemStack;" +
@@ -45,13 +56,16 @@ public class ElytraRendererMixin {
         PoseStack matrices,
         MultiBufferSource provider,
         int light,
-        ResourceLocation identifier,
+        ResourceLocation playerTexture,
         CallbackInfo ci,
+        @Local List<EquipmentClientInfo.Layer> layers,
         @Share("parameters") LocalRef<ETRenderParameters> parameters,
         @Share("overridden") LocalBooleanRef overridden) {
         if (type != EquipmentClientInfo.LayerType.WINGS) return;
-
-        ETRenderParameters params = new ETRenderParameters(model, stack, matrices, provider, null, identifier, light,
+        var base = layers.getFirst(); // Checked for isEmpty in the source
+        ResourceLocation texture = base.usePlayerTexture() && playerTexture != null
+            ? playerTexture : layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(type, base));
+        ETRenderParameters params = new ETRenderParameters(model, stack, matrices, provider, null, texture, light,
                                                  0xFFFFFFFF, ETRenderingAPIUtilsKt.NEEDS_OVERWRITE);
         parameters.set(params);
         // The result for the pre-render doesn't matter
@@ -78,7 +92,7 @@ public class ElytraRendererMixin {
         PoseStack matrices,
         MultiBufferSource provider,
         int light,
-        ResourceLocation identifier,
+        ResourceLocation playerTexture,
         CallbackInfo ci,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {

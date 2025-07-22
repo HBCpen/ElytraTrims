@@ -2,7 +2,6 @@ package dev.kikugie.elytratrims.render.impl
 
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.api.render.ETDecorator
-import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
@@ -21,7 +20,7 @@ import net.minecraft.util.Mth
 import net.minecraft.world.item.Item
 
 object ETColorRenderer : ETDecorator {
-    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("color"), ETRenderMethod.POST), this)
+    @JvmField val type: ETRendererID = ETRendererID(elytratrims("color"), ETRenderMethod.POST)
 
     override fun getType(): ETRendererID = type
 
@@ -31,7 +30,8 @@ object ETColorRenderer : ETDecorator {
                 Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
             stack.color.value.isVisible() ->
                 stack.color.value
-            else -> return@with parameters
+            else ->
+                return@with parameters.copy(color = 0)
         }
         parameters.copy(color = Color4i(color).blend(custom).value, light = getEffectiveLight()) {
             ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorCutoutNoCull(elytraSpriteFor(it.stack.item)), it.stack.hasFoil())

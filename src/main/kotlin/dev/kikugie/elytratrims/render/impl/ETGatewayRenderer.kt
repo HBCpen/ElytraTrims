@@ -11,10 +11,9 @@ import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 
 object ETGatewayRenderer : ETDecorator {
-    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
+    @JvmField val type: ETRendererID = ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE)
 
     override fun getType(): ETRendererID = type
 

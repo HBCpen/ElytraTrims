@@ -24,6 +24,6 @@ public record ETRenderParameters(
     @NotNull ResourceLocation texture,
     int light,
     int color,
-    @NotNull Function<@NotNull ETRenderParameters, @NotNull VertexConsumer> converter
+    @NotNull Function<ETRenderParameters, VertexConsumer> converter
 ) {
 }
