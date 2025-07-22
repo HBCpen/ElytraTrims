@@ -16,7 +16,7 @@ Let your creativity soar and make your elytra stand out with the Elytra Trims mo
 </a>
 
 <a href="https://github.com/kikugie/elytra-trims">
-<img alt="github" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg">
+<img alt="codeberg" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/codeberg_vector.svg">
 </a>
 
 <a href="https://discord.com/invite/TBgNUCfryS">
@@ -64,6 +64,9 @@ If you fancy something simplistic, dye your elytra however you want in a craftin
 Craft your elytra with a glow ink sac to make it glow in the dark.
 
 ![Glowing trim](https://cdn.modrinth.com/data/XpzGz7KD/images/849d54736e4519df78678bf00a2077a528e866ad.png)
+
+## Recipes
+You can find the full information about Elytra Trims recipes on the [wiki](https://codeberg.org/KikuGie/elytra-trims/wiki).
 
 ## Mod compatibility
 This lists mods Elytra Trims has explicit support for or known to work with. 
@@ -115,21 +118,3 @@ Trims can't be removed without other mods due to vanilla parity.
 
 > Trims look bad with capes!
 - Install [Mod Menu](<https://modrinth.com/mod/modmenu>) (Fabric) and [YACL](<https://modrinth.com/mod/yacl>). In the mods tab find ET and open its settings. There you can disable rendering elytra capes. This is preferable to the vanilla cape setting because it will keep the cape while not wearing an elytra.
-
-## Roadmap
-- [x] Elytra trims (v1.0)
-- [x] Dyes and banners (v1.1.0)
-- [x] [YACL](<https://modrinth.com/mod/yacl>) support (v1.1.1)
-- [x] Multiversion build (v1.1.2)
-- [x] Glowing elytras (v1.1.4)
-- [x] Elytra cleaning (v1.1.4)
-- [x] Smithing table preview (v1.1.7)
-- [x] Runtime trim generation (v1.1.10)
-- [x] Runtime banner generation (v1.3.0)
-- [x] HD banner support (v1.3.0)
-- [x] 🐸 support (I'll regret this) (v2.0)
-- [x] Server-side config (v2.0)
-### TODO
-- [ ] Banner pattern preview
-- [ ] Modernfix dynamic resources support
-- [ ] Elytra glow preview
