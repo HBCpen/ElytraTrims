@@ -5,14 +5,18 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.kikugie.elytratrims.render.*;
-import dev.kikugie.elytratrims.resource.image.Color4i;
+import dev.kikugie.elytratrims.api.ETRenderMethod;
+import dev.kikugie.elytratrims.api.ETRenderParameters;
+import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
+import dev.kikugie.elytratrims.api.impl.RenderParametersKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentAsset;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,8 +38,8 @@ public class ElytraRendererMixin {
 
     @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z"))
     private void invokeETOverrideRenderers(
-        net.minecraft.client.resources.model.EquipmentClientInfo.LayerType type,
-        ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> asset,
+        EquipmentClientInfo.LayerType type,
+        ResourceKey<EquipmentAsset> asset,
         Model model,
         ItemStack stack,
         PoseStack matrices,
@@ -45,12 +49,14 @@ public class ElytraRendererMixin {
         CallbackInfo ci,
         @Share("parameters") LocalRef<ETRenderParameters> parameters,
         @Share("overridden") LocalBooleanRef overridden) {
-        if (type != net.minecraft.client.resources.model.EquipmentClientInfo.LayerType.WINGS) return;
+        if (type != EquipmentClientInfo.LayerType.WINGS) return;
 
-        light = ETGlowRenderer.getEffectiveLight(stack, light);
-        ETRenderParameters params = ETRenderParameters.of(model, matrices, provider, stack, light, Color4i.WHITE);
+        ETRenderParameters params = new ETRenderParameters(model, stack, matrices, provider, null, identifier, light,
+                                                 0xFFFFFFFF, RenderParametersKt.NEEDS_OVERWRITE);
         parameters.set(params);
-        if (ETGatewayRenderer.INSTANCE.render(params))
+        // The result for the pre-render doesn't matter
+        ETRenderingAPIImpl.render(params, ETRenderMethod.PRE);
+        if (ETRenderingAPIImpl.render(params, ETRenderMethod.OVERRIDE))
             overridden.set(true);
     }
 
@@ -65,8 +71,8 @@ public class ElytraRendererMixin {
         cancellable = true
     )
     private void invokeETRenderers(
-        net.minecraft.client.resources.model.EquipmentClientInfo.LayerType type,
-        ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> asset,
+        EquipmentClientInfo.LayerType type,
+        ResourceKey<EquipmentAsset> asset,
         Model model,
         ItemStack stack,
         PoseStack matrices,
@@ -76,7 +82,8 @@ public class ElytraRendererMixin {
         CallbackInfo ci,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
-        if (type != net.minecraft.client.resources.model.EquipmentClientInfo.LayerType.WINGS) return;
-        if (ETRenderer.renderPost(parameters.get())) ci.cancel();
+        if (type != EquipmentClientInfo.LayerType.WINGS) return;
+        if (ETRenderingAPIImpl.render(parameters.get(), ETRenderMethod.POST))
+            ci.cancel();
     }
 }
