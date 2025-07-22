@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.ETRenderMethod;
 import dev.kikugie.elytratrims.api.ETRenderParameters;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
-import dev.kikugie.elytratrims.api.impl.RenderParametersKt;
+import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -52,7 +52,7 @@ public class ElytraRendererMixin {
         if (type != EquipmentClientInfo.LayerType.WINGS) return;
 
         ETRenderParameters params = new ETRenderParameters(model, stack, matrices, provider, null, identifier, light,
-                                                 0xFFFFFFFF, RenderParametersKt.NEEDS_OVERWRITE);
+                                                 0xFFFFFFFF, ETRenderingAPIUtilsKt.NEEDS_OVERWRITE);
         parameters.set(params);
         // The result for the pre-render doesn't matter
         ETRenderingAPIImpl.render(params, ETRenderMethod.PRE);

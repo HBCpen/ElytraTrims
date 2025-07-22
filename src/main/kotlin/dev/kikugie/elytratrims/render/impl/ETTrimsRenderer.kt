@@ -5,9 +5,9 @@ import dev.kikugie.elytratrims.api.*
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.item.trim
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
-import dev.kikugie.elytratrims.render.getEffectiveLight
+import dev.kikugie.elytratrims.api.impl.getEffectiveLight
 import dev.kikugie.elytratrims.render.getSprite
-import dev.kikugie.elytratrims.render.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.entity.ItemRenderer
@@ -17,8 +17,8 @@ import net.minecraft.world.item.equipment.EquipmentAssets
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 
 object ETTrimsRenderer : ETDecorator {
-    @JvmField val type: ETRendererType = ETRenderingAPI.registerDecorator(ETRendererType(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
-    override fun getType(): ETRendererType = type
+    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
+    override fun getType(): ETRendererID = type
 
     private val reported = mutableSetOf<Identifier>()
     private val armorTrims: Memoizer<ArmorTrim, TextureAtlasSprite?> = memoize {

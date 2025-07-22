@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
+/**
+ * Combines parameters that are used in the elytra rendering process.
+ */
 public record ETRenderParameters(
     @NotNull Model elytra,
     @NotNull ItemStack stack,

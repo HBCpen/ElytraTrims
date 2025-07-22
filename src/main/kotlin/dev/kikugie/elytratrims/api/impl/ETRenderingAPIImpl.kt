@@ -1,39 +1,45 @@
 package dev.kikugie.elytratrims.api.impl
 
-import com.google.common.collect.ImmutableMap
 import dev.kikugie.elytratrims.api.ETDecorator
-import dev.kikugie.elytratrims.api.ETRenderingAPI
 import dev.kikugie.elytratrims.api.ETRenderMethod
 import dev.kikugie.elytratrims.api.ETRenderParameters
-import dev.kikugie.elytratrims.api.ETRendererType
+import dev.kikugie.elytratrims.api.ETRendererID
+import dev.kikugie.elytratrims.api.ETRenderingAPI
 import org.jetbrains.annotations.ApiStatus
+import java.util.function.BiConsumer
 import java.util.function.Function
 
 private typealias Callback = Function<ETRenderParameters, ETRenderParameters>
 
 @ApiStatus.Internal
 object ETRenderingAPIImpl {
-    private val renderersByType: MutableMap<ETRendererType, ETDecorator> = mutableMapOf()
-    private val parameterWrappers: MutableMap<ETRendererType, Callback> = mutableMapOf()
-    private val renderWrappers: MutableMap<ETRendererType, ETRenderingAPI.Callback> = mutableMapOf()
+    private val renderersByMethod: MutableMap<ETRenderMethod, MutableList<ETDecorator>> = mutableMapOf()
+    private val parameterWrappers: MutableMap<ETRendererID, Callback> = mutableMapOf()
+    private val renderWrappers: MutableMap<ETRendererID, ETRenderingAPI.Callback> = mutableMapOf()
 
-    @JvmStatic fun getDecorators(): Map<ETRendererType, ETDecorator> =
-        ImmutableMap.copyOf(renderersByType)
+    @JvmStatic fun getDecorators(): List<ETDecorator> =
+        renderersByMethod.values.flatten()
 
-    @JvmStatic fun registerDecorator(type: ETRendererType, renderer: ETDecorator) : ETRendererType = type.also {
-        renderersByType.compute(type) { _, current ->
-            require(current == null) { "Decorator ${type.identifier} is already registered as ${current!!::class.qualifiedName}" }
-            renderer
+    @JvmStatic fun registerDecorator(
+        type: ETRendererID,
+        renderer: ETDecorator,
+        adder: BiConsumer<MutableList<ETDecorator>, ETDecorator>
+    ): ETRendererID = type.also {
+        val list = renderersByMethod.getOrPut(type.method, ::mutableListOf)
+        if (list.isNotEmpty()) {
+            val match = list.find { it.type.identifier == type.identifier }
+            require(match == null) { "Decorator ${type.identifier} is already registered as ${match!!::class.qualifiedName}" }
         }
+        adder.accept(list, renderer)
     }
 
-    @JvmStatic fun wrapRenderParameters(type: ETRendererType, parameters: Callback) {
+    @JvmStatic fun wrapRenderParameters(type: ETRendererID, parameters: Callback) {
         parameterWrappers.compute(type) { _, it ->
             if (it == null) parameters else it.andThen(parameters)
         }
     }
 
-    @JvmStatic fun wrapRenderCall(type: ETRendererType, callback: ETRenderingAPI.Callback) {
+    @JvmStatic fun wrapRenderCall(type: ETRendererID, callback: ETRenderingAPI.Callback) {
         renderWrappers.compute(type) { _, current: ETRenderingAPI.Callback? ->
             if (current == null) callback else ETRenderingAPI.Callback { parameters, original ->
                 callback.render(parameters) { current.render(it, original) }
@@ -43,7 +49,7 @@ object ETRenderingAPIImpl {
 
     @JvmStatic fun render(parameters: ETRenderParameters, method: ETRenderMethod): Boolean {
         var aggregate = false
-        for ((type, renderer) in renderersByType) if (type.method == method)
+        for (renderer in renderersByMethod[method].orEmpty())
             aggregate = renderer.completeRender(parameters) || aggregate
         return aggregate
     }

@@ -7,9 +7,9 @@ import dev.kikugie.elytratrims.item.ETFlag
 import dev.kikugie.elytratrims.item.banner
 import dev.kikugie.elytratrims.item.flags
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
-import dev.kikugie.elytratrims.render.getEffectiveLight
+import dev.kikugie.elytratrims.api.impl.getEffectiveLight
 import dev.kikugie.elytratrims.render.getSprite
-import dev.kikugie.elytratrims.render.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
@@ -19,8 +19,8 @@ import net.minecraft.core.Holder
 import net.minecraft.world.level.block.entity.BannerPattern
 
 object ETPatternsRenderer : ETDecorator {
-    @JvmField val type: ETRendererType = ETRenderingAPI.registerDecorator(ETRendererType(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
-    override fun getType(): ETRendererType = type
+    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
+    override fun getType(): ETRendererID = type
 
     private val reported = mutableSetOf<Identifier>()
     private val shieldBase: TextureAtlasSprite? by memoized {

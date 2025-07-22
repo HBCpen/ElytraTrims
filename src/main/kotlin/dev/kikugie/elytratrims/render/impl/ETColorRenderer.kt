@@ -5,13 +5,13 @@ import dev.kikugie.elytratrims.api.ETDecorator
 import dev.kikugie.elytratrims.api.ETRenderingAPI
 import dev.kikugie.elytratrims.api.ETRenderMethod
 import dev.kikugie.elytratrims.api.ETRenderParameters
-import dev.kikugie.elytratrims.api.ETRendererType
+import dev.kikugie.elytratrims.api.ETRendererID
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.ifTrue
 import dev.kikugie.elytratrims.item.color
-import dev.kikugie.elytratrims.render.getEffectiveLight
-import dev.kikugie.elytratrims.render.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.getEffectiveLight
+import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
@@ -21,9 +21,9 @@ import net.minecraft.util.Mth
 import net.minecraft.world.item.Item
 
 object ETColorRenderer : ETDecorator {
-    @JvmField val type: ETRendererType = ETRenderingAPI.registerDecorator(ETRendererType(elytratrims("color"), ETRenderMethod.POST), this)
+    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("color"), ETRenderMethod.POST), this)
 
-    override fun getType(): ETRendererType = type
+    override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         val custom = when {

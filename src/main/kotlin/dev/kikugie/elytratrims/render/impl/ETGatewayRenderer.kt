@@ -7,12 +7,12 @@ import dev.kikugie.elytratrims.ifTrue
 import dev.kikugie.elytratrims.item.ETFlag
 import dev.kikugie.elytratrims.item.flags
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
-import dev.kikugie.elytratrims.render.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.renderToBuffer
 
 object ETGatewayRenderer : ETDecorator {
-    @JvmField val type: ETRendererType = ETRenderingAPI.registerDecorator(ETRendererType(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
+    @JvmField val type: ETRendererID = ETRenderingAPI.registerDecorator(ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE), this)
 
-    override fun getType(): ETRendererType = type
+    override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         if (!stack.flags[ETFlag.GATEWAY]) parameters
