@@ -52,8 +52,8 @@ class ETRuntimePackImpl(
 
     init {
         if (ModData.isDevEnv) with(ModData.gameDir.resolve(".et-debug")) {
-            dump(this)
-            LOGGER.info("Dumped genereated resources to $this")
+            dump(this, type.directory)
+            LOGGER.info("Dumped generated resources to $this/${type.directory}")
         }
     }
 

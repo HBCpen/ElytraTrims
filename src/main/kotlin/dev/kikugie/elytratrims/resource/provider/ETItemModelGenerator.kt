@@ -54,13 +54,44 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         val generators: ItemModelGenerators = ModelProxy(this).let { ItemModelGenerators(it, it) }
         val materials: Set<TrimMaterialKey> = ETAtlasGenerator(lookup).collectPalettedPermutations().asSequence()
             .flatMap { it.permutations.keys }.distinct()
-            .mapNotNull(Identifier::parse)
+            .mapNotNull { if (it.endsWith("_darker")) null else Identifier.tryParse(it) }
             .map { ResourceKey.create(Registries.TRIM_MATERIAL, it) }
             .toSet()
         // for (it in BuiltInRegistries.ITEM.get(ETTags.ELYTRA_DECORATABLE).getOrElse { return@buildMap })
         //     generators.generateElytraModel(it.value(), materials)
         // FIXME: tags are not available at this point, so maybe add an API call to register custom elytras
         generators.generateElytraModel(Items.ELYTRA, materials)
+    }
+
+    private fun ItemModelGenerators.generateElytraModel(item: Item, materials: Iterable<TrimMaterialKey>) {
+        val model = conditional(
+            Broken(),
+            generateElytraVariants(item, true, materials),
+            generateElytraVariants(item, false, materials)
+        )
+        itemModelOutput.accept(item, model)
+    }
+
+    private fun ItemModelGenerators.generateElytraVariants(item: Item, broken: Boolean, materials: Iterable<TrimMaterialKey>): ItemModel.Unbaked {
+        val base = plainModel(item.model(broken))
+        val overlay = run {
+            val destination = item.model(broken, true)
+            FLAT_ITEM.create(destination, TextureMapping.layer0(item.texture(broken, true)), modelOutput)
+            tintedModel(destination, Dye(0))
+        }
+        val fallback = composite(base, overlay)
+        val cases = materials.map {
+            `when`(it, composite(base, overlay, generateTrimModel(item, broken, it.location().path)))
+        }
+        return select(TrimMaterialProperty(), fallback, cases)
+    }
+
+    private fun ItemModelGenerators.generateTrimModel(item: Item, broken: Boolean, material: String): ItemModel.Unbaked {
+        val destination = item.model(broken, false, material)
+        val trim = BuiltInRegistries.ITEM.getKey(item).withPath("trims/items/wings${buildSuffix(material = material)}")
+
+        FLAT_ITEM.create(destination, TextureMapping.layer0(trim), modelOutput)
+        return plainModel(destination)
     }
 
     private fun buildSuffix(broken: Boolean = false, overlay: Boolean = false, material: String = ""): String = buildString {
@@ -74,47 +105,4 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
 
     private fun Item.texture(broken: Boolean = false, overlay: Boolean = false, material: String = ""): Identifier =
         TextureMapping.getItemTexture(this, buildSuffix(broken, overlay, material))
-
-    private fun ItemModelGenerators.generateElytraModel(item: Item, materials: Iterable<TrimMaterialKey>) {
-        val model = select(TrimMaterialProperty(), generateFallbackModel(item), generateElytraVariants(item, materials))
-        itemModelOutput.accept(item, model)
-    }
-
-    private fun ItemModelGenerators.generateElytraVariants(item: Item, materials: Iterable<TrimMaterialKey>) = buildList {
-        val regularBase = plainModel(item.model(false))
-        val regularOverlay = tintedModel(item.model(broken = false, overlay = true), Dye(0))
-
-        val brokenBase = plainModel(item.model(true))
-        val brokenOverlay = tintedModel(item.model(broken = true, overlay = true), Dye(0))
-
-        for (it in materials) {
-            val material = it.location().path
-            val regular = composite(regularBase, regularOverlay, generateTrimModel(item, false, material))
-            val broken = composite(brokenBase, brokenOverlay, generateTrimModel(item, true, material))
-            val selector = conditional(Broken(), broken, regular)
-            this += `when`(it, selector)
-        }
-    }
-
-    private fun ItemModelGenerators.generateFallbackModel(item: Item): ItemModel.Unbaked {
-        val regular = composite(plainModel(item.model(false)), generateOverlayModel(item, false))
-        val broken = composite(plainModel(item.model(true)), generateOverlayModel(item, true))
-        return conditional(Broken(), broken, regular)
-    }
-
-    private fun ItemModelGenerators.generateOverlayModel(item: Item, broken: Boolean): ItemModel.Unbaked {
-        val destination = item.model(broken, true)
-        val overlay = item.texture(broken, true)
-
-        FLAT_ITEM.create(destination, TextureMapping.layer0(overlay), modelOutput)
-        return tintedModel(destination, Dye(0))
-    }
-
-    private fun ItemModelGenerators.generateTrimModel(item: Item, broken: Boolean, material: String): ItemModel.Unbaked {
-        val destination = item.model(broken, false, material)
-        val trim = BuiltInRegistries.ITEM.getKey(item).withPath("trims/items/wings${buildSuffix(material = material)}")
-
-        FLAT_ITEM.create(destination, TextureMapping.layer0(trim), modelOutput)
-        return plainModel(destination)
-    }
 }
