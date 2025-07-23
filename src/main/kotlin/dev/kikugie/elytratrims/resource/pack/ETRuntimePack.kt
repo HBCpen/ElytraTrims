@@ -10,16 +10,13 @@ import net.minecraft.server.packs.AbstractPackResources
 import net.minecraft.server.packs.PackLocationInfo
 import net.minecraft.server.packs.PackResources
 import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.resources.IoSupplier
 import net.minecraft.server.packs.resources.ResourceManager
 import java.io.InputStream
 
 typealias InputSupplier = IoSupplier<InputStream>
 typealias ResourceEntry = Pair<PackIdentifier, InputSupplier>
-
-private typealias MetadataAccessor<T> =
-    /*? >=1.21.4 {*/ net.minecraft.server.packs.metadata.MetadataSectionType<T>
-    /*?} else*/ /*net.minecraft.server.packs.metadata.MetadataSectionSerializer<T>*/
 
 interface ETRuntimePack : ResourcePack {
     companion object {
@@ -50,9 +47,9 @@ interface ETRuntimePack : ResourcePack {
         open(getFilename(packType, identifier))
 
     override fun listResources(type: PackType, namespace: String, path: String, visitor: PackResources.ResourceOutput) =
-        locate(PackIdentifier.Companion.of(type, namespace, path)).forEach { (id, supplier) -> visitor.accept(id.toIdentifier(), supplier) }
+        locate(PackIdentifier.of(type, namespace, path)).forEach { (id, supplier) -> visitor.accept(id.toIdentifier(), supplier) }
 
-    override fun <T : Any?> getMetadataSection(reader: MetadataAccessor<T?>): T? =
+    override fun <T : Any?> getMetadataSection(reader: MetadataSectionType<T?>): T? =
         open("pack.mcmeta")?.get()?.use { AbstractPackResources.getMetadataFromStream(reader, it) }
 
     override fun close() {

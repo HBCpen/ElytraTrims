@@ -23,7 +23,7 @@ class ETRuntimePackImpl(
     val manager: ResourceManager
 ) : ETRuntimePack {
     companion object {
-        val LOGGER = LoggerFactory.getLogger("Elytra Trims Runtime Pack")
+        val LOGGER = LoggerFactory.getLogger("ETRuntimePack")
 
         val CLIENT = listOf(
             ::ETAtlasGenerator,
@@ -51,7 +51,10 @@ class ETRuntimePackImpl(
     override val resources: Map<PackIdentifier, InputSupplier> = collectResources()
 
     init {
-        if (ModData.isDevEnv) dump(ModData.gameDir.resolve(".et-debug"))
+        if (ModData.isDevEnv) with(ModData.gameDir.resolve(".et-debug")) {
+            dump(this)
+            LOGGER.info("Dumped genereated resources to $this")
+        }
     }
 
     override fun open(file: String): InputSupplier? {

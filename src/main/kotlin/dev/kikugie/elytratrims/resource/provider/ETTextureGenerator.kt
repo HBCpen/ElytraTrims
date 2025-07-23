@@ -18,14 +18,14 @@ import kotlin.jvm.optionals.getOrNull
 
 class ETTextureGenerator(val lookup: ResourceManager) : ETResourceProvider<EditableImage>() {
     override fun generate(): Map<PackIdentifier, EditableImage> = buildMap {
-        fun suffixed(suffix: String): (String) -> String = { it.replace(".png", "_$suffix.png")}
+        fun replaced(pattern: String, value: String): (String) -> String = { it.replace(pattern, value)}
 
         val saturated = listOf(
             "entity/equipment/wings/elytra.png",
             "item/elytra.png",
             "item/elytra_broken.png",
         )
-        for (image in saturated) texture(vanilla(image), suffixed("overlay")) {
+        for (image in saturated) texture(vanilla(image), replaced("/elytra", "/elytra_overlay")) {
             use(EditableImage::saturated)
         }
 
@@ -40,7 +40,7 @@ class ETTextureGenerator(val lookup: ResourceManager) : ETResourceProvider<Edita
             use { it.outlined(Color4i(0xFF373737)) }
         }
 
-        texture(vanilla("trims/items/wings_trim.png"), suffixed("broken")) {
+        texture(vanilla("trims/items/wings_trim.png"), replaced("/wings", "/wings_broken")) {
             load(vanilla("item/elytra_broken.png"))?.use { mask -> use { it.masked(mask) } } ?: this
         }
 

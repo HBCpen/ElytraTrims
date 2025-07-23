@@ -7,7 +7,7 @@ import dev.kikugie.fletching_table.annotation.fabric.Entrypoint;
 import static dev.kikugie.elytratrims.CommonsKt.elytratrims;
 import static dev.kikugie.elytratrims.recipe.cauldron.CauldronInteractionsKt.*;
 
-@Entrypoint
+/*? if fabric*/@Entrypoint
 public class ETCommonEntrypoint implements ETCommonInitializer {
     @Override
     public int priority() {

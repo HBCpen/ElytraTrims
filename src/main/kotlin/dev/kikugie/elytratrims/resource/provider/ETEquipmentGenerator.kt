@@ -14,6 +14,7 @@ import net.minecraft.world.item.equipment.EquipmentAssets
 // TODO: To be used in resourcepack gen
 class ETEquipmentGenerator(val lookup: ResourceManager) : ETResourceProvider<EquipmentClientInfo>() {
     override fun generate(): Map<PackIdentifier, EquipmentClientInfo> = buildMap {
+        /*
         asset(EquipmentAssets.ELYTRA) {
             addLayers(
                 EquipmentClientInfo.LayerType.WINGS,
@@ -24,6 +25,7 @@ class ETEquipmentGenerator(val lookup: ResourceManager) : ETResourceProvider<Equ
                 )
             )
         }
+         */
     }
 
     override fun convert(value: EquipmentClientInfo): InputSupplier = toJsonSupplier(EquipmentClientInfo.CODEC, value)
