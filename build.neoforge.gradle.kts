@@ -77,7 +77,7 @@ publishMods {
     val cf = findProperty("publish.curseforge.key") as? String
     dryRun = mr == null || cf == null
 
-    type = BETA
+    type = STABLE
     file = tasks.jar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
