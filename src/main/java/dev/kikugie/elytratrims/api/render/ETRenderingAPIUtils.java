@@ -8,17 +8,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
-public final class ETRenderingAPIUtils {
+@ApiStatus.NonExtendable
+public interface ETRenderingAPIUtils {
     /**
      * Gets the increased light map value to be used if elytra has the glow tag.
      *
      * @param parameters Used render parameters.
      * @return The effective light map value.
      */
-    public static int getEffectiveLight(ETRenderParameters parameters) {
+    static int getEffectiveLight(ETRenderParameters parameters) {
         return ETRenderingAPIUtilsKt.getEffectiveLight(parameters);
     }
 
@@ -27,7 +29,7 @@ public final class ETRenderingAPIUtils {
      *
      * @param parameters Used render parameters.
      */
-    public static void renderToBuffer(ETRenderParameters parameters) {
+    static void renderToBuffer(ETRenderParameters parameters) {
         ETRenderingAPIUtilsKt.renderToBuffer(parameters);
     }
 
@@ -40,7 +42,7 @@ public final class ETRenderingAPIUtils {
      * @param converter VertexConsumer builder.
      * @return The modified parameters instance.
      */
-    public static ETRenderParameters withConverter(ETRenderParameters parameters, Function<ETRenderParameters, VertexConsumer> converter) {
+    static ETRenderParameters withConverter(ETRenderParameters parameters, Function<ETRenderParameters, VertexConsumer> converter) {
         return ETRenderingAPIUtilsKt.withConverter(parameters, converter);
     }
 }

@@ -8,12 +8,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
+@ApiStatus.NonExtendable
 public interface ETRenderingAPI {
     @FunctionalInterface
     interface Callback {
