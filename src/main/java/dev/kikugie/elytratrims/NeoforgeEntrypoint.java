@@ -4,6 +4,7 @@ package dev.kikugie.elytratrims;
 /*import dev.kikugie.elytratrims.api.ETClientInitializer;
 import dev.kikugie.elytratrims.api.ETCommonInitializer;
 import dev.kikugie.elytratrims.api.impl.EntrypointUtilsKt;
+import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteraction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -20,6 +21,7 @@ public class NeoforgeEntrypoint {
             it.onInitializeCommonET();
         if (ModData.INSTANCE.isClient()) for (ETClientInitializer it : EntrypointUtilsKt.sortClient(CLIENT_EPS))
             it.onInitializeClientET();
+        ETCauldronInteraction.register();
     }
 }
 *///?}

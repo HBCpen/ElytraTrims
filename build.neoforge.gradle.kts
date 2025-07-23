@@ -2,8 +2,8 @@ plugins {
     kotlin("jvm")
     id("elytratrims.common")
     id("net.neoforged.moddev")
+    id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.13"
 }
 
