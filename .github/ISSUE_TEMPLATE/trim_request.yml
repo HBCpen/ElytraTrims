@@ -27,8 +27,3 @@ body:
         Use this field to provide any additional info you feel necessary. If you
         have ideas or references for the trim designs, you're welcome to attach
         them here.
-  - type: markdown
-    attributes:
-      value: >-
-        This template was generated with [Issue Forms
-        Creator](https://issue-forms-creator.netlify.app)
