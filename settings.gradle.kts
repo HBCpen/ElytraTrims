@@ -1,3 +1,5 @@
+import dev.kikugie.stonecutter.data.tree.TreeBuilder
+
 pluginManagement {
     repositories {
         mavenLocal()
@@ -12,16 +14,20 @@ pluginManagement {
 plugins {
     // For some reason, this plugin is crucial - do not remove
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-    id("dev.kikugie.stonecutter") version "0.7-beta.3"
+    id("dev.kikugie.stonecutter") version "0.7.5"
 }
 
 stonecutter {
-    create(rootProject) {
-        fun match(version: String, vararg loaders: String) = loaders.forEach {
-            vers("$version-$it", version).buildscript = "build.$it.gradle.kts"
-        }
+    fun TreeBuilder.match(version: String, vararg loaders: String) = loaders.forEach {
+        vers("$version-$it", version).buildscript = "build.$it.gradle.kts"
+    }
 
+    create(rootProject) {
         match("1.21.8", "fabric", "neoforge")
+        match("1.21.5", "fabric", "neoforge")
+    }
+
+    create("extensions") {
         match("1.21.5", "fabric", "neoforge")
     }
 }

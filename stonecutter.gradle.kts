@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.data.tree.struct.ProjectNode
-
 plugins {
     kotlin("jvm") version "2.2.0" apply false
     id("dev.kikugie.stonecutter")
@@ -18,8 +16,7 @@ stonecutter parameters {
 }
 
 stonecutter tasks {
-    val ordering = Comparator
-        .comparing<ProjectNode, _> { stonecutter.parse(it.metadata.version) }
+    val ordering = versionComparator
         .thenComparingInt { if (it.metadata.project.endsWith("fabric")) 1 else 0 }
 
     order("publishModrinth", ordering)
@@ -46,6 +43,3 @@ tasks.register<PublishDiscordTask>("publishDiscord") {
     channel = env.fetch("DISCORD_CHANNEL", "0").toLong()
     role = env.fetch("DISCORD_ROLE", "0").toLong()
 }
-
-// TODO: fix cauldron interaction??
-// TODO: fix broken elytra item texture??

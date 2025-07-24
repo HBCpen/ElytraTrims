@@ -8,6 +8,7 @@ displayURL = "https://modrinth.com/mod/elytra-trims"
 logoFile = "assets/elytratrims/icon.png"
 authors = "KikuGie"
 description = '''Lightweight and customizable support for elytra trims and other decorations.'''
+issueTrackerUrl="https://codeberg.org/KikuGie/elytra-trims/issues"
 
 [[dependencies.elytratrims]]
 modId = "neoforge"

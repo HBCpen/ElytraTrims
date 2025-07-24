@@ -1,0 +1,26 @@
+license = "LGPL 3.0"
+
+[[mods]]
+modId = "elytratrims-extensions"
+displayName = "Elytra Trims"
+version = "${version}"
+displayURL = "https://modrinth.com/mod/elytra-trims-extensions"
+logoFile = "assets/elytratrims_extensions/icon.png"
+authors = "KikuGie"
+description = '''Elytra Trims additions for other packs out there.'''
+showAsResourcePack=true
+issueTrackerUrl="https://codeberg.org/KikuGie/elytra-trims/issues"
+
+[[dependencies.elytratrims-extensions]]
+modId = "neoforge"
+type = "required"
+versionRange = "[1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.elytratrims-extensions]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft}"
+ordering = "NONE"
+side = "BOTH"

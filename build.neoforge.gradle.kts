@@ -57,6 +57,10 @@ tasks {
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
+
+    register("publishElytraTrims") {
+        dependsOn("publishMods")
+    }
 }
 
 java {

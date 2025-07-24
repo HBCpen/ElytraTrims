@@ -8,8 +8,8 @@
   ],
   "contact": {
     "homepage": "https://modrinth.com/mod/elytra-trims",
-    "sources": "https://github.com/Kikugie/elytra-trims",
-    "issues": "https://github.com/Kikugie/elytra-trims/issues"
+    "sources": "https://codeberg.org/KikuGie/elytra-trims",
+    "issues": "https://codeberg.org/KikuGie/elytra-trims/issues"
   },
   "description": "Lightweight and customizable support for elytra trims and other decorations.",
   "icon": "assets/elytratrims/icon.png",

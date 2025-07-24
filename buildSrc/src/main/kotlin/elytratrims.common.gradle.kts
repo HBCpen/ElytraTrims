@@ -18,6 +18,10 @@ repositories {
     strictMaven("https://repo.nyon.dev/releases", "dev.nyon")
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Xdoclint:none")
+}
+
 tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
 
