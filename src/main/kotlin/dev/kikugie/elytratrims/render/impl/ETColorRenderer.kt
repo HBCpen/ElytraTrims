@@ -26,7 +26,7 @@ object ETColorRenderer : ETDecorator {
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         val custom = when {
-            stack.displayName.tryCollapseToString() == "jeb_" ->
+            stack.displayName.string.trim('[', ']') == "jeb_" ->
                 Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
 
             stack.color.value.isVisible() ->
