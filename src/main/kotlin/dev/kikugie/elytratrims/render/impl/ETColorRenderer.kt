@@ -9,10 +9,10 @@ import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.elytratrims
-import dev.kikugie.elytratrims.ifTrue
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
 import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.resource.image.Color4i
+import dev.kikugie.elytratrims.runIf
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
@@ -42,7 +42,7 @@ object ETColorRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        (color != 0).ifTrue { renderToBuffer() }
+        runIf(color != 0) { renderToBuffer() }
     }
 
     override fun reset() {

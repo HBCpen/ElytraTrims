@@ -4,7 +4,7 @@ plugins {
     id("net.neoforged.moddev")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
-    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.13"
+    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.14"
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}"
@@ -40,6 +40,9 @@ neoForge {
 
 dependencies {
     implementation("dev.nyon:KotlinLangForge:2.7.1-k2.1.21-3.0+neoforge")
+    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
+        compileOnly(it)
+    }
 }
 
 tasks {

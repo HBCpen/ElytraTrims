@@ -16,6 +16,8 @@ repositories {
     }
     strictMaven("https://maven.parchmentmc.org", "org.parchmentmc.data")
     strictMaven("https://repo.nyon.dev/releases", "dev.nyon")
+    strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
+    strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
 }
 
 tasks.withType<JavaCompile> {

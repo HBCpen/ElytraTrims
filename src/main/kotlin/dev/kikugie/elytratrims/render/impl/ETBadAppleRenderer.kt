@@ -31,7 +31,7 @@ object ETBadAppleRenderer : ETDecorator {
 
     override fun prepare(original: ETRenderParameters): ETRenderParameters = with(original) {
         if (!stack.flags[ETFlags.BAD_APPLE]) return@with original
-        original.copy(texture = Sheets.ARMOR_TRIMS_SHEET, sprite = animation ?: return@with original, light = getEffectiveLight()) {
+        original.copy(sprite = animation ?: return@with original, texture = Sheets.ARMOR_TRIMS_SHEET, light = getEffectiveLight()) {
             val sprite = checkNotNull(it.sprite) { "Sprite should be set for bad apple rendering" }
             ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorTranslucent(it.texture), it.stack.hasFoil())
                 .let(sprite::wrap)

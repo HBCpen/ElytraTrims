@@ -7,6 +7,8 @@ interface ModDataSpec {
     val isClient: Boolean
     val isServer: Boolean
     val gameDir: Path
+
+    fun isModLoaded(id: String): Boolean
 }
 
 //? if fabric {
@@ -17,6 +19,8 @@ object ModData : ModDataSpec {
     override val isClient: Boolean get() = LOADER.environmentType == net.fabricmc.api.EnvType.CLIENT
     override val isServer: Boolean get() = LOADER.environmentType == net.fabricmc.api.EnvType.SERVER
     override val gameDir: Path get() = LOADER.gameDir
+
+    override fun isModLoaded(id: String): Boolean = LOADER.isModLoaded(id)
 }
 //?} else {
 /*object ModData : ModDataSpec {
@@ -24,5 +28,7 @@ object ModData : ModDataSpec {
     override val isClient: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT
     override val isServer: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.DEDICATED_SERVER
     override val gameDir: Path get() = TODO("Not yet implemented")
+
+    override fun isModLoaded(id: String): Boolean = net.neoforged.fml.loading.FMLLoader.getLoadingModList().getModFileById(id) != null
 }
 *///?}

@@ -39,7 +39,7 @@ object ETTrimsRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        (stack.trim()?.let(armorTrims) != null).ifTrue(::renderToBuffer)
+        runIf(stack.trim()?.let(armorTrims) != null) { renderToBuffer() }
     }
 
     override fun reset() {

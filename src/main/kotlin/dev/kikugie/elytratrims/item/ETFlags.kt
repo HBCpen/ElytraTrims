@@ -7,5 +7,5 @@ object ETFlags {
     val GLOW = ETItemFlag(elytratrims("glow"))
     val BANNER = ETItemFlag(elytratrims("banner"))
     val GATEWAY = ETItemFlag(elytratrims("gateway"))
-    val BAD_APPLE = ETItemFlag(elytratrims("bad_apple"))
+    val BAD_APPLE = ETItemFlag(elytratrims("animation"))
 }

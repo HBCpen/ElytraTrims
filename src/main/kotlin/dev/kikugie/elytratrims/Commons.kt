@@ -14,7 +14,6 @@ val MINECRAFT: Minecraft get() = Minecraft.getInstance()
 @Suppress("NOTHING_TO_INLINE")
 inline infix fun <T> Any.then(o: T): T = o
 inline fun runIf(bool: Boolean, action: () -> Unit) = bool.also { if (it) action() }
-inline fun Boolean.ifTrue(action: () -> Unit) = also { if (it) action() }
 
 fun <T : Any?> T.asOptional() = Optional.ofNullable(this)
 

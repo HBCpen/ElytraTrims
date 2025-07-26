@@ -2,14 +2,13 @@
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-
 plugins {
     kotlin("jvm")
     id("fabric-loom")
     id("elytratrims.common")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
-    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.13"
+    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.14"
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}"
@@ -30,6 +29,10 @@ repositories {
 }
 
 dependencies {
+    fun fapi(vararg modules: String, builder: (Dependency) -> Any? = ::modImplementation) {
+        for (it in modules) builder(fabricApi.module("fabric-$it", property("deps.fabric-api") as String))
+    }
+
     minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
     mappings(loom.layered {
         officialMojangMappings()
@@ -40,8 +43,14 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
 
-    val modules = listOf("transitive-access-wideners-v1", "registry-sync-v0", "resource-loader-v0")
-    for (it in modules) modImplementation(fabricApi.module("fabric-$it", property("deps.fabric-api") as String))
+    fapi("transitive-access-wideners-v1", "registry-sync-v0", "resource-loader-v0")
+
+    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
+        modCompileOnly(it)
+        modLocalRuntime(it)
+
+        fapi("block-view-api-v2", "renderer-api-v1", "rendering-fluids-v1", builder = ::modLocalRuntime)
+    }
 }
 
 java {

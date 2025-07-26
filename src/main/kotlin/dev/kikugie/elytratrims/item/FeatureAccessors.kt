@@ -36,10 +36,10 @@ class ColorAccess(private val owner: ItemStack) : ETFeatureAccess<Int> {
         val ItemStack.color: ColorAccess
             inline get() = ColorAccess(this)
     }
-    override fun get(): Int = DyedItemColor.getOrDefault(owner, -1)
-    override fun set(value: Int) = owner.setOrRemove(DYED_COLOR, value.takeIf { it >= 0 }?.let(::DyedItemColor))
-    override fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, -1))
-    override fun clear() = set(-1)
+    override fun get(): Int = DyedItemColor.getOrDefault(owner, 0)
+    override fun set(value: Int) = owner.setOrRemove(DYED_COLOR, value.takeIf { it > 0 }?.let(::DyedItemColor))
+    override fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, 0))
+    override fun clear() = set(0)
 }
 
 class PatternsAccess(private val owner: ItemStack) : ETFeatureAccess<BannerPatternLayers?>, Iterable<BannerPatternLayers.Layer> {
