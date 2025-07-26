@@ -1,2 +1,2 @@
-## Fixes:
-- Fixed rainbow elytra not working.
+## Features:
+- Added an easter egg related to apples.
