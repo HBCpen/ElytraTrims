@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
-import dev.kikugie.elytratrims.item.ETFlag
-import dev.kikugie.elytratrims.item.flags
+import dev.kikugie.elytratrims.item.ETFlags
+import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
 import net.minecraft.client.model.Model
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
@@ -19,7 +19,7 @@ import java.util.function.Function
 }
 
 fun ETRenderParameters.getEffectiveLight() =
-    if (stack.flags[ETFlag.GLOW]) 0xFF00FF else light
+    if (stack.flags[ETFlags.GLOW]) 0xFF00FF else light
 
 fun ETRenderParameters.renderToBuffer() =
     elytra.renderToBuffer(matrices, converter.apply(this), light, OverlayTexture.NO_OVERLAY, color)

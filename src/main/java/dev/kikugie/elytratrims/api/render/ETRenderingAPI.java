@@ -3,6 +3,7 @@ package dev.kikugie.elytratrims.api.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
+import kotlin.sequences.SequencesKt;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -36,7 +37,7 @@ public interface ETRenderingAPI {
      * @return Immutable copy of the registered decorators map.
      */
     static @NotNull List<ETDecorator> registeredDecorators() {
-        return ETRenderingAPIImpl.getDecorators();
+        return SequencesKt.toList(ETRenderingAPIImpl.getDecorators());
     }
 
     /**

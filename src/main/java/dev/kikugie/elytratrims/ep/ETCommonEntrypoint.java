@@ -18,6 +18,7 @@ public class ETCommonEntrypoint implements ETCommonInitializer {
     public void onInitializeCommonET() {
         ETInteractionAPI.registerCauldronInteraction(elytratrims("remove_dye"), REMOVE_COLOR);
         ETInteractionAPI.registerCauldronInteraction(elytratrims("remove_glow"), REMOVE_GLOW);
-        ETInteractionAPI.registerCauldronInteraction(elytratrims("remove_pattern"), REMOVE_PATTERN);
+        ETInteractionAPI.registerCauldronInteraction(elytratrims("remove_pattern"), REMOVE_PATTERNS);
+        ETInteractionAPI.registerCauldronInteraction(elytratrims("remove_touhou"), REMOVE_TOUHOU);
     }
 }

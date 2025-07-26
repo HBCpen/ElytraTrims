@@ -8,7 +8,8 @@ import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.item.trim
+import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
+import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import net.minecraft.client.renderer.RenderType
@@ -29,7 +30,7 @@ object ETTrimsRenderer : ETDecorator {
     }
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
-        val trim = stack.trim.value?.let(armorTrims)
+        val trim = stack.trim()?.let(armorTrims)
         if (trim == null) parameters else copy(texture = Sheets.ARMOR_TRIMS_SHEET, sprite = trim, light = getEffectiveLight()) {
             val sprite = checkNotNull(it.sprite) { "Sprite should be set for trim rendering" }
             ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorCutoutNoCull(it.texture), it.stack.hasFoil())
@@ -38,7 +39,7 @@ object ETTrimsRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        (stack.trim.value?.let(armorTrims) != null).ifTrue(::renderToBuffer)
+        (stack.trim()?.let(armorTrims) != null).ifTrue(::renderToBuffer)
     }
 
     override fun reset() {

@@ -1,9 +1,10 @@
 package dev.kikugie.elytratrims.recipe
 
 import dev.kikugie.elytratrims.Identifier
-import dev.kikugie.elytratrims.item.ETFlag
-import dev.kikugie.elytratrims.item.banner
-import dev.kikugie.elytratrims.item.flags
+import dev.kikugie.elytratrims.api.item.ETItemFlag
+import dev.kikugie.elytratrims.item.ETFlags
+import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
+import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.registries.BuiltInRegistries
@@ -31,9 +32,9 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
             is SmithingRecipe -> when (entry.id.location().toString()) {
                 "elytratrims:apply_shield_pattern" -> entry replace PatternsRecipe(recipe, false)
                 "elytratrims:apply_banner_pattern" -> entry replace PatternsRecipe(recipe, true)
-                "elytratrims:apply_animation_effect" -> entry replace FlagRecipe(recipe, true, ETFlag.ANIMATION)
-                "elytratrims:apply_gateway_effect" -> entry replace FlagRecipe(recipe, true, ETFlag.GATEWAY)
-                "elytratrims:apply_glow_effect" -> entry replace FlagRecipe(recipe, true, ETFlag.GLOW)
+                "elytratrims:apply_animation_effect" -> entry replace FlagRecipe(recipe, true, ETFlags.BAD_APPLE)
+                "elytratrims:apply_gateway_effect" -> entry replace FlagRecipe(recipe, true, ETFlags.GATEWAY)
+                "elytratrims:apply_glow_effect" -> entry replace FlagRecipe(recipe, true, ETFlags.GLOW)
                 else -> entry
             }
 
@@ -41,15 +42,15 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
         }
     }
 
-    open class FlagRecipe(delegate: SmithingRecipe, private val setter: Boolean, private val flag: ETFlag) : ETSmithingRecipe(delegate) {
+    open class FlagRecipe(delegate: SmithingRecipe, private val setter: Boolean, private val flag: ETItemFlag) : ETSmithingRecipe(delegate) {
         override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack? = input.base.copy().apply {
             flags[flag] = setter
         }
     }
 
-    class PatternsRecipe(delegate: SmithingRecipe, setter: Boolean) : FlagRecipe(delegate, setter, ETFlag.BANNER) {
+    class PatternsRecipe(delegate: SmithingRecipe, setter: Boolean) : FlagRecipe(delegate, setter, ETFlags.BANNER) {
         override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack? =
-            super.assemble(input, provider)?.apply { banner.copy(input.template) }
+            super.assemble(input, provider)?.apply { patterns.copy(input.template) }
     }
 }
 

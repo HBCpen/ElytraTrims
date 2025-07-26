@@ -10,7 +10,8 @@ import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.ifTrue
-import dev.kikugie.elytratrims.item.color
+import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
+import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
@@ -29,8 +30,8 @@ object ETColorRenderer : ETDecorator {
             stack.displayName.string.trim('[', ']') == "jeb_" ->
                 Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
 
-            stack.color.value.isVisible() ->
-                stack.color.value
+            Color4i(stack.color()).isVisible() ->
+                Color4i(stack.color())
 
             else ->
                 return@with parameters.copy(color = 0)

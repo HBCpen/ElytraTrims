@@ -2,8 +2,6 @@ package dev.kikugie.elytratrims;
 
 //? if fabric {
 import dev.kikugie.elytratrims.api.ETCommonInitializer;
-import dev.kikugie.elytratrims.api.impl.EntrypointUtilsKt;
-import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteraction;
 import dev.kikugie.fletching_table.annotation.fabric.Entrypoint;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,9 +18,7 @@ public class FabricCommonEntrypoint implements ModInitializer {
         var entrypoints = new ArrayList<ETCommonInitializer>(containers.size());
         for (EntrypointContainer<ETCommonInitializer> it : containers)
             entrypoints.add(it.getEntrypoint());
-        for (ETCommonInitializer it : EntrypointUtilsKt.sortCommon(entrypoints))
-            it.onInitializeCommonET();
-        ETCauldronInteraction.register();
+        ETEntrypointImpl.commonInit(entrypoints);
     }
 }
 //?}

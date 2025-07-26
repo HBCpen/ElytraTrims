@@ -1,12 +1,15 @@
 package dev.kikugie.elytratrims
 
 import dev.kikugie.elytratrims.resource.image.Color4i
+import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation.fromNamespaceAndPath
 import net.minecraft.resources.ResourceLocation.withDefaultNamespace
 import net.minecraft.world.item.DyeColor
 import java.util.Optional
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+
+val MINECRAFT: Minecraft get() = Minecraft.getInstance()
 
 @Suppress("NOTHING_TO_INLINE")
 inline infix fun <T> Any.then(o: T): T = o

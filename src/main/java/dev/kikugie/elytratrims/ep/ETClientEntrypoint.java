@@ -15,6 +15,7 @@ public class ETClientEntrypoint implements ETClientInitializer {
     public void onInitializeClientET() {
         ETRenderingAPI.registerDecorator(ETGatewayRenderer.INSTANCE);
         ETRenderingAPI.registerDecorator(ETColorRenderer.INSTANCE);
+        ETRenderingAPI.registerDecorator(ETBadAppleRenderer.INSTANCE);
         ETRenderingAPI.registerDecorator(ETPatternsRenderer.INSTANCE);
         ETRenderingAPI.registerDecorator(ETTrimsRenderer.INSTANCE);
     }

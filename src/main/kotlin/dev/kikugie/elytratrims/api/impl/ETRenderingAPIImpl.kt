@@ -18,8 +18,8 @@ object ETRenderingAPIImpl {
     private val parameterWrappers: MutableMap<ETRendererID, Callback> = mutableMapOf()
     private val renderWrappers: MutableMap<ETRendererID, ETRenderingAPI.Callback> = mutableMapOf()
 
-    @JvmStatic fun getDecorators(): List<ETDecorator> =
-        renderersByMethod.values.flatten()
+    @JvmStatic fun getDecorators(): Sequence<ETDecorator> =
+        renderersByMethod.values.asSequence().flatten()
 
     @JvmStatic fun registerDecorator(
         renderer: ETDecorator,

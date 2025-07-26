@@ -8,9 +8,10 @@ import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.item.ETFlag
-import dev.kikugie.elytratrims.item.banner
-import dev.kikugie.elytratrims.item.flags
+import dev.kikugie.elytratrims.item.ETFlags
+import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
+import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
+import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.resource.image.Color4i
@@ -40,10 +41,9 @@ object ETPatternsRenderer : ETDecorator {
     }
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
-        val access = stack.banner
-        if (access.base == null && access.patterns.isEmpty()) return@with parameters
+        if (stack.patterns()?.layers.isNullOrEmpty()) return@with parameters
 
-        val atlas = if (stack.flags[ETFlag.BANNER]) Sheets.BANNER_SHEET else Sheets.SHIELD_SHEET
+        val atlas = if (stack.flags[ETFlags.BANNER]) Sheets.BANNER_SHEET else Sheets.SHIELD_SHEET
         return copy(texture = atlas, light = getEffectiveLight()) {
             val sprite = checkNotNull(it.sprite) { "Sprite should be set for pattern rendering" }
             ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorTranslucent(it.texture), it.stack.hasFoil())
@@ -52,24 +52,13 @@ object ETPatternsRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        val access = stack.banner
-        if (access.base == null && access.patterns.isEmpty()) return@with false
-
-        val banner = stack.flags[ETFlag.BANNER]
+        val banner = stack.flags[ETFlags.BANNER]
         var rendered = false
 
-        access.base?.let {
-            val sprite = (if (banner) bannerBase else shieldBase)
-                ?: return@let
-            val blend = Color4i(color).blend(Color4i(it))
-            copy(sprite = sprite, color = blend.value).renderToBuffer()
-            rendered = true
-        }
-
-        access.patterns.forEach { (pattern, it) ->
-            val sprite = (if (banner) bannerPatterns(pattern) else shieldPatterns(pattern))
-                ?: return@forEach
-            val blend = Color4i(color).blend(Color4i(it))
+        for (it in stack.patterns) {
+            val sprite = (if (banner) bannerPatterns(it.pattern) else shieldPatterns(it.pattern))
+                ?: continue
+            val blend = Color4i(color).blend(Color4i(it.color))
             copy(sprite = sprite, color = blend.value).renderToBuffer()
             rendered = true
         }
