@@ -13,9 +13,10 @@ object ETEntrypointImpl {
             .forEach(ETClientInitializer::onInitializeClientET)
 
         ElytraRenderLayers.GATEWAY_MASKED
-        (MINECRAFT.resourceManager as? ReloadableResourceManager)?.run {
-            registerReloadListener(ETDecoratorResetter)
-        }
+        // FIXME: - Forge? - Forge.
+//        (MINECRAFT.resourceManager as? ReloadableResourceManager)?.run {
+//            registerReloadListener(ETDecoratorResetter)
+//        }
     }
 
     @JvmStatic fun commonInit(entrypoints: Iterable<ETCommonInitializer>) {

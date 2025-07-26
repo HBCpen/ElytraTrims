@@ -20,6 +20,7 @@ import dev.kikugie.elytratrims.runIf
     runIf(!stack.patterns()?.layers.isNullOrEmpty()) { stack.patterns.clear() }
 }
 
+@Deprecated("No longer removable")
 @JvmField val REMOVE_TOUHOU = ETCauldronInteraction { _, _, stack ->
     runIf(stack.flags[ETFlags.BAD_APPLE]) { stack.flags.remove(ETFlags.BAD_APPLE) }
 }
