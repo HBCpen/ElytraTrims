@@ -42,14 +42,15 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
-
-    fapi("transitive-access-wideners-v1", "registry-sync-v0", "resource-loader-v0")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
 
     fletchingTable.modrinth("sodium", stonecutter.current.version).let {
         modCompileOnly(it)
         modLocalRuntime(it)
-
-        fapi("block-view-api-v2", "renderer-api-v1", "rendering-fluids-v1", builder = ::modLocalRuntime)
+    }
+    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
+        modCompileOnly(it)
+        modLocalRuntime(it)
     }
 }
 
