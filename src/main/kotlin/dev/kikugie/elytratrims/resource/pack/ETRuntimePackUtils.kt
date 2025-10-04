@@ -24,3 +24,4 @@ fun ETRuntimePack.dump(dir: Path, subpath: String) {
 }
 
 fun List<ResourcePack>.hasElytraTrimsPack(): Boolean = any { "elytratrims" in it.packId() }
+fun List<ResourcePack>.hasInjectedPack(): Boolean = any { it is ETRuntimePack }

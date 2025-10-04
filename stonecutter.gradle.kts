@@ -27,19 +27,3 @@ for (version in stonecutter.versions.map { it.version }.distinct()) tasks.regist
     group = "publishing"
     dependsOn(stonecutter.tasks.named("publishMods") { metadata.version == version })
 }
-
-tasks.register<PublishDiscordTask>("publishDiscord") {
-    stonecutter.tree.nodes.map { "${it.project.path}:buildAndCollect" }
-        .let { mustRunAfter(*it.toTypedArray()) }
-    dependsOn("chiseledBuildAndCollect")
-
-    fun prop(string: String) = project.property(string) as String
-    files = objects.directoryProperty().value(project.layout.buildDirectory.dir("libs"))
-    changelog = file("CHANGES.md").readText()
-    version = prop("mod.version")
-
-    token = env.fetch("DISCORD_TOKEN", "_")
-    server = env.fetch("DISCORD_SERVER", "0").toLong()
-    channel = env.fetch("DISCORD_CHANNEL", "0").toLong()
-    role = env.fetch("DISCORD_ROLE", "0").toLong()
-}

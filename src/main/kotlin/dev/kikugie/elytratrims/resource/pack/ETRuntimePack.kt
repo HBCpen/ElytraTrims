@@ -1,9 +1,7 @@
 package dev.kikugie.elytratrims.resource.pack
 
 import dev.kikugie.elytratrims.Identifier
-import dev.kikugie.elytratrims.ModData
 import dev.kikugie.elytratrims.ResourcePack
-import dev.kikugie.elytratrims.resource.pack.PackIdentifier
 import dev.kikugie.elytratrims.then
 import net.minecraft.FileUtil
 import net.minecraft.server.packs.AbstractPackResources

@@ -2,12 +2,12 @@ package dev.kikugie.elytratrims.api.impl
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import dev.kikugie.elytratrims.ETModel
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.item.ETFlags
 import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
-import net.minecraft.client.model.Model
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
@@ -28,7 +28,7 @@ fun ETRenderParameters.withConverter(converter: Function<ETRenderParameters, Ver
     copy(converter = converter)
 
 fun ETRenderParameters.copy(
-    elytra: Model = elytra(),
+    elytra: ETModel = elytra(),
     stack: ItemStack = stack(),
     matrices: PoseStack = matrices(),
     source: MultiBufferSource = source(),

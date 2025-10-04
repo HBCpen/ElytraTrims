@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.CustomData
 
 private fun ItemStack.hasCustomFlag(key: String) =
-    get(DataComponents.CUSTOM_DATA)?.contains(key) == true
+    get(DataComponents.CUSTOM_DATA)?.copyTag()?.contains(key) == true
 
 private fun ItemStack.setCustomFlag(key: String, value: Boolean) =
     if (value) addCustomFlag(key)
