@@ -28,7 +28,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.ref.Reference;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
@@ -71,12 +73,14 @@ public class ElytraRendererMixin {
         var base = layers.getFirst(); // Checked for isEmpty in the source
         ResourceLocation texture = base.usePlayerTexture() && resourceLocation != null
             ? resourceLocation : layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, base));
-        ETRenderParameters params = new ETRenderParameters((Model<Object>) model, object, itemStack, poseStack, RenderType.armorEntityGlint(), null, texture, i, 0xFFFFFFFF, j, k, m);
+        AtomicInteger order = new AtomicInteger(m.get());
+        ETRenderParameters params = new ETRenderParameters((Model<Object>) model, object, itemStack, poseStack, RenderType.armorEntityGlint(), null, texture, i, 0xFFFFFFFF, j, k, order);
         parameters.set(params);
         // The result for the pre-render doesn't matter
         ETRenderingAPIImpl.render(params, submitNodeCollector, ETRenderMethod.PRE);
         if (ETRenderingAPIImpl.render(params, submitNodeCollector, ETRenderMethod.OVERRIDE))
             overridden.set(true);
+        m.set(order.get());
     }
 
     @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = CANCEL_METHOD))
@@ -102,10 +106,13 @@ public class ElytraRendererMixin {
         int j,
         int k,
         CallbackInfo ci,
+        @Local(ordinal = 3) LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
+        parameters.get().order().set(m.get());
         if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
         if (ETRenderingAPIImpl.render(parameters.get(), submitNodeCollector, ETRenderMethod.POST))
             ci.cancel();
+        m.set(parameters.get().order().get());
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.EquipmentClientInfo
+import net.minecraft.data.AtlasIds
 import net.minecraft.world.item.equipment.EquipmentAssets
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 
@@ -26,7 +27,7 @@ object ETTrimsRenderer : ETDecorator {
 
     private val reported = mutableSetOf<Identifier>()
     private val armorTrims: Memoizer<ArmorTrim, TextureAtlasSprite?> = memoize {
-        Sheets.ARMOR_TRIMS_SHEET.getSprite(texture(it), ::report)
+        AtlasIds.ARMOR_TRIMS.getSprite(texture(it), ::report)
     }
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
