@@ -6,6 +6,7 @@ import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
+import net.minecraft.client.renderer.SubmitNodeCollector
 import org.jetbrains.annotations.ApiStatus
 import java.util.function.BiConsumer
 import java.util.function.Function
@@ -42,27 +43,27 @@ object ETRenderingAPIImpl {
 
     @JvmStatic fun wrapRenderCall(type: ETRendererID, callback: ETRenderingAPI.Callback) {
         renderWrappers.compute(type) { _, current: ETRenderingAPI.Callback? ->
-            if (current == null) callback else ETRenderingAPI.Callback { parameters, original ->
-                callback.render(parameters) { current.render(it, original) }
+            if (current == null) callback else ETRenderingAPI.Callback { parameters, collector, original ->
+                callback.render(parameters, collector) { it, _ -> current.render(it, collector, original) }
             }
         }
     }
 
-    @JvmStatic fun render(parameters: ETRenderParameters, method: ETRenderMethod): Boolean {
+    @JvmStatic fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector, method: ETRenderMethod): Boolean {
         var aggregate = false
         for (renderer in renderersByMethod[method].orEmpty())
-            aggregate = renderer.completeRender(parameters) || aggregate
+            aggregate = renderer.completeRender(parameters, collector) || aggregate
         return aggregate
     }
 
     private fun ETDecorator.composeParameters(parameters: ETRenderParameters): ETRenderParameters =
         parameterWrappers[type]?.apply(parameters) ?: parameters
 
-    private fun ETDecorator.composeRender(parameters: ETRenderParameters, operation: ETRenderParameters.() -> Boolean): Boolean =
-        renderWrappers[type]?.render(parameters, operation) ?: operation(parameters)
+    private fun ETDecorator.composeRender(parameters: ETRenderParameters, collector: SubmitNodeCollector, operation: ETRenderParameters.(SubmitNodeCollector) -> Boolean): Boolean =
+        renderWrappers[type]?.render(parameters, collector, operation) ?: operation(parameters, collector)
 
-    private fun ETDecorator.completeRender(parameters: ETRenderParameters): Boolean {
+    private fun ETDecorator.completeRender(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean {
         val parameters = composeParameters(prepare(parameters))
-        return composeRender(parameters, ::render)
+        return composeRender(parameters, collector, ::render)
     }
 }

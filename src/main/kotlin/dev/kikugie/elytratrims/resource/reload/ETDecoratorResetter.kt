@@ -10,11 +10,11 @@ import java.util.concurrent.Executor
 
 object ETDecoratorResetter : PreparableReloadListener {
     override fun reload(
-        barrier: PreparableReloadListener.PreparationBarrier,
-        manager: ResourceManager,
-        backgroundExecutor: Executor,
-        gameExecutor: Executor
-    ): CompletableFuture<Void> = barrier.wait(Unit.INSTANCE).thenRun {
+        sharedState: PreparableReloadListener.SharedState,
+        executor: Executor,
+        preparationBarrier: PreparableReloadListener.PreparationBarrier,
+        executor2: Executor
+    ): CompletableFuture<Void> = preparationBarrier.wait(Unit.INSTANCE).thenRun {
         with(Profiler.get()) {
             push("reset elytra decorators")
             for (it in ETRenderingAPIImpl.getDecorators())

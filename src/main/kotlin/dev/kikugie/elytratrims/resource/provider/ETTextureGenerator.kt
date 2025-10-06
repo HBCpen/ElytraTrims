@@ -3,11 +3,11 @@ package dev.kikugie.elytratrims.resource.provider
 import com.mojang.blaze3d.platform.NativeImage
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.resource.image.Color4i
-import dev.kikugie.elytratrims.resource.pack.ETRuntimePackImpl.Companion.LOGGER
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
 import dev.kikugie.elytratrims.resource.image.EditableImage
 import dev.kikugie.elytratrims.resource.image.toEditable
+import dev.kikugie.elytratrims.resource.pack.ETRuntimePack.Companion.LOGGER
 import dev.kikugie.elytratrims.then
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.server.packs.PackType

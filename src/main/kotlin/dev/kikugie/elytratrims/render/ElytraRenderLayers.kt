@@ -14,9 +14,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer
 
 object ElytraRenderLayers {
-    private val SNIPPET_ARGS =
-        /*? if >=1.21.6 {*/arrayOf(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
-        /*?} else*//*arrayOf(MATRICES_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET)*/
+    private val SNIPPET_ARGS = arrayOf(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
 
     @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline.builder(*SNIPPET_ARGS)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
@@ -57,7 +55,5 @@ object ElytraRenderLayers {
     }
      */
 
-    private fun RenderStateShard.MultiTextureStateShard.Builder.add(tex: Identifier) =
-        /*? if >=1.21.6 {*/add(tex, false)
-        /*?} else*//*add(tex, false, false)*/
+    private fun RenderStateShard.MultiTextureStateShard.Builder.add(tex: Identifier) = add(tex, false)
 }

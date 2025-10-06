@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.render.impl
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.submitToCollector
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
@@ -15,6 +15,7 @@ import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.runIf
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.Mth
@@ -36,13 +37,15 @@ object ETColorRenderer : ETDecorator {
             else ->
                 return@with parameters.copy(color = 0)
         }
-        parameters.copy(color = Color4i(color).blend(custom).value, light = getEffectiveLight()) {
-            ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorCutoutNoCull(elytraSpriteFor(it.stack.item)), it.stack.hasFoil())
-        }
+        parameters.copy(
+            color = Color4i(color).blend(custom).value,
+            light = getEffectiveLight(),
+            render = RenderType.armorCutoutNoCull(elytraSpriteFor(stack.item))
+        )
     }
 
-    override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        runIf(color != 0) { renderToBuffer() }
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+        runIf(color != 0) { submitToCollector(collector) }
     }
 
     override fun reset() {

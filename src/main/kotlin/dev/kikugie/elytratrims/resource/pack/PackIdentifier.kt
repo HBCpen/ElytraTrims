@@ -13,7 +13,7 @@ data class PackIdentifier(
         fun of(type: PackType, id: Identifier) = PackIdentifier(type, id.namespace, id.path)
         fun of(file: String): PackIdentifier {
             val (type, namespace, path) = file.split('/', limit = 3)
-            val entry = requireNotNull(PackType.values().find { it.directory == type }) {
+            val entry = requireNotNull(PackType.entries.find { it.directory == type }) {
                 "File '$file' contains invalid resource type '$type'"
             }
             return PackIdentifier(entry, namespace, path)

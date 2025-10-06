@@ -8,7 +8,7 @@ plugins {
     id("elytratrims.common")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
-    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.20"
+    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.21"
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}"
@@ -48,10 +48,10 @@ dependencies {
         modCompileOnly(it)
         modLocalRuntime(it)
     }
-    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
-        modCompileOnly(it)
-        modLocalRuntime(it)
-    }
+//    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
+//        modCompileOnly(it)
+//        modLocalRuntime(it)
+//    }
 }
 
 java {

@@ -4,7 +4,6 @@ import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.MemoizedProperty
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.renderToBuffer
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
@@ -17,6 +16,7 @@ import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 
@@ -30,18 +30,19 @@ object ETBadAppleRenderer : ETDecorator {
     override fun getType(): ETRendererID = type
 
     override fun prepare(original: ETRenderParameters): ETRenderParameters = with(original) {
-        if (!stack.flags[ETFlags.BAD_APPLE]) return@with original
-        original.copy(sprite = animation ?: return@with original, texture = Sheets.ARMOR_TRIMS_SHEET, light = getEffectiveLight()) {
-            val sprite = checkNotNull(it.sprite) { "Sprite should be set for bad apple rendering" }
-            ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorTranslucent(it.texture), it.stack.hasFoil())
-                .let(sprite::wrap)
-        }
+//        if (!stack.flags[ETFlags.BAD_APPLE]) return@with original
+//        original.copy(sprite = animation ?: return@with original, texture = Sheets.ARMOR_TRIMS_SHEET, light = getEffectiveLight()) {
+//            val sprite = checkNotNull(it.sprite) { "Sprite should be set for bad apple rendering" }
+//            ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorTranslucent(it.texture), it.stack.hasFoil())
+//                .let(sprite::wrap)
+//        }
+        this
     }
 
-    override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        if (!stack.flags[ETFlags.BAD_APPLE] || sprite == null) return@with false
-        renderToBuffer()
-        true
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+//        if (!stack.flags[ETFlags.BAD_APPLE] || sprite == null) return@with false
+//        renderToBuffer()
+        false
     }
 
     fun report(id: Identifier) {

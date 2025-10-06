@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.render.impl
 import dev.kikugie.elytratrims.*
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.submitToCollector
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
@@ -17,6 +17,7 @@ import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
@@ -44,14 +45,10 @@ object ETPatternsRenderer : ETDecorator {
         if (stack.patterns()?.layers.isNullOrEmpty()) return@with parameters
 
         val atlas = if (stack.flags[ETFlags.BANNER]) Sheets.BANNER_SHEET else Sheets.SHIELD_SHEET
-        return copy(texture = atlas, light = getEffectiveLight()) {
-            val sprite = checkNotNull(it.sprite) { "Sprite should be set for pattern rendering" }
-            ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorTranslucent(it.texture), it.stack.hasFoil())
-                .let(sprite::wrap)
-        }
+        copy(texture = atlas, light = getEffectiveLight(), render = RenderType.armorTranslucent(texture))
     }
 
-    override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
         val banner = stack.flags[ETFlags.BANNER]
         var rendered = false
 
@@ -59,7 +56,7 @@ object ETPatternsRenderer : ETDecorator {
             val sprite = (if (banner) bannerPatterns(it.pattern) else shieldPatterns(it.pattern))
                 ?: continue
             val blend = Color4i(color).blend(Color4i(it.color))
-            copy(sprite = sprite, color = blend.value).renderToBuffer()
+            copy(sprite = sprite, color = blend.value).submitToCollector(collector)
             rendered = true
         }
 

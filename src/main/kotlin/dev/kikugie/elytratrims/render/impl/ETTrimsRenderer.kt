@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.render.impl
 import dev.kikugie.elytratrims.*
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.renderToBuffer
+import dev.kikugie.elytratrims.api.impl.submitToCollector
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
@@ -14,7 +14,7 @@ import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
-import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.EquipmentClientInfo
 import net.minecraft.world.item.equipment.EquipmentAssets
@@ -31,15 +31,11 @@ object ETTrimsRenderer : ETDecorator {
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         val trim = stack.trim()?.let(armorTrims)
-        if (trim == null) parameters else copy(texture = Sheets.ARMOR_TRIMS_SHEET, sprite = trim, light = getEffectiveLight()) {
-            val sprite = checkNotNull(it.sprite) { "Sprite should be set for trim rendering" }
-            ItemRenderer.getArmorFoilBuffer(it.source, RenderType.armorCutoutNoCull(it.texture), it.stack.hasFoil())
-                .let(sprite::wrap)
-        }
+        if (trim == null) parameters else copy(texture = Sheets.ARMOR_TRIMS_SHEET, sprite = trim, light = getEffectiveLight(), render = RenderType.armorCutoutNoCull(texture))
     }
 
-    override fun render(parameters: ETRenderParameters): Boolean = with(parameters) {
-        runIf(stack.trim()?.let(armorTrims) != null) { renderToBuffer() }
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+        runIf(stack.trim()?.let(armorTrims) != null) { submitToCollector(collector) }
     }
 
     override fun reset() {

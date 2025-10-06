@@ -1,16 +1,8 @@
 package dev.kikugie.elytratrims.api.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Function;
 
 @ApiStatus.NonExtendable
 public interface ETRenderingAPIUtils {
@@ -29,20 +21,7 @@ public interface ETRenderingAPIUtils {
      *
      * @param parameters Used render parameters.
      */
-    static void renderToBuffer(ETRenderParameters parameters) {
-        ETRenderingAPIUtilsKt.renderToBuffer(parameters);
-    }
-
-    /**
-     * Returns new render parameters with the specified converter, as mentioned in {@link ETDecorator#prepare(ETRenderParameters)}.
-     * For fine-tuned modifications, create a new instance yourself, or use {@link ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, ItemStack, PoseStack, MultiBufferSource, TextureAtlasSprite, ResourceLocation, int, int, Function)}
-     * when working in Kotlin.
-     *
-     * @param parameters The original parameters.
-     * @param converter VertexConsumer builder.
-     * @return The modified parameters instance.
-     */
-    static ETRenderParameters withConverter(ETRenderParameters parameters, Function<ETRenderParameters, VertexConsumer> converter) {
-        return ETRenderingAPIUtilsKt.withConverter(parameters, converter);
+    static void submitToCollector(ETRenderParameters parameters, SubmitNodeCollector collector) {
+        ETRenderingAPIUtilsKt.submitToCollector(parameters, collector);
     }
 }

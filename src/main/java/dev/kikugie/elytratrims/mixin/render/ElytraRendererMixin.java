@@ -4,16 +4,16 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.render.ETRenderMethod;
 import dev.kikugie.elytratrims.api.render.ETRenderParameters;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
-import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
-import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceKey;
@@ -34,13 +34,14 @@ import java.util.function.Function;
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
-    @Shadow @Final
+    @Shadow
+    @Final
     private Function<EquipmentLayerRenderer.LayerTextureKey, ResourceLocation> layerTextureLookup;
 
     @Unique
     private static final String RENDER_METHOD = "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
-        "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Lnet/minecraft/world/item/ItemStack;" +
-        "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/resources/ResourceLocation;)V";
+        "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/world/item/ItemStack;" +
+        "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/ResourceLocation;II)V";
 
     @Unique
     private static final String CANCEL_METHOD =
@@ -48,29 +49,33 @@ public class ElytraRendererMixin {
         /*?} else*//*"Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getArmorLayerTintColor(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;II)I";*/
 
     @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z"))
-    private void invokeETOverrideRenderers(
-        EquipmentClientInfo.LayerType type,
-        ResourceKey<EquipmentAsset> asset,
-        Model model,
-        ItemStack stack,
-        PoseStack matrices,
-        MultiBufferSource provider,
-        int light,
-        ResourceLocation playerTexture,
+    private <S> void invokeETOverrideRenderers(
+        EquipmentClientInfo.LayerType layerType,
+        ResourceKey<EquipmentAsset> resourceKey,
+        Model<? super S> model,
+        S object,
+        ItemStack itemStack,
+        PoseStack poseStack,
+        SubmitNodeCollector submitNodeCollector,
+        int i,
+        ResourceLocation resourceLocation,
+        int j,
+        int k,
         CallbackInfo ci,
         @Local List<EquipmentClientInfo.Layer> layers,
+        @Local(ordinal = 3) LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters,
-        @Share("overridden") LocalBooleanRef overridden) {
-        if (type != EquipmentClientInfo.LayerType.WINGS) return;
+        @Share("overridden") LocalBooleanRef overridden
+    ) {
+        if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
         var base = layers.getFirst(); // Checked for isEmpty in the source
-        ResourceLocation texture = base.usePlayerTexture() && playerTexture != null
-            ? playerTexture : layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(type, base));
-        ETRenderParameters params = new ETRenderParameters(model, stack, matrices, provider, null, texture, light,
-                                                 0xFFFFFFFF, ETRenderingAPIUtilsKt.NEEDS_OVERWRITE);
+        ResourceLocation texture = base.usePlayerTexture() && resourceLocation != null
+            ? resourceLocation : layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, base));
+        ETRenderParameters params = new ETRenderParameters((Model<Object>) model, object, itemStack, poseStack, RenderType.armorEntityGlint(), null, texture, i, 0xFFFFFFFF, j, k, m);
         parameters.set(params);
         // The result for the pre-render doesn't matter
-        ETRenderingAPIImpl.render(params, ETRenderMethod.PRE);
-        if (ETRenderingAPIImpl.render(params, ETRenderMethod.OVERRIDE))
+        ETRenderingAPIImpl.render(params, submitNodeCollector, ETRenderMethod.PRE);
+        if (ETRenderingAPIImpl.render(params, submitNodeCollector, ETRenderMethod.OVERRIDE))
             overridden.set(true);
     }
 
@@ -84,20 +89,23 @@ public class ElytraRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"),
         cancellable = true
     )
-    private void invokeETRenderers(
-        EquipmentClientInfo.LayerType type,
-        ResourceKey<EquipmentAsset> asset,
-        Model model,
-        ItemStack stack,
-        PoseStack matrices,
-        MultiBufferSource provider,
-        int light,
-        ResourceLocation playerTexture,
+    private <S> void invokeETRenderers(
+        EquipmentClientInfo.LayerType layerType,
+        ResourceKey<EquipmentAsset> resourceKey,
+        Model<? super S> model,
+        S object,
+        ItemStack itemStack,
+        PoseStack poseStack,
+        SubmitNodeCollector submitNodeCollector,
+        int i,
+        ResourceLocation resourceLocation,
+        int j,
+        int k,
         CallbackInfo ci,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
-        if (type != EquipmentClientInfo.LayerType.WINGS) return;
-        if (ETRenderingAPIImpl.render(parameters.get(), ETRenderMethod.POST))
+        if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
+        if (ETRenderingAPIImpl.render(parameters.get(), submitNodeCollector, ETRenderMethod.POST))
             ci.cancel();
     }
 }

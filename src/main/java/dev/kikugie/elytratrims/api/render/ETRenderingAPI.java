@@ -6,6 +6,7 @@ import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
 import kotlin.sequences.SequencesKt;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -30,7 +32,7 @@ public interface ETRenderingAPI {
          * @return {@code true} if the something was rendered (same for the provided operation).
          * This value is used to determine if the original elytra renderer should be cancelled.
          */
-        boolean render(ETRenderParameters parameters, Function<ETRenderParameters, Boolean> operation);
+        boolean render(ETRenderParameters parameters, SubmitNodeCollector collector, BiFunction<ETRenderParameters, SubmitNodeCollector, Boolean> operation);
     }
 
     /**
