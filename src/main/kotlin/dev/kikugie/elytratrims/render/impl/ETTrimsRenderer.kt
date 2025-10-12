@@ -26,22 +26,22 @@ object ETTrimsRenderer : ETDecorator {
     override fun getType(): ETRendererID = type
 
     private val reported = mutableSetOf<Identifier>()
-    private val armorTrims: Memoizer<ArmorTrim, TextureAtlasSprite?> = memoize {
+    private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite?> = memoize {
         AtlasIds.ARMOR_TRIMS.getSprite(texture(it), ::report)
     }
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
-        val trim = stack.trim()?.let(armorTrims)
-        if (trim == null) parameters else copy(texture = Sheets.ARMOR_TRIMS_SHEET, sprite = trim, light = getEffectiveLight(), render = RenderType.armorCutoutNoCull(texture))
+        val trim = stack.trim() ?: return@with parameters
+        copy(sprite = lookup(trim), light = getEffectiveLight(), render = Sheets.armorTrimsSheet(trim.pattern.value().decal))
     }
 
     override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
-        runIf(stack.trim()?.let(armorTrims) != null) { submitToCollector(collector) }
+        runIf(stack.trim()?.let(lookup) != null) { submitToCollector(collector) }
     }
 
     override fun reset() {
         reported.clear()
-        armorTrims.clear()
+        lookup.clear()
     }
 
     private fun texture(trim: ArmorTrim) = trim.layerAssetId(

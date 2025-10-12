@@ -21,7 +21,8 @@ abstract class ETResourceProvider<T> {
 
     abstract fun generate(): Map<PackIdentifier, T>
     abstract fun convert(value: T): InputSupplier
-    fun run(): CompletableFuture<Map<PackIdentifier, InputSupplier>> = CompletableFuture.supplyAsync({
-        generate().mapValues { (_, value) -> convert(value) }
-    }, Util.backgroundExecutor().forName(this::class.simpleName!!))
+
+    fun assemble() = generate().mapValues { (_, value) -> convert(value) }
+    fun run(): CompletableFuture<Map<PackIdentifier, InputSupplier>> = CompletableFuture
+        .supplyAsync(::assemble, Util.backgroundExecutor().forName(this::class.simpleName!!))
 }

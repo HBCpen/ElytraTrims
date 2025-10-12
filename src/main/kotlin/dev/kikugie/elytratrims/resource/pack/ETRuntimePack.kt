@@ -13,6 +13,7 @@ import net.minecraft.server.packs.AbstractPackResources
 import net.minecraft.server.packs.PackLocationInfo
 import net.minecraft.server.packs.PackResources
 import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.resources.IoSupplier
 import net.minecraft.server.packs.resources.ResourceManager
@@ -42,14 +43,19 @@ private fun generatorsFor(type: PackType) = when(type) {
 }
 
 private fun collectResources(type: PackType, manager: ResourceManager): Map<PackIdentifier, InputSupplier> {
-    LOGGER.info("Generating $type resources")
+    LOGGER.info("Generating $type")
     val data = ConcurrentHashMap<PackIdentifier, InputSupplier>()
     val time = measureTime {
-        val futures = generatorsFor(type).map {
-            it(manager).run().thenAcceptAsync(data::putAll)
-        }
+        for (generator in generatorsFor(type))
+            data.putAll(generator(manager).assemble())
 
-        CompletableFuture.allOf(*futures.toTypedArray()).join()
+//        val futures = generatorsFor(type).map {
+//            val generator = it(manager)
+//            LOGGER.info("Running ${generator::class.simpleName}")
+//            generator.run().thenAccept(data::putAll)
+//        }
+//
+//        CompletableFuture.allOf(*futures.toTypedArray()).join()
     }
 
     LOGGER.info("Collected ${data.size} ${type.directory} resources in $time")
@@ -79,6 +85,9 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
     override fun getResource(packType: PackType, identifier: Identifier): InputSupplier? =
         open(getFilename(packType, identifier))
 
+    override fun <T> getMetadataSection(reader: MetadataSectionType<T?>): T? =
+        open("pack.mcmeta")?.get()?.use { getMetadataFromStream(reader, it, ET_PACK_INFO) }
+
     override fun listResources(type: PackType, namespace: String, path: String, visitor: PackResources.ResourceOutput): Unit =
         locate(PackIdentifier.of(type, namespace, path)).forEach { (id, supplier) -> visitor.accept(id.toIdentifier(), supplier) }
 
@@ -89,9 +98,8 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
         if ('/' !in file) base.getRootResource(file)
         else resources[PackIdentifier.of(file)]
 
-    private fun locate(path: PackIdentifier): Sequence<ResourceEntry> = resources.entries.asSequence()
+    private fun locate(path: PackIdentifier): Sequence<Map.Entry<PackIdentifier, InputSupplier>> = resources.entries.asSequence()
         .filter { path.type == it.key.type && path.namespace == it.key.namespace && it.key.path.startsWith(path.path) }
-        .map { (it.key to it.value) }
 
     private fun getFilename(type: PackType, identifier: Identifier) =
         "${type.directory}/${identifier.namespace}/${identifier.path}"
@@ -100,7 +108,7 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
         @JvmField val LOGGER = LoggerFactory.getLogger("ETRuntimePack")
 
         @JvmField val ET_PACK_INFO: PackLocationInfo =
-            PackLocationInfo("elytratrims-generated", Text.literal("Elytra Trims Generated"), PackSource.DEFAULT, Optional.empty())
+            PackLocationInfo("elytratrims-generated", Text.literal("Elytra Trims Generated"), PackSource.BUILT_IN, Optional.empty())
 
         @Suppress("RedundantNullableReturnType")
         @JvmStatic fun of(unchecked: PackType, manager: ResourceManager): ETRuntimePack? {
