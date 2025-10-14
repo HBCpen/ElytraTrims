@@ -35,8 +35,7 @@ value class Color4i(val value: Int) {
     val green get() = value and 0x0000FF00 ushr 8
     val blue get() = value and 0x000000FF
     val alpha get() = value and 0xFF000000.toInt() ushr 24
-    
-    fun toColor4f() = Color4f(value)
+
     fun isEmpty() = value == 0
     fun isVisible() = alpha >= 24 // Approximately 10% transparency
     fun withRed(red: Int) = Color4i(value and 0xFF00FF00.toInt() or (red shl 16))
@@ -63,30 +62,6 @@ value class Color4i(val value: Int) {
             )
         }
     }
-}
 
-@JvmInline
-value class Color4f(val value: Int) {
-    constructor(red: Float, green: Float, blue: Float, alpha: Float = 1F)
-            : this(fromColors(red, green, blue, alpha))
-
-    val red get() = toColor4i().red / 255F
-    val green get() = toColor4i().green / 255F
-    val blue get() = toColor4i().blue / 255F
-    val alpha get() = toColor4i().alpha / 255F
-    
-    fun toColor4i() = Color4i(value)
-    fun isEmpty() = value == 0
-    fun isVisible() = alpha > 0
-    fun withRed(red: Float) = toColor4i().withRed((red * 255).toInt()).toColor4f()
-    fun withGreen(green: Float) = toColor4i().withGreen((green * 255).toInt()).toColor4f()
-    fun withBlue(blue: Float) = toColor4i().withBlue((blue * 255).toInt()).toColor4f()
-    fun withAlpha(alpha: Float) = toColor4i().withAlpha((alpha * 255).toInt()).toColor4f()
-
-    operator fun component1(): Float = red
-    operator fun component2(): Float = green
-    operator fun component3(): Float = blue
-    operator fun component4(): Float = alpha
-
-    fun blend(other: Color4f) = toColor4i().blend(other.toColor4i()).toColor4f()
+    override fun toString(): String = value.toHexString(HexFormat.UpperCase)
 }

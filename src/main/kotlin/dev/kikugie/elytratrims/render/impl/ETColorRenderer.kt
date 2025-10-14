@@ -40,7 +40,7 @@ object ETColorRenderer : ETDecorator {
         parameters.copy(
             color = Color4i(color).blend(custom).value,
             light = getEffectiveLight(),
-            render = RenderType.armorCutoutNoCull(elytraSpriteFor(stack.item))
+            render = RenderType.armorTranslucent(elytraSpriteFor(stack.item))
         )
     }
 
