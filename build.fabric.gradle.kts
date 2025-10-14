@@ -26,6 +26,7 @@ loom {
 
 repositories {
     mavenLocal()
+    maven("https://maven.bawnorton.com/releases")
 }
 
 dependencies {
@@ -48,6 +49,7 @@ dependencies {
         modCompileOnly(it)
         modLocalRuntime(it)
     }
+    modCompileOnly("com.bawnorton.trimica:trimica-fabric:1.3.0-temp+1.21.10")
 //    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
 //        modCompileOnly(it)
 //        modLocalRuntime(it)
@@ -100,7 +102,7 @@ publishMods {
     val cf = findProperty("publish.curseforge.key") as? String
     dryRun = mr == null || cf == null
 
-    type = STABLE
+    type = BETA
     file = tasks.remapJar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
 

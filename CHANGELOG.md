@@ -1,2 +1,2 @@
-## Features
-- Added [Trimica](https://modrinth.com/mod/trimica) support.
+## Changes
+- Ported to Minecraft 1.21.9/.10.
