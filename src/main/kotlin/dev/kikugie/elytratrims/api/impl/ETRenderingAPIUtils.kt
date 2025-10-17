@@ -19,7 +19,7 @@ fun ETRenderParameters.getEffectiveLight() =
     if (stack.flags[ETFlags.GLOW]) 0xFF00FF else light
 
 fun ETRenderParameters.submitToCollector(collector: SubmitNodeCollector) {
-    collector.order(order.getAndIncrement()).submitModel(elytra, `object`, matrices, render, light, OverlayTexture.NO_OVERLAY, -1, sprite, outline, null)
+    collector.order(order.getAndIncrement()).submitModel(elytra, `object`, matrices, render, light, OverlayTexture.NO_OVERLAY, color, sprite, outline, null)
 }
 
 fun ETRenderParameters.copy(

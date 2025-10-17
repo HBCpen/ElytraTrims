@@ -20,19 +20,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.ref.Reference;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+@Debug(export = true)
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
@@ -50,7 +47,8 @@ public class ElytraRendererMixin {
         /*? if fabric {*/"Lnet/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer;getColorForLayer(Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;I)I";
         /*?} else*//*"Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getArmorLayerTintColor(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;II)I";*/
 
-    @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z"))
+    @SuppressWarnings("unchecked")
+    @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private <S> void invokeETOverrideRenderers(
         EquipmentClientInfo.LayerType layerType,
         ResourceKey<EquipmentAsset> resourceKey,
@@ -65,16 +63,19 @@ public class ElytraRendererMixin {
         int k,
         CallbackInfo ci,
         @Local List<EquipmentClientInfo.Layer> layers,
-        @Local(ordinal = 3) LocalIntRef m,
+        @Local(ordinal = 4) LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters,
         @Share("overridden") LocalBooleanRef overridden
     ) {
         if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
-        var base = layers.getFirst(); // Checked for isEmpty in the source
-        ResourceLocation texture = base.usePlayerTexture() && resourceLocation != null
-            ? resourceLocation : layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, base));
-        AtomicInteger order = new AtomicInteger(m.get());
-        ETRenderParameters params = new ETRenderParameters((Model<Object>) model, object, itemStack, poseStack, RenderType.armorEntityGlint(), null, texture, i, 0xFFFFFFFF, j, k, order);
+        var order = new AtomicInteger(m.get());
+        var texture = !layers.getFirst().usePlayerTexture() || resourceLocation == null
+            ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, layers.getFirst()))
+            : resourceLocation;
+        var params = new ETRenderParameters((Model<Object>) model,
+            object, itemStack, poseStack, RenderType.armorEntityGlint(),
+            null, texture, i, 0xFFFFFFFF, j, k, order);
+
         parameters.set(params);
         // The result for the pre-render doesn't matter
         ETRenderingAPIImpl.render(params, submitNodeCollector, ETRenderMethod.PRE);
@@ -106,11 +107,11 @@ public class ElytraRendererMixin {
         int j,
         int k,
         CallbackInfo ci,
-        @Local(ordinal = 3) LocalIntRef m,
+        @Local(ordinal = 4) LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
+        if (parameters.get() == null || layerType != EquipmentClientInfo.LayerType.WINGS) return;
         parameters.get().order().set(m.get());
-        if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
         if (ETRenderingAPIImpl.render(parameters.get(), submitNodeCollector, ETRenderMethod.POST))
             ci.cancel();
         m.set(parameters.get().order().get());
