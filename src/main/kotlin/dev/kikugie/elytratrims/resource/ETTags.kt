@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 
 object ETTags {
-    val ELYTRA_DECORATABLE: TagKey<Item> = create("decoratable")
+    @JvmField val ELYTRA_DECORATABLE: TagKey<Item> = create("decoratable")
 
     private fun create(name: String): TagKey<Item> =
         TagKey.create(Registries.ITEM, elytratrims(name))
