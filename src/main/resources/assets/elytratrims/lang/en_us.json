@@ -1,5 +1,31 @@
 {
   "elytratrims.item.tooltip.decorations": "§7Decorations:",
   "elytratrims.item.tooltip.glow": "§eGlowing",
-  "elytratrims.item.tooltip.gateway": "§bCosmic"
+  "elytratrims.item.tooltip.gateway": "§bCosmic",
+
+  "trim_pattern.alexscaves.polarity": "Polarity Armor Trim (Alex's Caves)",
+  "trim_pattern.moresnifferflowers.aroma": "Aroma Armor Trim (More Sniffer Flowers)",
+  "trim_pattern.geode_plus.celeste": "Celeste Armor Trim (Geode+)",
+  "trim_pattern.geode_plus.wrap": "Wrap Armor Trim (Geode+)",
+  "trim_pattern.geode_plus.heart": "Heart Armor Trim (Geode+)",
+  "trim_pattern.ancient_aether.whale": "Whale Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.royal": "Royal Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.ancient": "Ancient Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.mosaic": "Mosaic Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.solar": "Solar Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.ascended": "Ascended Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.wynd": "Wynd Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.mechanical": "Mechanical Armor Trim (Ancient Aether)",
+  "trim_pattern.ancient_aether.mysterious": "Mysterious Armor Trim (Ancient Aether)",
+  "trim_pattern.more_armor_trims.fever": "Fever Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.beast": "Beast Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.storm": "Storm Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.myth": "Myth Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.horizon": "Horizon Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.ram": "Ram Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.nihility": "Nihility Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.greed": "Greed Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.wraith": "Wraith Armor Trim (More Armor Trims)",
+  "trim_pattern.more_armor_trims.origin": "Origin Armor Trim (More Armor Trims)",
+  "trim_pattern.frostiful.frosty": "Frosty Armor Trim (Frostiful)"
 }

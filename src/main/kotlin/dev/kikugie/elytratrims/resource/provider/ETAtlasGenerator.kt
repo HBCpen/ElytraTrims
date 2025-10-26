@@ -6,6 +6,7 @@ import com.mojang.serialization.JsonOps
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
+import dev.kikugie.elytratrims.resource.pack.readJsonWith
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.client.renderer.texture.atlas.SpriteSource
@@ -67,9 +68,7 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
             .values.asSequence().flatten()
 
         for (res in sources) try {
-            val perms = res.openAsReader()
-                .use { Dynamic(JsonOps.INSTANCE, JsonParser.parseReader(it)) }
-                .let { SpriteSources.FILE_CODEC.parse(it).orThrow }
+            val perms = res.readJsonWith(SpriteSources.FILE_CODEC)
                 .filterIsInstance<PalettedPermutations>()
             for (it in perms)
                 builder += it
