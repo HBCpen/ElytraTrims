@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.recipe
 
 import dev.kikugie.elytratrims.api.item.ETItemFlag
+import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.ETFlags
 import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
@@ -8,11 +9,14 @@ import dev.kikugie.elytratrims.mixin.recipe.SmithingTransformRecipeAccessor
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.inventory.SmithingMenu
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 import net.minecraft.world.item.equipment.trim.TrimMaterials
 import kotlin.jvm.optionals.getOrElse
+import kotlin.random.Random
 
 abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRecipe(
     delegate.templateIngredient(),
@@ -21,6 +25,9 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
     (delegate as SmithingTransformRecipeAccessor).result
 ) {
     companion object {
+        @JvmField val RANDOM_TRIM = elytratrims("apply_random_trim")
+
+        internal var seed: Int = Random.nextInt()
         private infix fun RecipeHolder<*>.replace(recipe: Recipe<*>) = RecipeHolder(id, recipe)
 
         @JvmStatic
@@ -36,6 +43,14 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
             }
 
             else -> entry
+        }
+
+        @JvmStatic
+        fun advance(world: ServerLevel, input: SmithingRecipeInput) {
+            val recipe = world.recipeAccess().getRecipeFor(RecipeType.SMITHING, input, world)
+                .getOrElse { return }
+            if (recipe.id.location() == RANDOM_TRIM)
+                seed = Random.nextInt(seed)
         }
     }
 
@@ -63,8 +78,9 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
                 return ItemStack.EMPTY
 
             val applied: ArmorTrim
+            val random = Random(seed)
             while (true) {
-                val choice = variants.random()
+                val choice = variants.random(random)
                 if (choice != present) {
                     applied = ArmorTrim(material, choice)
                     break
