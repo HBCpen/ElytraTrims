@@ -4,7 +4,7 @@ plugins {
     id("net.neoforged.moddev")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
-    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.21"
+    id("dev.kikugie.fletching-table.neoforge") version "0.1.0-alpha.22"
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}"
