@@ -10,7 +10,6 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.inventory.SmithingMenu
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.item.equipment.trim.ArmorTrim
@@ -33,7 +32,8 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
         @JvmStatic
         fun modify(entry: RecipeHolder<Recipe<*>>): RecipeHolder<Recipe<*>> = when (val recipe = entry.value) {
             is SmithingRecipe -> when (entry.id.location().toString()) {
-                "elytratrims:apply_random_trim" -> entry replace RandomTrimRecipe(recipe)
+                "elytratrims:apply_random_trim" -> entry replace RandomTrimRecipe(recipe, true)
+                "elytratrims:apply_random_trim_reroll" -> entry replace RandomTrimRecipe(recipe, false)
                 "elytratrims:apply_shield_pattern" -> entry replace PatternsRecipe(recipe, false)
                 "elytratrims:apply_banner_pattern" -> entry replace PatternsRecipe(recipe, true)
                 "elytratrims:apply_animation_effect" -> entry replace FlagRecipe(recipe, true, ETFlags.BAD_APPLE)
@@ -47,10 +47,7 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
 
         @JvmStatic
         fun advance(world: ServerLevel, input: SmithingRecipeInput) {
-            val recipe = world.recipeAccess().getRecipeFor(RecipeType.SMITHING, input, world)
-                .getOrElse { return }
-            if (recipe.id.location() == RANDOM_TRIM)
-                seed = Random.nextInt(seed)
+            seed = Random.nextInt(seed)
         }
     }
 
@@ -65,7 +62,7 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
             super.assemble(input, provider)?.apply { patterns.copy(input.template) }
     }
 
-    class RandomTrimRecipe(delegate: SmithingRecipe) : ETSmithingRecipe(delegate) {
+    class RandomTrimRecipe(delegate: SmithingRecipe, val consistent: Boolean) : ETSmithingRecipe(delegate) {
         override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack {
             val material = TrimMaterials.getFromIngredient(provider, input.addition)
                 .getOrElse { return ItemStack.EMPTY }
@@ -78,9 +75,10 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
                 return ItemStack.EMPTY
 
             val applied: ArmorTrim
-            val random = Random(seed)
+            val random = if (consistent) Random(seed) else null
             while (true) {
-                val choice = variants.random(random)
+                val choice = random?.let(variants::random)
+                    ?: variants.random()
                 if (choice != present) {
                     applied = ArmorTrim(material, choice)
                     break
