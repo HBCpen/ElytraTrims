@@ -43,9 +43,9 @@ dependencies {
     fletchingTable.modrinth("sodium", stonecutter.current.version).let {
         compileOnly(it)
     }
-//    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
-//        compileOnly(it)
-//    }
+    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
+        compileOnly(it)
+    }
 }
 
 tasks {

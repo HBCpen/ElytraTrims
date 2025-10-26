@@ -8,7 +8,7 @@ plugins {
     id("com.google.devtools.ksp") version "2.2.20-2.0.4" apply false
 }
 
-stonecutter active "1.21.9-fabric"
+stonecutter active "1.21.10-fabric"
 
 stonecutter parameters {
     constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
