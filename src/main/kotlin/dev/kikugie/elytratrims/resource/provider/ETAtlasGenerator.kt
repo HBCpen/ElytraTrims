@@ -6,6 +6,7 @@ import com.mojang.serialization.JsonOps
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
+import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.client.renderer.texture.atlas.SpriteSource
 import net.minecraft.client.renderer.texture.atlas.SpriteSources
@@ -25,13 +26,15 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
     override fun generate(): Map<PackIdentifier, List<SpriteSource>> = buildMap {
         val sources = collectPalettedPermutations()
 
-        atlas(vanilla("armor_trims")) {
-            this += sources.map {
-                val textures = it.textures.distinct().mapNotNull {
-                    if ("humanoid" !in it.path || "leggings" in it.path) null
-                    else it.withPath { it.replace("humanoid", "wings") }
+        atlas(ElytraTrimsAtlas.ATLAS_ID) {
+            this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
+            this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
+            this += sources.map { perm ->
+                val textures = perm.textures.distinct().mapNotNull { tex ->
+                    if ("humanoid" !in tex.path || "leggings" in tex.path) null
+                    else tex.withPath { it.replace("humanoid", "wings") }
                 }
-                PalettedPermutations(textures, it.paletteKey, it.permutations)
+                PalettedPermutations(textures, perm.paletteKey, perm.permutations)
             }
         }
         atlas(vanilla("blocks")) {
@@ -39,12 +42,6 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
             this += sources.map {
                 PalettedPermutations(textures, it.paletteKey, it.permutations)
             }
-        }
-        atlas(vanilla("banner_patterns")) {
-            this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
-        }
-        atlas(vanilla("shield_patterns")) {
-            this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
         }
     }
 
@@ -54,7 +51,7 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
     fun collectPatterns(useBanners: Boolean): Collection<Identifier> {
         val type = if (useBanners) "banner" else "shield"
         val atlases = lookup.listResourceStacks("atlases") { it.path.endsWith("${type}_patterns.json") }
-        val proxy = ProxyOutput(mutableSetOf<Identifier>())
+        val proxy = ProxyOutput(mutableSetOf())
         for (res in atlases.values.asSequence().flatten()) res.runCatching {
             openAsReader()
                 .use { Dynamic(JsonOps.INSTANCE, JsonParser.parseReader(it)) }

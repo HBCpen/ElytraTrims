@@ -8,5 +8,6 @@ import net.minecraft.world.item.Item
 object ETTags {
     val ELYTRA_DECORATABLE: TagKey<Item> = create("decoratable")
 
-    private fun create(name: String) = TagKey.create(Registries.ITEM, elytratrims(name))
+    private fun create(name: String): TagKey<Item> =
+        TagKey.create(Registries.ITEM, elytratrims(name))
 }

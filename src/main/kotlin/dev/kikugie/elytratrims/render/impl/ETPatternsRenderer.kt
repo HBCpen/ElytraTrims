@@ -16,6 +16,7 @@ import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.resource.image.Color4i
+import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -27,15 +28,16 @@ import net.minecraft.world.level.block.entity.BannerPattern
 
 object ETPatternsRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("patterns"), ETRenderMethod.POST)
-    override fun getType(): ETRendererID = type
 
     private val reported = mutableSetOf<Identifier>()
     private val shieldPatterns: Memoizer<Holder<BannerPattern>, TextureAtlasSprite?> = memoize {
-        AtlasIds.SHIELD_PATTERNS.getSprite(texture(it.value().assetId, false), ::report)
+        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it.value().assetId, false), ::report)
     }
     private val bannerPatterns: Memoizer<Holder<BannerPattern>, TextureAtlasSprite?> = memoize {
-        AtlasIds.BANNER_PATTERNS.getSprite(texture(it.value().assetId, true), ::report)
+        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it.value().assetId, true), ::report)
     }
+
+    override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         if (stack.patterns()?.layers.isNullOrEmpty()) return@with parameters
@@ -49,10 +51,8 @@ object ETPatternsRenderer : ETDecorator {
         for (it in stack.patterns) {
             val sprite = (if (banner) bannerPatterns(it.pattern) else shieldPatterns(it.pattern))
                 ?: continue
-            val render = if (banner) RenderType.armorTranslucent(Sheets.BANNER_SHEET)
-            else RenderType.armorTranslucent(Sheets.SHIELD_SHEET)
             val blend = Color4i(color).blend(Color4i(it.color))
-            copy(sprite = sprite, color = blend.value, render = render).submitToCollector(collector)
+            copy(sprite = sprite, color = blend.value, render = RenderType.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)).submitToCollector(collector)
             rendered = true
         }
 
