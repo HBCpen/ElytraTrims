@@ -6,21 +6,12 @@ import dev.kikugie.elytratrims.debug.command.register
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
+import net.minecraft.commands.arguments.ResourceKeyArgument
 import net.minecraft.commands.arguments.coordinates.Coordinates
-import net.minecraft.commands.arguments.item.ItemInput
-import net.minecraft.core.component.DataComponents
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.EquipmentSlot
-import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
-import net.minecraft.world.item.equipment.trim.ArmorTrim
-import net.minecraft.world.item.equipment.trim.TrimMaterials
-import kotlin.jvm.optionals.getOrElse
+import net.minecraft.resources.ResourceKey
+import net.minecraft.world.item.equipment.trim.TrimMaterial
+import net.minecraft.world.item.equipment.trim.TrimPattern
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -32,16 +23,31 @@ fun registerServerDebugCommands(
     register("elytratrims:spawn_variants", access) {
         argument<Coordinates>("position") { pos ->
             argument("dimension", IntegerArgumentType.integer(1)) { dim ->
-                runs {
-                    spawnArmorStands(source, access, pos(),  dim())
-                }
+                runs { spawnArmorStands(source, access, pos(),  dim()) }
             }
 
-            runs {
-                spawnArmorStands(source, access, pos())
-            }
+            runs { spawnArmorStands(source, access, pos()) }
         }
     }
+
+    register("elytratrims:give_elytra", access) {
+        argument("pattern", ResourceKeyArgument.key(Registries.TRIM_PATTERN)) { pattern ->
+            argument("material", ResourceKeyArgument.key(Registries.TRIM_MATERIAL)) { material ->
+                runs { giveTrimmedElytra(source, access, pattern(), material()) }
+            }
+
+            runs { giveTrimmedElytra(source, access, pattern()) }
+        }
+    }
+}
+
+private fun giveTrimmedElytra(source: CommandSourceStack, access: CommandBuildContext, pattern: ResourceKey<TrimPattern>, material: ResourceKey<TrimMaterial>? = null) {
+    val lookup = access.lookupOrThrow(Registries.TRIM_MATERIAL)
+    val material = material?.let { lookup.getOrThrow(it) }
+        ?: lookup.listElements().toList().random()
+
+    val command = "give @s minecraft:elytra[trim={material:\"${material.value().assets.base.suffix}\",pattern:\"${pattern.location()}\"}]"
+    source.dispatcher().execute(command, source)
 }
 
 private fun spawnArmorStands(source: CommandSourceStack, access: CommandBuildContext, position: Coordinates, dimension: Int = -1) {
