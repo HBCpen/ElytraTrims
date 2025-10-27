@@ -7,6 +7,7 @@ import dev.kikugie.elytratrims.api.ETCommonInitializer
 import dev.kikugie.elytratrims.api.interaction.ETInteractionAPI.registerCauldronInteraction
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI.registerDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI.wrapRenderCall
+import dev.kikugie.elytratrims.debug.registerServerDebugCommands
 import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteraction
 import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_COLOR
 import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_GLOW
@@ -25,11 +26,8 @@ object ETEntrypointImpl {
         entrypoints.sortedByDescending(ETClientInitializer::priority)
             .forEach(ETClientInitializer::onInitializeClientET)
 
+        // Inits the value
         ElytraRenderLayers.GATEWAY_MASKED
-        // FIXME: - Forge? - Forge.
-//        (MINECRAFT.resourceManager as? ReloadableResourceManager)?.run {
-//            registerReloadListener(ETDecoratorResetter)
-//        }
     }
 
     @JvmStatic fun commonInit(entrypoints: Iterable<ETCommonInitializer>) {
@@ -37,6 +35,10 @@ object ETEntrypointImpl {
             .forEach(ETCommonInitializer::onInitializeCommonET)
 
         ETCauldronInteraction.register()
+        //? if fabric {
+        if (ModData.isDevEnv) net.fabricmc.fabric.api.command.v2
+            .CommandRegistrationCallback.EVENT.register(::registerServerDebugCommands)
+        //?}
     }
 
     @JvmStatic fun clientEP() {
