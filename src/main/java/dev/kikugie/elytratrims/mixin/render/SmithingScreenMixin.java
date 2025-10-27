@@ -39,7 +39,8 @@ public class SmithingScreenMixin {
 
 	@Inject(method = "updateArmorStandPreview", at = @At(value = "RETURN"))
 	private void rotateIfHasElytra(ItemStack stack, CallbackInfo ci) {
-		boolean isElytra = !stack.isEmpty() && stack.is(ETTags.ELYTRA_DECORATABLE);
+		if (stack.isEmpty()) return;
+		boolean isElytra = stack.is(ETTags.ELYTRA_DECORATABLE);
 		renderData.update(isElytra);
 	}
 
