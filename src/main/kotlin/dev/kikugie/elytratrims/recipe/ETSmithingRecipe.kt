@@ -67,20 +67,17 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
             val material = TrimMaterials.getFromIngredient(provider, input.addition)
                 .getOrElse { return ItemStack.EMPTY }
 
-            val present = input.base.get(DataComponents.TRIM)?.pattern
-            val variants = provider.lookupOrThrow(Registries.TRIM_PATTERN)
+            val existingTrim = input.base.get(DataComponents.TRIM)
+            val allMaterials = provider.lookupOrThrow(Registries.TRIM_PATTERN)
                 .listElements().toList()
-
-            if (present != null && (variants.isEmpty() || variants.size == 1 && variants.first() == present))
-                return ItemStack.EMPTY
 
             val applied: ArmorTrim
             val random = if (consistent) Random(seed) else null
             while (true) {
-                val choice = random?.let(variants::random)
-                    ?: variants.random()
-                if (choice != present) {
-                    applied = ArmorTrim(material, choice)
+                val pattern = random?.let(allMaterials::random)
+                    ?: allMaterials.random()
+                if (pattern != existingTrim?.pattern || material != existingTrim.material) {
+                    applied = ArmorTrim(material, pattern)
                     break
                 }
             }
