@@ -2,6 +2,7 @@ package dev.kikugie.elytratrims.debug
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import dev.kikugie.elytratrims.debug.command.PermissionLevel
 import dev.kikugie.elytratrims.debug.command.register
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
@@ -21,6 +22,8 @@ fun registerServerDebugCommands(
     env: Commands.CommandSelection
 ) = with(dispatcher) {
     register("elytratrims:spawn_variants", access) {
+        requiresPermissionLevel(PermissionLevel.OWNER)
+
         argument<Coordinates>("position") { pos ->
             argument("dimension", IntegerArgumentType.integer(1)) { dim ->
                 runs { spawnArmorStands(source, access, pos(),  dim()) }
@@ -31,6 +34,8 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:give_elytra", access) {
+        requiresPermissionLevel(PermissionLevel.OWNER)
+
         argument("pattern", ResourceKeyArgument.key(Registries.TRIM_PATTERN)) { pattern ->
             argument("material", ResourceKeyArgument.key(Registries.TRIM_MATERIAL)) { material ->
                 runs { giveTrimmedElytra(source, access, pattern(), material()) }

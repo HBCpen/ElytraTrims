@@ -6,6 +6,7 @@ import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
 import kotlin.sequences.SequencesKt;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -92,7 +94,7 @@ public interface ETRenderingAPI {
      * Modifies parameters passed to all decorator rendering functions.
      *
      * @param parameters Parameter modification function
-     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, ItemStack, PoseStack, MultiBufferSource, TextureAtlasSprite, ResourceLocation, int, int, Function)
+     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, Object, ItemStack, PoseStack, RenderType, TextureAtlasSprite, ResourceLocation, int, int, int, int, AtomicInteger) 
      */
     static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters> parameters) {
         for (ETDecorator renderer : registeredDecorators()) wrapRenderParameters(renderer.getType(), parameters);
@@ -102,7 +104,7 @@ public interface ETRenderingAPI {
      * Modifies parameters passed to the specified decorator rendering function.
      *
      * @param parameters Parameter modification function
-     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, ItemStack, PoseStack, MultiBufferSource, TextureAtlasSprite, ResourceLocation, int, int, Function)
+     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, Object, ItemStack, PoseStack, RenderType, TextureAtlasSprite, ResourceLocation, int, int, int, int, AtomicInteger) 
      */
     static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<ETRenderParameters> parameters) {
         ETRenderingAPIImpl.wrapRenderParameters(type, parameters);
