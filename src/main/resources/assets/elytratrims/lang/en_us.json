@@ -35,5 +35,16 @@
   "trim_pattern.elytratrims.stars": "Stars Armor Trim (Elytra Trims)",
   "trim_pattern.elytratrims.web": "Web Armor Trim (Elytra Trims)",
   "trim_pattern.elytratrims.fly": "Fly Armor Trim (Elytra Trims)",
-  "trim_pattern.elytratrims.gems": "Gems Armor Trim (Elytra Trims)"
+  "trim_pattern.elytratrims.gems": "Gems Armor Trim (Elytra Trims)",
+  "trim_pattern.atmospheric.apostle": "Apostle Armor Trim (Atmospheric)",
+  "trim_pattern.atmospheric.druid": "Druid Armor Trim (Atmospheric)",
+  "trim_pattern.atmospheric.petrified": "Petrified Armor Trim (Atmospheric)",
+  "trim_pattern.caverns_and_chasms.exile": "Exile Armor Trim (Caverns & Chasms)",
+  "trim_pattern.lost_aether_content.noble": "Noble Armor Trim (Aether Lost Content)",
+  "trim_pattern.neapolitan.primal": "Primal Armor Trim (Neapolitan)",
+  "trim_pattern.netherexp.rift": "Primal Armor Trim (Nether Expansion)",
+  "trim_pattern.netherexp.spirit": "Spirit Armor Trim (Nether Expansion)",
+  "trim_pattern.netherexp.valor": "Valor Armor Trim (Nether Expansion)",
+  "trim_pattern.unusualend.ancient": "Ancient Armor Trim (Unusual End)",
+  "trim_pattern.yungscavebiomes.ancient": "Ancient Armor Trim (Yung's Cave Biomes)"
 }
