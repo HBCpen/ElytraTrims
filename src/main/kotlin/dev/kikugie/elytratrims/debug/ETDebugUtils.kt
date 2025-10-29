@@ -2,17 +2,16 @@ package dev.kikugie.elytratrims.debug
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
-import dev.kikugie.elytratrims.debug.command.PermissionLevel
-import dev.kikugie.elytratrims.debug.command.register
+import com.mojang.brigadier.context.CommandContext
+import dev.kikugie.elytratrims.debug.command.*
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
-import net.minecraft.commands.arguments.ResourceKeyArgument
 import net.minecraft.commands.arguments.coordinates.Coordinates
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceKey
-import net.minecraft.world.item.equipment.trim.TrimMaterial
-import net.minecraft.world.item.equipment.trim.TrimPattern
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -26,33 +25,33 @@ fun registerServerDebugCommands(
 
         argument<Coordinates>("position") { pos ->
             argument("dimension", IntegerArgumentType.integer(1)) { dim ->
-                runs { spawnArmorStands(source, access, pos(),  dim()) }
+                runs { spawnArmorStands(source, access, pos(), dim()) }
             }
 
             runs { spawnArmorStands(source, access, pos()) }
         }
     }
 
-    register("elytratrims:give_elytra", access) {
-        requiresPermissionLevel(PermissionLevel.OWNER)
+    register("elytratrims:configure_elytra", access) {
+        val (trimLiteral, trimActions) = trim<CommandSourceStack>()
+        val (patternLiteral, patternActions) = pattern<CommandSourceStack>()
+        val (colorLiteral, colorActions) = color<CommandSourceStack>()
+        val (flagLiteral, flagActions) = flag<CommandSourceStack>()
 
-        argument("pattern", ResourceKeyArgument.key(Registries.TRIM_PATTERN)) { pattern ->
-            argument("material", ResourceKeyArgument.key(Registries.TRIM_MATERIAL)) { material ->
-                runs { giveTrimmedElytra(source, access, pattern(), material()) }
-            }
-
-            runs { giveTrimmedElytra(source, access, pattern()) }
-        }
+        children += listOf(trimLiteral, patternLiteral, colorLiteral, flagLiteral)
+        for (list in listOf(trimActions, patternActions, colorActions, flagActions))
+            for ((builder, modifier) in list)
+                builder.runs { modifyItemInHand(this, modifier) }
     }
 }
 
-private fun giveTrimmedElytra(source: CommandSourceStack, access: CommandBuildContext, pattern: ResourceKey<TrimPattern>, material: ResourceKey<TrimMaterial>? = null) {
-    val lookup = access.lookupOrThrow(Registries.TRIM_MATERIAL)
-    val material = material?.let { lookup.getOrThrow(it) }
-        ?: lookup.listElements().toList().random()
-
-    val command = "give @s minecraft:elytra[trim={material:\"${material.value().assets.base.suffix}\",pattern:\"${pattern.location()}\"}]"
-    source.dispatcher().execute(command, source)
+private fun modifyItemInHand(context: CommandContext<CommandSourceStack>, modifier: ItemModifier<CommandSourceStack>) {
+    var elytra = context.source.playerOrException.getItemInHand(InteractionHand.MAIN_HAND)
+    if (elytra.isEmpty) {
+        elytra = ItemStack(Items.ELYTRA).apply { modifier.apply(context, this) }
+        context.source.playerOrException.setItemInHand(InteractionHand.MAIN_HAND, elytra)
+    }
+    modifier.apply(context, elytra)
 }
 
 private fun spawnArmorStands(source: CommandSourceStack, access: CommandBuildContext, position: Coordinates, dimension: Int = -1) {

@@ -1,10 +1,14 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package dev.kikugie.elytratrims
 
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
+import net.minecraft.core.component.DataComponentType
 import net.minecraft.resources.ResourceLocation.fromNamespaceAndPath
 import net.minecraft.resources.ResourceLocation.withDefaultNamespace
 import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.ItemStack
 import java.util.Optional
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

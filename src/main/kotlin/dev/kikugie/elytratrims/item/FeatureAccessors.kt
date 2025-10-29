@@ -26,8 +26,8 @@ class TrimAccess(private val owner: ItemStack) : ETFeatureAccess<ArmorTrim?> {
             inline get() = TrimAccess(this)
     }
     override fun get(): ArmorTrim? = owner.get(TRIM)
-    override fun set(value: ArmorTrim?) = owner.setOrRemove(TRIM, value)
-    override fun copy(stack: ItemStack) = set(stack.get(TRIM))
+    override infix fun set(value: ArmorTrim?) = owner.setOrRemove(TRIM, value)
+    override infix fun copy(stack: ItemStack) = set(stack.get(TRIM))
     override fun clear() = set(null)
 }
 
@@ -37,8 +37,8 @@ class ColorAccess(private val owner: ItemStack) : ETFeatureAccess<Int> {
             inline get() = ColorAccess(this)
     }
     override fun get(): Int = DyedItemColor.getOrDefault(owner, 0)
-    override fun set(value: Int) = owner.setOrRemove(DYED_COLOR, value.takeIf { it > 0 }?.let(::DyedItemColor))
-    override fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, 0))
+    override infix fun set(value: Int) = owner.setOrRemove(DYED_COLOR, value.takeIf { it > 0 }?.let(::DyedItemColor))
+    override infix fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, 0))
     override fun clear() = set(0)
 }
 
@@ -48,8 +48,8 @@ class PatternsAccess(private val owner: ItemStack) : ETFeatureAccess<BannerPatte
             inline get() = PatternsAccess(this)
     }
     override fun get(): BannerPatternLayers? = owner.get(BANNER_PATTERNS)
-    override fun set(value: BannerPatternLayers?) = owner.setOrRemove(BANNER_PATTERNS, value)
-    override fun copy(stack: ItemStack) = set(stack.get(BANNER_PATTERNS))
+    override infix fun set(value: BannerPatternLayers?) = owner.setOrRemove(BANNER_PATTERNS, value)
+    override infix fun copy(stack: ItemStack) = set(stack.get(BANNER_PATTERNS))
     override fun clear() = set(null)
 
     override fun iterator(): Iterator<BannerPatternLayers.Layer> =
