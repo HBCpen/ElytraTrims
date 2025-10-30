@@ -50,10 +50,11 @@ dependencies {
         modLocalRuntime(it)
     }
     modCompileOnly("com.bawnorton.trimica:trimica-fabric:1.3.0-temp+1.21.10")
-//    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
-//        modCompileOnly(it)
-//        modLocalRuntime(it)
-//    }
+}
+
+stonecutter {
+    constants["sodium"] = true
+    constants["trimica"] = true
 }
 
 java {

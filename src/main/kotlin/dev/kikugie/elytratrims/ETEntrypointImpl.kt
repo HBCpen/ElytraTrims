@@ -1,7 +1,5 @@
 package dev.kikugie.elytratrims
 
-import com.bawnorton.trimica.api.BaseTextureInterceptor
-import com.bawnorton.trimica.api.TrimicaApi
 import dev.kikugie.elytratrims.api.ETClientInitializer
 import dev.kikugie.elytratrims.api.ETCommonInitializer
 import dev.kikugie.elytratrims.api.interaction.ETInteractionAPI.registerCauldronInteraction
@@ -15,7 +13,6 @@ import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_PATTERNS
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.render.impl.*
 import dev.kikugie.elytratrims.resource.ETTags
-import net.caffeinemc.mods.sodium.api.texture.SpriteUtil
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 import org.slf4j.LoggerFactory
@@ -61,23 +58,30 @@ object ETEntrypointImpl {
 
     @Suppress("UnstableApiUsage")
     private fun registerSodiumCompat() {
+        //? if sodium {
         val logger = LoggerFactory.getLogger("ETSodiumCompat")
         val reported = AtomicBoolean(false)
 
         wrapRenderCall(ETBadAppleRenderer.type) { parameters, collector, operation ->
             if (parameters.sprite != null && !reported.get()) parameters
-                .runCatching { SpriteUtil.INSTANCE.markSpriteActive(sprite!!) }
+                .runCatching { net.caffeinemc.mods.sodium.api.texture.SpriteUtil.INSTANCE.markSpriteActive(sprite!!) }
                 .onFailure { reported.set(true); logger.error("Failed to mark sprite as active", it) }
             operation.apply(parameters, collector)
         }
+        //?}
     }
 
-    private fun registerTrimicaCompat() = TrimicaApi.getInstance().registerBaseTextureInterceptor(1000, object : BaseTextureInterceptor {
-        override fun interceptItemTexture(expectedBaseTexture: Identifier?, itemWithTrim: ItemStack, armourTrim: ArmorTrim): Identifier? =
-            if (!itemWithTrim.`is`(ETTags.ELYTRA_DECORATABLE)) expectedBaseTexture
-            else with(armourTrim.pattern.value().assetId) {
-                if (namespace != "minecraft") vanilla("textures/trims/items/wings_trim.png")
-                else withPath { "textures/trims/items/wings/$it.png" }
-            }
-    })
+    private fun registerTrimicaCompat() {
+        //? if trimica {
+        com.bawnorton.trimica.api.TrimicaApi.getInstance().registerBaseTextureInterceptor(
+            1000, object : com.bawnorton.trimica.api.BaseTextureInterceptor {
+                override fun interceptItemTexture(expectedBaseTexture: Identifier?, itemWithTrim: ItemStack, armourTrim: ArmorTrim): Identifier? =
+                    if (!itemWithTrim.`is`(ETTags.ELYTRA_DECORATABLE)) expectedBaseTexture
+                    else with(armourTrim.pattern.value().assetId) {
+                        if (namespace != "minecraft") vanilla("textures/trims/items/wings_trim.png")
+                        else withPath { "textures/trims/items/wings/$it.png" }
+                    }
+            })
+        //?}
+    }
 }

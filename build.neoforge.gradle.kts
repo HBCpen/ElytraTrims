@@ -12,6 +12,7 @@ base.archivesName = "${property("mod.id")}-neoforge"
 
 repositories {
     mavenLocal()
+    maven("https://maven.bawnorton.com/releases")
 }
 
 neoForge {
@@ -40,12 +41,15 @@ neoForge {
 
 dependencies {
     implementation("dev.nyon:KotlinLangForge:2.7.1-k2.1.21-3.0+neoforge")
-    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
-        compileOnly(it)
-    }
-    fletchingTable.modrinth("trimica", stonecutter.current.version).let {
-        compileOnly(it)
-    }
+//    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
+//        compileOnly(it)
+//    }
+    compileOnly("com.bawnorton.trimica:trimica-neoforge:1.3.0-temp+1.21.10")
+}
+
+stonecutter {
+    constants["sodium"] = false
+    constants["trimica"] = true
 }
 
 tasks {

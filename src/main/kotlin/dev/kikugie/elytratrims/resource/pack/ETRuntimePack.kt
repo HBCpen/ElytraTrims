@@ -116,7 +116,7 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
             //? if fabric {
             return ETRuntimePack(unchecked, manager)
             //?} else {
-            /*return if (unchecked == PackType.CLIENT_RESOURCES && ModData.isServer) null
+            /*return if (unchecked == PackType.CLIENT_RESOURCES && dev.kikugie.elytratrims.ModData.isServer) null
             else ETRuntimePack(unchecked, manager)
             *///?}
         }
