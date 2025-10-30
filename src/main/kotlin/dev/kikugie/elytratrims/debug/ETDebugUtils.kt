@@ -34,6 +34,8 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:configure_elytra", access) {
+        requiresPermissionLevel(PermissionLevel.OWNER)
+
         val (trimLiteral, trimActions) = trim<CommandSourceStack>()
         val (patternLiteral, patternActions) = pattern<CommandSourceStack>()
         val (colorLiteral, colorActions) = color<CommandSourceStack>()
@@ -46,6 +48,8 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:advance_recipe", access) {
+        requiresPermissionLevel(PermissionLevel.OWNER)
+
         runs { ETSmithingRecipe.advance() }
     }
 }

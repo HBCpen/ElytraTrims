@@ -36,7 +36,7 @@ object ETEntrypointImpl {
 
         ETCauldronInteraction.register()
         //? if fabric {
-        net.fabricmc.fabric.api.command.v2
+        if (ModData.isDevEnv) net.fabricmc.fabric.api.command.v2
             .CommandRegistrationCallback.EVENT.register(::registerServerDebugCommands)
         //?}
     }
