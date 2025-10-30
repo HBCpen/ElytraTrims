@@ -42,16 +42,20 @@ class ColorAccess(private val owner: ItemStack) : ETFeatureAccess<Int> {
     override fun clear() = set(0)
 }
 
-class PatternsAccess(private val owner: ItemStack) : ETFeatureAccess<BannerPatternLayers?>, Iterable<BannerPatternLayers.Layer> {
+class PatternsAccess(private val owner: ItemStack) : ETFeatureAccess<BannerPatternLayers?>, Collection<BannerPatternLayers.Layer> {
     companion object {
         val ItemStack.patterns: PatternsAccess
             inline get() = PatternsAccess(this)
     }
+    private val layers get() = get()?.layers.orEmpty()
     override fun get(): BannerPatternLayers? = owner.get(BANNER_PATTERNS)
     override infix fun set(value: BannerPatternLayers?) = owner.setOrRemove(BANNER_PATTERNS, value)
     override infix fun copy(stack: ItemStack) = set(stack.get(BANNER_PATTERNS))
     override fun clear() = set(null)
 
-    override fun iterator(): Iterator<BannerPatternLayers.Layer> =
-        get()?.layers.orEmpty().iterator()
+    override val size: Int get() = layers.size
+    override fun isEmpty(): Boolean = layers.isEmpty()
+    override fun iterator(): Iterator<BannerPatternLayers.Layer> = layers.iterator()
+    override fun contains(element: BannerPatternLayers.Layer): Boolean = element in layers
+    override fun containsAll(elements: Collection<BannerPatternLayers.Layer>): Boolean = layers.containsAll(elements)
 }

@@ -2,10 +2,9 @@ package dev.kikugie.elytratrims.api.impl
 
 import com.mojang.blaze3d.vertex.PoseStack
 import dev.kikugie.elytratrims.Identifier
+import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
-import dev.kikugie.elytratrims.item.ETFlags
-import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
 import net.minecraft.client.model.Model
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 
 fun ETRenderParameters.getEffectiveLight() =
-    if (stack.flags[ETFlags.GLOW]) 0xFF00FF else light
+    if (ETItemFlag.GLOW[stack]) 0xFF00FF else light
 
 fun ETRenderParameters.submitToCollector(collector: SubmitNodeCollector) {
     collector.order(order.getAndIncrement()).submitModel(elytra, `object`, matrices, render, light, OverlayTexture.NO_OVERLAY, color, sprite, outline, null)

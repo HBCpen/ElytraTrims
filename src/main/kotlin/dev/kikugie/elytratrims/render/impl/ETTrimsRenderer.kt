@@ -4,6 +4,7 @@ import dev.kikugie.elytratrims.*
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
 import dev.kikugie.elytratrims.api.impl.submitToCollector
+import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
@@ -12,6 +13,7 @@ import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
 import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
+import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
@@ -23,7 +25,7 @@ object ETTrimsRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("trims"), ETRenderMethod.POST)
 
     private val reported = mutableSetOf<Identifier>()
-    private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite?> = memoize {
+    private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite> = memoize {
         ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it), ::report)
     }
 
@@ -35,7 +37,8 @@ object ETTrimsRenderer : ETDecorator {
     }
 
     override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
-        runIf(stack.trim()?.let(lookup) != null) { submitToCollector(collector) }
+        runIf(!sprite.isMissing || ETItemFlag.DEBUG[stack]) { submitToCollector(collector) }
+        stack.trim() != null
     }
 
     override fun reset() {

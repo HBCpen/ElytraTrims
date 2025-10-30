@@ -1,8 +1,10 @@
 package dev.kikugie.elytratrims.mixin.render;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.kikugie.elytratrims.api.item.ETItemFlag;
 import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.elytratrims.render.SmithingTableRenderData;
 import dev.kikugie.elytratrims.resource.ETTags;
@@ -31,17 +33,17 @@ public class SmithingScreenMixin {
 	@Unique
 	private final SmithingTableRenderData renderData = new SmithingTableRenderData();
 
-	@Inject(method = "containerTick", at = @At("RETURN"))
+	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void tickArmorStand(CallbackInfo ci) {
 		if (armorStandPreview != null)
 			armorStandPreview.tick();
 	}
 
-	@Inject(method = "updateArmorStandPreview", at = @At(value = "RETURN"))
-	private void rotateIfHasElytra(ItemStack stack, CallbackInfo ci) {
-		if (stack.isEmpty()) return;
-		boolean isElytra = stack.is(ETTags.ELYTRA_DECORATABLE);
-		renderData.update(isElytra);
+	@ModifyExpressionValue(method = "updateArmorStandPreview", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copy()Lnet/minecraft/world/item/ItemStack;"))
+	private ItemStack rotateIfHasElytra(ItemStack stack) {
+		renderData.update(stack.is(ETTags.ELYTRA_DECORATABLE));
+		ETItemFlag.DEBUG.set(stack, true);
+		return stack;
 	}
 
 	@WrapOperation(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))

@@ -6,8 +6,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
-import dev.kikugie.elytratrims.item.ETFlags
-import dev.kikugie.elytratrims.item.ItemFlagAccessor.Companion.flags
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
 import dev.kikugie.elytratrims.text
@@ -26,7 +24,7 @@ import net.minecraft.world.level.block.entity.BannerPattern
 import net.minecraft.world.level.block.entity.BannerPatternLayers
 
 val DYE_COLORS = DyeColor.entries.associateBy(DyeColor::getName)
-val ET_FLAGS = listOf(ETFlags.GLOW, ETFlags.BANNER, ETFlags.GATEWAY, ETFlags.BAD_APPLE)
+val ET_FLAGS = listOf(ETItemFlag.GLOW, ETItemFlag.BANNER, ETItemFlag.GATEWAY, ETItemFlag.BAD_APPLE, ETItemFlag.DEBUG)
     .associateBy(ETItemFlag::key)
 
 val NO_SUCH_DYE = SimpleCommandExceptionType("Invalid dye color".text())
@@ -144,7 +142,7 @@ interface ItemModifier<Source> where Source : SharedSuggestionProvider {
 
     class Flag<Source>(val flag: ArgumentResolver<Source, ETItemFlag>, val value: ArgumentResolver<Source, Boolean>) : ItemModifier<Source> where Source : SharedSuggestionProvider {
         override fun apply(context:CommandContext<Source>, stack: ItemStack) {
-            stack.flags[context.flag()] = context.value()
+            context.flag()[stack] = context.value()
         }
     }
 }
