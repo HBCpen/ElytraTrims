@@ -46,8 +46,8 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
         }
 
         @JvmStatic
-        fun advance(world: ServerLevel, input: SmithingRecipeInput) {
-            seed = Random.nextInt(seed)
+        fun advance() {
+            seed = Random(seed).nextInt()
         }
     }
 

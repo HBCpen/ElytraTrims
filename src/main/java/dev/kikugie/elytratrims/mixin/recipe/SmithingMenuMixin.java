@@ -26,6 +26,6 @@ public abstract class SmithingMenuMixin {
 	@Inject(method = "onTake", at = @At(value = "RETURN"))
 	private void advanceRandomTrim(Player player, ItemStack stack, CallbackInfo ci) {
 		if (level instanceof ServerLevel serverLevel)
-			ETSmithingRecipe.advance(serverLevel, createRecipeInput());
+			ETSmithingRecipe.advance();
 	}
 }

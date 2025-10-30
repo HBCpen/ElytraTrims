@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.kikugie.elytratrims.debug.command.*
+import dev.kikugie.elytratrims.recipe.ETSmithingRecipe
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -42,6 +43,10 @@ fun registerServerDebugCommands(
         for (list in listOf(trimActions, patternActions, colorActions, flagActions))
             for ((builder, modifier) in list)
                 builder.runs { modifyItemInHand(this, modifier) }
+    }
+
+    register("elytratrims:advance_recipe", access) {
+        runs { ETSmithingRecipe.advance() }
     }
 }
 
