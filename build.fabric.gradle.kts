@@ -91,6 +91,10 @@ fletchingTable {
         mixin("default", "elytratrims.mixins.json")
     }
 
+    lang.register("main") {
+        patterns.add("assets/elytratrims/lang/*.yml")
+    }
+
     fabric {
         entrypointMappings.put("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
         entrypointMappings.put("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")

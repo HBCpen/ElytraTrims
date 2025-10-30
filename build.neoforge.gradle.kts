@@ -80,6 +80,10 @@ fletchingTable {
     mixins.register("main") {
         mixin("default", "elytratrims.mixins.json")
     }
+
+    lang.register("main") {
+        patterns.add("assets/elytratrims/lang/*.yml")
+    }
 }
 
 publishMods {

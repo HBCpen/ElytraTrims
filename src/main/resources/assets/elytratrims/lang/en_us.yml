@@ -1,0 +1,67 @@
+trim_pattern:
+  alexscaves:
+    polarity: Polarity Armor Trim (Alex's Caves)
+  ancient_aether:
+    ancient: Ancient Armor Trim (Ancient Aether)
+    ascended: Ascended Armor Trim (Ancient Aether)
+    mechanical: Mechanical Armor Trim (Ancient Aether)
+    mosaic: Mosaic Armor Trim (Ancient Aether)
+    mysterious: Mysterious Armor Trim (Ancient Aether)
+    royal: Royal Armor Trim (Ancient Aether)
+    solar: Solar Armor Trim (Ancient Aether)
+    whale: Whale Armor Trim (Ancient Aether)
+    wynd: Wynd Armor Trim (Ancient Aether)
+  atmospheric:
+    apostle: Apostle Armor Trim (Atmospheric)
+    druid: Druid Armor Trim (Atmospheric)
+    petrified: Petrified Armor Trim (Atmospheric)
+  caverns_and_chasms:
+    exile: Exile Armor Trim (Caverns & Chasms)
+  elytratrims:
+    construction: Construction Armor Trim (Elytra Trims)
+    fly: Fly Armor Trim (Elytra Trims)
+    gems: Gems Armor Trim (Elytra Trims)
+    grate: Grate Armor Trim (Elytra Trims)
+    grid: Grid Armor Trim (Elytra Trims)
+    stars: Stars Armor Trim (Elytra Trims)
+    web: Web Armor Trim (Elytra Trims)
+    whirl: Whirl Armor Trim (Elytra Trims)
+  eternal_starlight:
+    keeper: Keeper Armor Trim (Eternal Starlight)
+    twining: Twining Armor Trim (Eternal Starlight)
+  frostiful:
+    frosty: Frosty Armor Trim (Frostiful)
+    glacial: Glacial Armor Trim (Frostiful)
+    snow_man: Snow Man Armor Trim (Frostiful)
+  geode_plus:
+    celeste: Celeste Armor Trim (Geode+)
+    heart: Heart Armor Trim (Geode+)
+    wrap: Wrap Armor Trim (Geode+)
+  lost_aether_content:
+    noble: Noble Armor Trim (Aether Lost Content)
+  more_armor_trims:
+    beast: Beast Armor Trim (More Armor Trims)
+    fever: Fever Armor Trim (More Armor Trims)
+    greed: Greed Armor Trim (More Armor Trims)
+    horizon: Horizon Armor Trim (More Armor Trims)
+    myth: Myth Armor Trim (More Armor Trims)
+    nihility: Nihility Armor Trim (More Armor Trims)
+    origin: Origin Armor Trim (More Armor Trims)
+    parasite: Parasite Armor Trim (More Armor Trims)
+    ram: Ram Armor Trim (More Armor Trims)
+    storm: Storm Armor Trim (More Armor Trims)
+    twilight: Twilight Armor Trim (More Armor Trims)
+    witness: Witness Armor Trim (More Armor Trims)
+    wraith: Wraith Armor Trim (More Armor Trims)
+  moresnifferflowers:
+    aroma: Aroma Armor Trim (More Sniffer Flowers)
+  neapolitan:
+    primal: Primal Armor Trim (Neapolitan)
+  netherexp:
+    rift: Primal Armor Trim (Nether Expansion)
+    spirit: Spirit Armor Trim (Nether Expansion)
+    valor: Valor Armor Trim (Nether Expansion)
+  unusualend:
+    ancient: Ancient Armor Trim (Unusual End)
+  yungscavebiomes:
+    ancient: Ancient Armor Trim (Yung's Cave Biomes)
