@@ -1,11 +1,9 @@
-<center><div>
-<img alt="logo" height="256" src="https://cdn.modrinth.com/data/XpzGz7KD/8ff6751948e096f540e320681742d0b3b918931e.png">
+<div style="text-align: center">
+<img alt="logo" width="256" src="https://cdn.modrinth.com/data/XpzGz7KD/images/1d33b802dfb5a1b2d25a2490fe1a9df0a681d686.png">
 
 <h1>Elytra Trims</h1>
 <p>
-<b>With this mod, you can add armor trims, dye your elytra in any color, and put banner patterns on them.<br>
-It also comes with resourcepack support, mod config, and server-side support.<br>
-Let your creativity soar and make your elytra stand out with the Elytra Trims mod!</b>
+<b>With this mod, you can add armor trims, dye your elytra in any color, and put banner patterns on them.</b>
 </p>
 <a href="https://modrinth.com/mod/elytra-trims">
 <img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">
@@ -33,92 +31,84 @@ Let your creativity soar and make your elytra stand out with the Elytra Trims mo
 <img alt="forge" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/supported/forge_vector.svg">
 
 <hr>
-</div></center>
-
-### For more trims check out [Elytra Trims Extensions](https://modrinth.com/mod/elytra-trims-extensions)
+</div>
 
 ## Installation
+> [!IMPORTANT]  
+> Mod functionality and compatibility may be different across Minecraft updates!
 
-Elytra Trims has to be installed on the client to be able to see trims and other features.  
-Installing it on a server enables new trimming and crafting recipes. It doesn't require all players to have the mod, but in that case they won't see the trims/dyes/etc.
+### Dependencies
+Elytra Trims requires [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin) 
+or [Kotlin Lang Forge](https://modrinth.com/mod/kotlin-lang-forge) *(alternatively [Kotlin for Forge](https://modrinth.com/mod/kotlin-for-forge))*
+on the respective mod loader.  
+On 1.20 and 1.21 you may also need [YACL](https://modrinth.com/mod/yacl) and [ModMenu](https://modrinth.com/mod/modmenu) *(Fabric only)*.
 
-You can *technically* obtain a trimmed/dyed elytra on a server without the mod. To do it create an elytra you want in creative singleplayer, save it in a hotbar and load on the server.
+### Prerequisites
+In multiplayer, Elytra Trims **must be installed on the server**, however this **doesn't prevent players without the mod from joining.**
 
-## Trims
+| *Elytra Trims = ET*    | Player doesn't have ET                                 | Player has ET                                                      |
+|------------------------|--------------------------------------------------------|--------------------------------------------------------------------|
+| Server doesn't have ET | Vanilla experience.                                    | Player can join, but can't apply trims, patterns, etc. to elytras. |
+| Server has ET          | Player can join, but doesn't see trims, patterns, etc. | Player can craft and see decorated elytras.                        |
+|                        |                                                        |                                                                    |
 
-Put any trim on your elytra just like any other armor. Mod provides a default resourcepack with all vanilla trims, but
-it can be expanded further.
-
+## Features
+### Trims
+Trims can be applied to elytras similar to the armor. By default, the mod provides textures for a all vanilla trims, and some custom ones!  
+**Note**: on 1.20 and 1.21 you may need to install [Elytra Trims Extensions](https://modrinth.com/mod/elytra-trims-extensions) for trim compat.  
 ![A few trims](https://cdn.modrinth.com/data/XpzGz7KD/images/2966103eb5efb4e408088dbd502da364babf636d.png)
 
-## Banner patterns
+Additionally, you can replace the trim pattern in the recipe with a trial key to get access to even more elytras.  
+**Note**: this feature is currently only available on 1.21.10 and newer.  
+![All the trims](https://i.imgur.com/Wkt5nSa.jpeg)
 
-Combine your elytra with a banner to add intricate patterns and designs to your elytra.
-
+### Banner patterns
+Banners can be applied to elytras to show the patterns.
+In the smithing table, combining elytra with a banner and either paper or leather will transfer
+banner or shield patterns respectively.  
+**Note**: the patterns are applied **without the base** - you need to dye the elytra to add it.  
 ![Elytra with banner patterns](https://cdn.modrinth.com/data/XpzGz7KD/images/0327378aa65018c5f4e761c09c14fa94bb7e1d8d.png)
 
-## Dyeing
-
-If you fancy something simplistic, dye your elytra however you want in a crafting table.
-
+### Dyeing
+If you fancy something simplistic, dye your elytra however you want in a crafting table.  
 ![Dyed elytra](https://cdn.modrinth.com/data/XpzGz7KD/images/511e985762a518992f2bc140b34e9f5c104ade74.png)
 
-## Glowing
-
-Craft your elytra with a glow ink sac to make it glow in the dark.
-
+### Glowing
+Combine an elytra with a glow ink sac in the crafting table to make it glow!
 ![Glowing trim](https://cdn.modrinth.com/data/XpzGz7KD/images/849d54736e4519df78678bf00a2077a528e866ad.png)
+
+### Cosmic effect
+An expensive endeavor, but if you're willing to part with a nether star, you can apply a unique effect to your elytra.
+![Cosmic elytra](https://i.imgur.com/mlISKvX.png)
+
+### Easter eggs
+Elytra Trims has a couple secret recipes and interactions, which are best discovered by accident, so keep your eyes out!
 
 ## Recipes
 You can find the full information about Elytra Trims recipes on the [wiki](https://codeberg.org/KikuGie/elytra-trims/wiki).
 
-## Mod compatibility
-This lists mods Elytra Trims has explicit support for or known to work with. 
-It's likely to work with other mods, but you'll have to try it out.
-
-### Supports
-- Custom elytras:
-  - [Mythic Metals](https://modrinth.com/mod/mythicmetals)
-  - [Better End](https://modrinth.com/mod/betterend)
-  - [Mekanism](https://modrinth.com/mod/mekanism)
-- Extra trim patterns (Requires [Extensions](https://modrinth.com/mod/elytra-trims-extensions): 
-  - [More Armor Trims](https://modrinth.com/mod/more-armor-trims)
-  - [Geode+](https://modrinth.com/mod/geode-plus)
-  - [Frostiful](https://modrinth.com/mod/frostiful)
-  - [Ancient Aether](https://modrinth.com/mod/ancient-aether)
-  - [Alex's Caves](https://modrinth.com/mod/alexs-caves)
-- Elytra trinkets:
-  - [Elytra Slot](https://modrinth.com/mod/elytra-slot)
-  - [Elytra Trinket](https://modrinth.com/mod/elytra_trinket)
-- Trim utilities:
-  - [All The Trims](https://modrinth.com/mod/allthetrims)
-  - [Better Trims](https://modrinth.com/mod/bettertrims)
-  - [Better Enchanting Table](https://modrinth.com/mod/bettersmithingtable)
-- Extra banners:
-  - [Additional Banners](https://modrinth.com/mod/additional-banners)
-  - [Archeology Banners](https://modrinth.com/mod/archaeology-banners)
-  - *And any other banner mods*
-
-### Conflicts
-- [Customizable Elytra](<https://modrinth.com/mod/customizable-elytra>) - overrides elytra renderer entirely, preventing Elytra Trims from working.
-
-## Customization
-With resourcepack support, you can customize all the mod's features to your liking. Change the texture of your armor
-trims or add a unique design to your elytra pattern with ease.
-
 ## FAQ
-(Elytra Trims will be referred as ET)
-> I can't put trims/banner/dyes on the elytra!
-- If you're playing on a server, ET has to be installed there. On a paper/purpur/spigot or vanilla server you can use the datapack, but it will only work for trims.
-  If you're playing in singleplayer, it means ET is not loaded. Look up on YouTube how to install mods.
+### Are there any conflicts with other mods?
+- Customizable Elytra: overrides elytra renderer entirely.
+- Kube JS: breaks elytra decoration recipes.
+- Lunar/Feather Client: breaks elytra rendering.
 
-> How do I use this mod on a server without it?
-- Client-side commands are planned, however for now the easiest way is to save trimmed elytra in a creative hotbar and load it on a server.  
-  Survival recipes are not possible without the mod installed on the server.
+### I can't put trims/banners/dyes on the elytra!
+Please check the following criteria:
+- Elytra Trims is installed on the server with the correct mod loader.
+- There aren't any conflicting mods installed.
+- Recipes may differ across the updates, check the mod changelog page.
 
-> How can I remove trims/patterns/dye/glow from my elytra?
-- To remove patterns, dye and glow (all together), click with elytra on a cauldrow with water.  
-Trims can't be removed without other mods due to vanilla parity.
+If nothing helps, please make an [issue report](https://codeberg.org/KikuGie/elytra-trims/issues/new?template=.github%2fISSUE_TEMPLATE%2fbug_report.yml).
 
-> Trims look bad with capes!
-- Install [Mod Menu](<https://modrinth.com/mod/modmenu>) (Fabric) and [YACL](<https://modrinth.com/mod/yacl>). In the mods tab find ET and open its settings. There you can disable rendering elytra capes. This is preferable to the vanilla cape setting because it will keep the cape while not wearing an elytra.
+### I can't see the trims!
+Please check the following criteria:
+- You have Elytra Trims installed on the client with the correct mod loader.
+- There aren't any conflicting mods installed.
+
+If it's a trim provided by a mod or a datapack, it will need custom textures for the elytra.
+Please make a [trim request](https://codeberg.org/KikuGie/elytra-trims/issues/new?template=.github%2fISSUE_TEMPLATE%2ftrim_request.yml),
+but be patient, as it takes creative work to make good trim designs.
+
+If it's a non-vanilla elytra, it may need explicit support from Elytra Trims.
+In this or other cases, please make an [issue report](https://codeberg.org/KikuGie/elytra-trims/issues/new?template=.github%2fISSUE_TEMPLATE%2fbug_report.yml).
