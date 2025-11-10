@@ -72,7 +72,7 @@ kotlin {
 
 tasks {
     processResources {
-        exclude("**/neoforge.mods.toml")
+        exclude("**/neoforge.mods.toml", "gen.sh")
     }
 
     register<Copy>("buildAndCollect") {

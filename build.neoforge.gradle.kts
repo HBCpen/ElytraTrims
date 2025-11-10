@@ -40,11 +40,12 @@ neoForge {
 }
 
 dependencies {
-    implementation("dev.nyon:KotlinLangForge:2.7.1-k2.1.21-3.0+neoforge")
+    jarJar("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")
+    compileOnly("dev.nyon:KotlinLangForge:2.10.6-k2.2.21-3.1+neoforge")
+    compileOnly("com.bawnorton.trimica:trimica-neoforge:1.3.0-temp+1.21.10")
 //    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
 //        compileOnly(it)
 //    }
-    compileOnly("com.bawnorton.trimica:trimica-neoforge:1.3.0-temp+1.21.10")
 }
 
 stonecutter {
@@ -54,7 +55,7 @@ stonecutter {
 
 tasks {
     processResources {
-        exclude("**/fabric.mod.json", "**/elytratrims.accesswidener")
+        exclude("**/fabric.mod.json", "**/elytratrims.accesswidener", "gen.sh")
     }
 
     named("createMinecraftArtifacts") {
@@ -66,10 +67,6 @@ tasks {
         from(jar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
-    }
-
-    register("publishElytraTrims") {
-        dependsOn("publishMods")
     }
 }
 
