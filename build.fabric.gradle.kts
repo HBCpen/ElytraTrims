@@ -50,6 +50,7 @@ dependencies {
         modLocalRuntime(it)
     }
     modCompileOnly("com.bawnorton.trimica:trimica-fabric:1.3.0-temp+1.21.10")
+    include("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")
 }
 
 stonecutter {
