@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "2.2.20" apply false
     id("dev.kikugie.stonecutter")
     id("co.uzzu.dotenv.gradle") version "4.0.0"
-    id("fabric-loom") version "1.11-SNAPSHOT" apply false
+    id("fabric-loom") version "1.13-SNAPSHOT" apply false
     id("net.neoforged.moddev") version "2.0.115" apply false
     id("me.modmuss50.mod-publish-plugin") version "1.0.+" apply false
     id("com.google.devtools.ksp") version "2.2.20-2.0.4" apply false

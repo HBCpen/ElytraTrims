@@ -10,11 +10,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.render.ETRenderMethod;
 import dev.kikugie.elytratrims.api.render.ETRenderParameters;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
+import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -110,10 +112,20 @@ public class ElytraRendererMixin {
         @Local(ordinal = 4) LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
-        if (parameters.get() == null || layerType != EquipmentClientInfo.LayerType.WINGS) return;
+        if (parameters.get() == null || layerType != EquipmentClientInfo.LayerType.WINGS)
+            return;
         parameters.get().order().set(m.get());
         if (ETRenderingAPIImpl.render(parameters.get(), submitNodeCollector, ETRenderMethod.POST))
             ci.cancel();
         m.set(parameters.get().order().get());
+    }
+
+    @Inject(
+        method = RENDER_METHOD,
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Sheets;armorTrimsSheet(Z)Lnet/minecraft/client/renderer/RenderType;"),
+        cancellable = true
+    )
+    private <S> void cancelMissingTrimRender(CallbackInfo ci, @Local TextureAtlasSprite sprite) {
+        if (ETRendererKt.isMissing(sprite)) ci.cancel();
     }
 }
