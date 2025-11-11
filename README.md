@@ -17,7 +17,7 @@
 <img alt="codeberg" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/codeberg_vector.svg">
 </a>
 
-<a href="https://discord.com/invite/TBgNUCfryS">
+<a href="https://discord.kikugie.dev/">
 <img alt="discord-singular" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/social/discord-singular_vector.svg">
 </a>
 
