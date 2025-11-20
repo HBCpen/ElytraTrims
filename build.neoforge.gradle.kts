@@ -42,14 +42,13 @@ neoForge {
 dependencies {
     jarJar("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")
     compileOnly("dev.nyon:KotlinLangForge:2.10.6-k2.2.21-3.1+neoforge")
-    compileOnly("com.bawnorton.trimica:trimica-neoforge:1.3.0-temp+1.21.10")
-//    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
-//        compileOnly(it)
-//    }
+    compileOnly("com.bawnorton.trimica:trimica-neoforge:${property("deps.trimica")}")
+    stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
+        .onSuccess { compileOnly(it) }
+        .isSuccess
 }
 
 stonecutter {
-    constants["sodium"] = false
     constants["trimica"] = true
 }
 

@@ -45,16 +45,13 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
 
-    fletchingTable.modrinth("sodium", stonecutter.current.version).let {
-        modCompileOnly(it)
-        modLocalRuntime(it)
-    }
-    modCompileOnly("com.bawnorton.trimica:trimica-fabric:1.3.0-temp+1.21.10")
-    include("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")
+    modCompileOnly("com.bawnorton.trimica:trimica-fabric:${property("deps.trimica")}")
+    stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
+        .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
+        .isSuccess
 }
 
 stonecutter {
-    constants["sodium"] = true
     constants["trimica"] = true
 }
 
