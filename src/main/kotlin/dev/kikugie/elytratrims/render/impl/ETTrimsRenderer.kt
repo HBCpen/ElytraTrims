@@ -15,7 +15,6 @@ import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
-import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.EquipmentClientInfo
 import net.minecraft.world.item.equipment.EquipmentAssets
@@ -26,17 +25,29 @@ object ETTrimsRenderer : ETDecorator {
 
     private val reported = mutableSetOf<Identifier>()
     private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite> = memoize {
-        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it), ::report)
+        ElytraTrimsAtlas./*? if >=1.21.9 {*/ATLAS_ID/*?} else*///ATLAS_SHEET
+            .getSprite(texture(it), ::report)
     }
+    //? if <1.21.9 {
+    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
+        val sprite = checkNotNull(prm.sprite) { "Sprite should be set for trim rendering" }
+        net.minecraft.client.renderer.entity.ItemRenderer.getArmorFoilBuffer(src, prm.render, prm.stack.hasFoil()).let(sprite::wrap)
+    }
+    *///?}
 
     override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         val trim = stack.trim() ?: return@with parameters
-        copy(sprite = lookup(trim), light = getEffectiveLight(), render = ElytraTrimsAtlas.elytraTrimsSheet(trim.pattern.value().decal))
+        copy(
+            sprite = lookup(trim),
+            light = getEffectiveLight(),
+            render = ElytraTrimsAtlas.elytraTrimsSheet(trim.pattern.value().decal),
+            /*? if <1.21.9*///argument = converterImpl
+        )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
         runIf(!sprite.isMissing || ETItemFlag.DEBUG[stack]) { submitToCollector(collector) }
         stack.trim() != null
     }

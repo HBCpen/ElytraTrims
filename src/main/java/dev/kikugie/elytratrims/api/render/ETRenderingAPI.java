@@ -1,23 +1,15 @@
 package dev.kikugie.elytratrims.api.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
 import kotlin.sequences.SequencesKt;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 @ApiStatus.NonExtendable
@@ -28,13 +20,22 @@ public interface ETRenderingAPI {
          * Wraps the rendering call for a decorator rendering function.
          *
          * @param parameters Processed parameters to be used in rendering.
+         * @param collector On 1.21.9+ the render call collector. On older versions always null for function compatibility.
          * @param operation The previous rendering function.
          *                  This may either be the original {@code renderToBuffer()} call,
          *                  or the call to a previous callback.
          * @return {@code true} if the something was rendered (same for the provided operation).
          * This value is used to determine if the original elytra renderer should be cancelled.
          */
-        boolean render(ETRenderParameters parameters, SubmitNodeCollector collector, BiFunction<ETRenderParameters, SubmitNodeCollector, Boolean> operation);
+        //? if >=1.21.9 {
+        boolean render(@NotNull ETRenderParameters parameters,
+                         @NotNull net.minecraft.client.renderer.SubmitNodeCollector collector,
+                         @NotNull BiFunction<ETRenderParameters, net.minecraft.client.renderer.SubmitNodeCollector, Boolean> operation);
+        //?} else {
+        /*boolean render(@NotNull ETRenderParameters parameters,
+                       @NotNull net.minecraft.client.renderer.MultiBufferSource collector,
+                       @NotNull BiFunction<ETRenderParameters, net.minecraft.client.renderer.MultiBufferSource, Boolean> operation);
+        *///?}
     }
 
     /**
@@ -64,7 +65,7 @@ public interface ETRenderingAPI {
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, ResourceLocation before) {
+    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, @NotNull ResourceLocation before) {
         return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, before);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(before));
@@ -81,7 +82,7 @@ public interface ETRenderingAPI {
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, ResourceLocation after) {
+    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, @NotNull ResourceLocation after) {
         return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, after);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(after));
@@ -94,9 +95,8 @@ public interface ETRenderingAPI {
      * Modifies parameters passed to all decorator rendering functions.
      *
      * @param parameters Parameter modification function
-     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, Object, ItemStack, PoseStack, RenderType, TextureAtlasSprite, ResourceLocation, int, int, int, int, AtomicInteger) 
      */
-    static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters> parameters) {
+    static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters>  parameters) {
         for (ETDecorator renderer : registeredDecorators()) wrapRenderParameters(renderer.getType(), parameters);
     }
 
@@ -104,7 +104,6 @@ public interface ETRenderingAPI {
      * Modifies parameters passed to the specified decorator rendering function.
      *
      * @param parameters Parameter modification function
-     * @see ETRenderingAPIUtilsKt#copy(ETRenderParameters, Model, Object, ItemStack, PoseStack, RenderType, TextureAtlasSprite, ResourceLocation, int, int, int, int, AtomicInteger) 
      */
     static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<ETRenderParameters> parameters) {
         ETRenderingAPIImpl.wrapRenderParameters(type, parameters);

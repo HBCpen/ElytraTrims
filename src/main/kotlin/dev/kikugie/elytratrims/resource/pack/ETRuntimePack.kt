@@ -86,7 +86,7 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
         open(getFilename(packType, identifier))
 
     override fun <T> getMetadataSection(reader: MetadataSectionType<T?>): T? =
-        open("pack.mcmeta")?.get()?.use { getMetadataFromStream(reader, it, ET_PACK_INFO) }
+        open("pack.mcmeta")?.get()?.use { getMetadataFromStream(reader, it, /*? if >=1.21.9 >> ')'*/ET_PACK_INFO) }
 
     override fun listResources(type: PackType, namespace: String, path: String, visitor: PackResources.ResourceOutput): Unit =
         locate(PackIdentifier.of(type, namespace, path)).forEach { (id, supplier) -> visitor.accept(id.toIdentifier(), supplier) }

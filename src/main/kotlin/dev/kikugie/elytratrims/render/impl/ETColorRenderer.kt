@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.render.impl
 
 import dev.kikugie.elytratrims.Identifier
+import dev.kikugie.elytratrims.RenderConsumer
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.getEffectiveLight
 import dev.kikugie.elytratrims.api.impl.submitToCollector
@@ -15,14 +16,17 @@ import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.runIf
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.SubmitNodeCollector
-import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.Mth
 import net.minecraft.world.item.Item
 
 object ETColorRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("color"), ETRenderMethod.POST)
+    //? if <1.21.9 {
+    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
+        net.minecraft.client.renderer.entity.ItemRenderer.getArmorFoilBuffer(src, prm.render, prm.stack.hasFoil())
+    }
+    *///?}
 
     override fun getType(): ETRendererID = type
 
@@ -40,11 +44,12 @@ object ETColorRenderer : ETDecorator {
         parameters.copy(
             color = Color4i(color).blend(custom).value,
             light = getEffectiveLight(),
-            render = RenderType.armorTranslucent(elytraSpriteFor(stack.item))
+            render = RenderType.armorTranslucent(elytraSpriteFor(stack.item)),
+            /*? if <1.21.9*///argument = converterImpl
         )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
         runIf(color != 0) { submitToCollector(collector) }
     }
 

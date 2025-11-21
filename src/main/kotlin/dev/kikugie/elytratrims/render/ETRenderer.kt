@@ -19,7 +19,9 @@ val TextureAtlasSprite?.isMissing
     get() = this == null || contents().name() == MissingTextureAtlasSprite.getLocation()
 
 fun Identifier.getSprite(identifier: Identifier, reporter: (Identifier) -> Unit): TextureAtlasSprite =
-    MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier).also { if (it.isMissing) reporter(identifier) }
+    /*? if >=1.21.9 {*/MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier)
+    /*?} else*///MINECRAFT.getTextureAtlas(this).apply(identifier)
+        .also { if (it.isMissing) reporter(identifier) }
 
 fun renderEntityInInventoryFollowsMouse(
     guiGraphics: GuiGraphics,

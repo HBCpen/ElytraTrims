@@ -17,7 +17,6 @@ import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
 import net.minecraft.world.level.block.entity.BannerPattern
@@ -26,24 +25,32 @@ object ETPatternsRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("patterns"), ETRenderMethod.POST)
 
     private val reported = mutableSetOf<Identifier>()
-    private val shieldPatterns: Memoizer<Holder<BannerPattern>, TextureAtlasSprite> = memoize {
-        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it.value().assetId, false), ::report)
+    private val patterns: Memoizer<Pair<Holder<BannerPattern>, Boolean>, TextureAtlasSprite> = memoize { (pattern, banner) ->
+        ElytraTrimsAtlas./*? if >=1.21.9 {*/ATLAS_ID/*?} else*///ATLAS_SHEET
+            .getSprite(texture(pattern.value().assetId, banner), ::report)
     }
-    private val bannerPatterns: Memoizer<Holder<BannerPattern>, TextureAtlasSprite> = memoize {
-        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(it.value().assetId, true), ::report)
+
+    //? if <1.21.9 {
+    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
+        val sprite = checkNotNull(prm.sprite) { "Sprite should be set for pattern rendering" }
+        net.minecraft.client.renderer.entity.ItemRenderer.getArmorFoilBuffer(src, prm.render, prm.stack.hasFoil()).let(sprite::wrap)
     }
+    *///?}
 
     override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         if (stack.patterns()?.layers.isNullOrEmpty()) return@with parameters
-        copy(light = getEffectiveLight())
+        copy(
+            light = getEffectiveLight(),
+            /*? if <1.21.9*///argument = converterImpl
+        )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
         val banner = ETItemFlag.BANNER[stack]
         for (it in stack.patterns) {
-            val sprite = if (banner) bannerPatterns(it.pattern) else shieldPatterns(it.pattern)
+            val sprite = patterns(it.pattern to banner)
             if (sprite.isMissing && !ETItemFlag.DEBUG[stack]) continue
 
             val blend = Color4i(color).blend(Color4i(it.color))
@@ -59,8 +66,7 @@ object ETPatternsRenderer : ETDecorator {
 
     override fun reset() {
         reported.clear()
-        shieldPatterns.clear()
-        bannerPatterns.clear()
+        patterns.clear()
     }
 
     private fun texture(asset: Identifier, banner: Boolean) = asset.withPrefix(if (banner) "entity/wings/banner/" else "entity/wings/shield/")

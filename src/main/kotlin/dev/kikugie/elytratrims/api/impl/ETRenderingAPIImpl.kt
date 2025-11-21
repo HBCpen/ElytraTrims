@@ -1,12 +1,12 @@
 package dev.kikugie.elytratrims.api.impl
 
+import dev.kikugie.elytratrims.RenderConsumer
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI
 import dev.kikugie.elytratrims.render.RENDER_LOGGER
-import net.minecraft.client.renderer.SubmitNodeCollector
 import org.jetbrains.annotations.ApiStatus
 import java.util.function.BiConsumer
 import java.util.function.Function
@@ -49,7 +49,7 @@ object ETRenderingAPIImpl {
         }
     }
 
-    @JvmStatic fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector, method: ETRenderMethod): Boolean {
+    @JvmStatic fun render(parameters: ETRenderParameters, collector: RenderConsumer, method: ETRenderMethod): Boolean {
         var aggregate = false
         for (renderer in renderersByMethod[method].orEmpty())
             aggregate = renderer.completeRender(parameters, collector) || aggregate
@@ -59,10 +59,10 @@ object ETRenderingAPIImpl {
     private fun ETDecorator.composeParameters(parameters: ETRenderParameters): ETRenderParameters =
         parameterWrappers[type]?.apply(parameters) ?: parameters
 
-    private fun ETDecorator.composeRender(parameters: ETRenderParameters, collector: SubmitNodeCollector, operation: ETRenderParameters.(SubmitNodeCollector) -> Boolean): Boolean =
+    private fun ETDecorator.composeRender(parameters: ETRenderParameters, collector: RenderConsumer, operation: ETRenderParameters.(RenderConsumer) -> Boolean): Boolean =
         renderWrappers[type]?.render(parameters, collector, operation) ?: operation(parameters, collector)
 
-    private fun ETDecorator.completeRender(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean {
+    private fun ETDecorator.completeRender(parameters: ETRenderParameters, collector: RenderConsumer): Boolean {
         val parameters = composeParameters(prepare(parameters))
         return composeRender(parameters, collector, ::render)
     }

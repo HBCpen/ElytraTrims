@@ -3,7 +3,6 @@ package dev.kikugie.elytratrims.resource.reload
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.elytratrims
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.resources.model.AtlasManager
 
 object ElytraTrimsAtlas {
     const val ATLAS_NAME = "decorations"
@@ -13,8 +12,10 @@ object ElytraTrimsAtlas {
     @JvmField val ELYTRA_TRIMS_RENDER: RenderType = RenderType.armorCutoutNoCull(ATLAS_SHEET)
     @JvmField val ELYTRA_TRIMS_RENDER_DECAL: RenderType = RenderType.createArmorDecalCutoutNoCull(ATLAS_SHEET)
 
-    @JvmStatic fun createAtlasConfig(): AtlasManager.AtlasConfig =
-        AtlasManager.AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
+    //? if >=1.21.9 {
+    @JvmStatic fun createAtlasConfig(): net.minecraft.client.resources.model.AtlasManager.AtlasConfig =
+        net.minecraft.client.resources.model.AtlasManager.AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
+    //?}
 
     @JvmStatic fun elytraTrimsSheet(decal: Boolean): RenderType =
         if (decal) ELYTRA_TRIMS_RENDER_DECAL else ELYTRA_TRIMS_RENDER

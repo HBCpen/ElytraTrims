@@ -4,6 +4,7 @@ import com.google.gson.JsonParser
 import com.mojang.serialization.Dynamic
 import com.mojang.serialization.JsonOps
 import dev.kikugie.elytratrims.Identifier
+import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
 import dev.kikugie.elytratrims.resource.pack.readJsonWith
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.texture.atlas.SpriteSource
 import net.minecraft.client.renderer.texture.atlas.SpriteSources
 import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister
 import net.minecraft.client.renderer.texture.atlas.sources.PalettedPermutations
+import net.minecraft.client.renderer.texture.atlas.sources.SingleFile
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.resources.ResourceManager
 import org.slf4j.Logger

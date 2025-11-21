@@ -19,7 +19,7 @@ data class PackIdentifier(
             return PackIdentifier(entry, namespace, path)
         }
     }
-    fun toIdentifier() = Identifier.fromNamespaceAndPath(namespace, path)
-    fun toPath() = "${type.directory}/$namespace/$path"
+    fun toIdentifier(): Identifier? = Identifier.fromNamespaceAndPath(namespace, path)
+    fun toPath(): String = "${type.directory}/$namespace/$path"
     override fun toString(): String = "${type.directory} - $namespace:$path"
 }
