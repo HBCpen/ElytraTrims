@@ -66,7 +66,7 @@ public class ElytraRendererMixin {
         var texture = !layers.getFirst().usePlayerTexture() || resourceLocation == null
             ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, layers.getFirst()))
             : resourceLocation;
-        var params = new ETRenderParameters((Model<Object>) model,
+        @SuppressWarnings("unchecked") var params = new ETRenderParameters((Model<Object>) model,
             object, itemStack, poseStack, RenderType.armorEntityGlint(),
             null, texture, i, 0xFFFFFFFF, j, k, order);
 

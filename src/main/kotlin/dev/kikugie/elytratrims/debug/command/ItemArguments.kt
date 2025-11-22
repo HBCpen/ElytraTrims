@@ -2,7 +2,6 @@ package dev.kikugie.elytratrims.debug.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
@@ -22,14 +21,12 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial
 import net.minecraft.world.item.equipment.trim.TrimPattern
 import net.minecraft.world.level.block.entity.BannerPattern
 import net.minecraft.world.level.block.entity.BannerPatternLayers
+import kotlin.text.uppercase
 
-val DYE_COLORS = DyeColor.entries.associateBy(DyeColor::getName)
 val ET_FLAGS = listOf(ETItemFlag.GLOW, ETItemFlag.BANNER, ETItemFlag.GATEWAY, ETItemFlag.BAD_APPLE, ETItemFlag.DEBUG)
     .associateBy(ETItemFlag::key)
 
-val NO_SUCH_DYE = SimpleCommandExceptionType("Invalid dye color".text())
 val NO_SUCH_FLAG = SimpleCommandExceptionType("Invalid item flag".text())
-val INVALID_KEY = DynamicCommandExceptionType { "Invalid identifier $it".text() }
 
 typealias ItemModifierAction<Source> = Pair<CommandBuilder<Source, *, *>, ItemModifier<Source>>
 
@@ -60,15 +57,15 @@ where Source : SharedSuggestionProvider, Source : PermissionSource {
 
     literal.argument("pattern", ResourceKeyArgument.key(Registries.BANNER_PATTERN)) { pattern ->
         argument("color", StringArgumentType.word()) { color ->
-            suggestList { DYE_COLORS.keys }
+            suggestList { DyeColor.entries.map(DyeColor::getName) }
             val dye: ArgumentResolver<Source, DyeColor> = {
-                DYE_COLORS[color()] ?: throw NO_SUCH_DYE.create()
+                DyeColor.valueOf(color().uppercase())
             }
             actions += this to ItemModifier.Pattern(pattern, dye)
         }
 
         val dye: ArgumentResolver<Source, DyeColor> = {
-            DYE_COLORS.values.random()
+            DyeColor.entries.random()
         }
         actions += this to ItemModifier.Pattern(pattern, dye)
     }
@@ -81,10 +78,10 @@ where Source : SharedSuggestionProvider, Source : PermissionSource {
     val actions = mutableListOf<ItemModifierAction<Source>>()
 
     literal.argument("color", StringArgumentType.word()) {
-        suggestList { DYE_COLORS.keys }
+        suggestList { DyeColor.entries.map(DyeColor::getName) }
 
         val dye: ArgumentResolver<Source, DyeColor> = {
-            DYE_COLORS[it()] ?: throw NO_SUCH_DYE.create()
+            DyeColor.valueOf(it().uppercase())
         }
         actions += this to ItemModifier.Color(dye)
     }
