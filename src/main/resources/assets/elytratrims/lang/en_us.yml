@@ -1,4 +1,8 @@
 tag.item.elytratrims.decoratable: Decoratable Elytras
+flag.item.elytratrims:
+  glow: §bGlowing
+  gateway: §dCosmic
+  animation: §cAn apple a day keeps the doctor away
 trim_pattern:
   alexscaves:
     polarity: Polarity Armor Trim (Alex's Caves)

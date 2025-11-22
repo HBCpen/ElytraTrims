@@ -12,6 +12,11 @@ public record ETItemFlag(ResourceLocation key) {
 	public static final ETItemFlag GATEWAY = new ETItemFlag(elytratrims("gateway"));
 	public static final ETItemFlag BAD_APPLE = new ETItemFlag(elytratrims("animation"));
 
+	/**
+	 * Enables debug rendering in the smithing table menu.
+	 * <br>
+	 * Currently makes missing textures only appear in the elytra preview.
+	 */
 	public static final ETItemFlag DEBUG = new ETItemFlag(elytratrims("debug"));
 
 	public boolean get(ItemStack stack) {

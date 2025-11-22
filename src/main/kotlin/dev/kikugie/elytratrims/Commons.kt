@@ -24,9 +24,9 @@ fun <T : Any?> T.asOptional() = Optional.ofNullable(this)
 fun vanilla(path: String): Identifier = withDefaultNamespace(path)
 fun elytratrims(path: String): Identifier = fromNamespaceAndPath("elytratrims", path)
 
-fun String.text(): Text = Text.literal(this)
-fun String.translatable(): Text = Text.translatable(this)
-fun String.translatable(vararg args: Any): Text = Text.translatable(this, *args)
+fun String.text(): MutableText = Text.literal(this)
+fun String.translatable(): MutableText = Text.translatable(this)
+fun String.translatable(vararg args: Any): MutableText = Text.translatable(this, *args)
 
 interface Memoizer<K, V> : (K) -> V {
     fun clear()
