@@ -24,11 +24,19 @@ object ModData : ModDataSpec {
 }
 //?} else {
 /*object ModData : ModDataSpec {
+    private val DIST =
+        /*? if >=1.21.9 {*/net.neoforged.fml.loading.FMLEnvironment.getDist()
+        /*?} else*///net.neoforged.fml.loading.FMLEnvironment.dist
+
+    private val LIST =
+        /*? if >=1.21.9 {*/net.neoforged.fml.loading.FMLLoader.getCurrent().loadingModList
+        /*?} else*///net.neoforged.fml.loading.FMLLoader.getLoadingModList()
+
     override val isDevEnv: Boolean get() = false
-    override val isClient: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.getDist() == net.neoforged.api.distmarker.Dist.CLIENT
-    override val isServer: Boolean get() = net.neoforged.fml.loading.FMLEnvironment.getDist() == net.neoforged.api.distmarker.Dist.DEDICATED_SERVER
+    override val isClient: Boolean get() = DIST == net.neoforged.api.distmarker.Dist.CLIENT
+    override val isServer: Boolean get() = DIST == net.neoforged.api.distmarker.Dist.DEDICATED_SERVER
     override val gameDir: Path get() = TODO("Not yet implemented")
 
-    override fun isModLoaded(id: String): Boolean = net.neoforged.fml.loading.FMLLoader.getCurrent().loadingModList.getModFileById(id) != null
+    override fun isModLoaded(id: String): Boolean = LIST.getModFileById(id) != null
 }
 *///?}

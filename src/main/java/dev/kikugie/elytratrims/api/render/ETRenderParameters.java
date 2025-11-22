@@ -27,8 +27,8 @@ public record ETRenderParameters(
     /*? if >=1.21.9 {*/@NotNull java.util.concurrent.atomic.AtomicInteger order
     /*?} else*///@NotNull VertexConsumerFactory converter
 ) {
-    //? if >=1.21.9 {
-    public static final VertexConsumerFactory DUMMY = (a, b) -> { throw new UnsupportedOperationException("Expected override"); };
+    //? if <1.21.9 {
+    /*public static final VertexConsumerFactory DUMMY = (a, b) -> { throw new UnsupportedOperationException("Expected override"); };
 
     @FunctionalInterface
     public interface VertexConsumerFactory {
@@ -37,5 +37,5 @@ public record ETRenderParameters(
             @NotNull net.minecraft.client.renderer.MultiBufferSource source
         );
     }
-    //?}
+    *///?}
 }

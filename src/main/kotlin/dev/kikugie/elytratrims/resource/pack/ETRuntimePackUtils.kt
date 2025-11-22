@@ -8,7 +8,6 @@ import dev.kikugie.elytratrims.ResourcePack
 import net.minecraft.server.packs.resources.Resource
 
 fun List<ResourcePack>.hasElytraTrimsPack(): Boolean = any { "elytratrims" in it.packId() }
-fun List<ResourcePack>.hasInjectedPack(): Boolean = any { it is ETRuntimePack }
 
 fun <T> List<T>.wrap() = WrappedList(this)
 fun <T> List<T>.isWrapped() = this is WrappedList
