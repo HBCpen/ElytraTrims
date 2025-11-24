@@ -10,7 +10,7 @@ import dev.kikugie.elytratrims.memoize
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.RenderPipelines.*
 import net.minecraft.client.renderer.RenderStateShard
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer
 
 object ElytraRenderLayers {

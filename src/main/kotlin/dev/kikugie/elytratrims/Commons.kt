@@ -4,11 +4,7 @@ package dev.kikugie.elytratrims
 
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
-import net.minecraft.core.component.DataComponentType
-import net.minecraft.resources.ResourceLocation.fromNamespaceAndPath
-import net.minecraft.resources.ResourceLocation.withDefaultNamespace
 import net.minecraft.world.item.DyeColor
-import net.minecraft.world.item.ItemStack
 import java.util.Optional
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -21,8 +17,8 @@ inline fun runIf(bool: Boolean, action: () -> Unit) = bool.also { if (it) action
 
 fun <T : Any?> T.asOptional() = Optional.ofNullable(this)
 
-fun vanilla(path: String): Identifier = withDefaultNamespace(path)
-fun elytratrims(path: String): Identifier = fromNamespaceAndPath("elytratrims", path)
+fun vanilla(path: String): Identifier = Identifier.withDefaultNamespace(path)
+fun elytratrims(path: String): Identifier = Identifier.fromNamespaceAndPath("elytratrims", path)
 
 fun String.text(): MutableText = Text.literal(this)
 fun String.translatable(): MutableText = Text.translatable(this)

@@ -1,15 +1,15 @@
 accessWidener v2 named
 
-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
+accessible class net/minecraft/client/renderer/rendertype/RenderType$CompositeRenderType
+accessible class net/minecraft/client/renderer/rendertype/RenderType$CompositeState
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$MultiTextureStateShard
 accessible class net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer$LayerTextureKey
 accessible class net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer$TrimSpriteKey
 
-accessible method net/minecraft/client/renderer/texture/atlas/sources/PalettedPermutations <init> (Ljava/util/List;Lnet/minecraft/resources/ResourceLocation;Ljava/util/Map;)V
+accessible method net/minecraft/client/renderer/texture/atlas/sources/PalettedPermutations <init> (Ljava/util/List;Lnet/minecraft/resources/Identifier;Ljava/util/Map;)V
 accessible method com/mojang/blaze3d/platform/NativeImage writeToChannel (Ljava/nio/channels/WritableByteChannel;)Z
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+accessible method net/minecraft/client/renderer/rendertype/RenderType create (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/rendertype/RenderType$CompositeState;)Lnet/minecraft/client/renderer/rendertype/RenderType$CompositeRenderType;
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 accessible method net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer$LayerTextureKey <init> (Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;)V
 

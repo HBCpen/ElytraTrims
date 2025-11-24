@@ -1,12 +1,11 @@
 package dev.kikugie.elytratrims.api.item;
 
 import dev.kikugie.elytratrims.item.ItemFlagAccessorKt;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import static dev.kikugie.elytratrims.CommonsKt.elytratrims;
 
-public record ETItemFlag(ResourceLocation key) {
+public record ETItemFlag(net.minecraft.resources.Identifier key) {
 	public static final ETItemFlag GLOW = new ETItemFlag(elytratrims("glow"));
 	public static final ETItemFlag BANNER = new ETItemFlag(elytratrims("banner"));
 	public static final ETItemFlag GATEWAY = new ETItemFlag(elytratrims("gateway"));

@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.api.render;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
 import dev.kikugie.elytratrims.api.impl.ETRenderingAPIUtilsKt;
 import kotlin.sequences.SequencesKt;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +65,7 @@ public interface ETRenderingAPI {
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, @NotNull ResourceLocation before) {
+    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, @NotNull net.minecraft.resources.Identifier before) {
         return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, before);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(before));
@@ -82,7 +82,7 @@ public interface ETRenderingAPI {
      * in which case you should add an is-mod-loaded check and trigger registration afterwards.
      * @return The provided identifier.
      */
-    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, @NotNull ResourceLocation after) {
+    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, @NotNull net.minecraft.resources.Identifier after) {
         return ETRenderingAPIImpl.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingAPIUtilsKt.indexOfId(list, after);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(after));

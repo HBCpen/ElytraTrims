@@ -7,7 +7,7 @@ import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.api.render.ETDecorator
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import net.minecraft.client.model.Model
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.world.item.ItemStack
 import java.util.concurrent.atomic.AtomicInteger

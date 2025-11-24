@@ -1,6 +1,6 @@
 package dev.kikugie.elytratrims
 
-typealias Identifier = net.minecraft.resources.ResourceLocation
+typealias Identifier = net.minecraft.resources.Identifier
 typealias ResourcePack = net.minecraft.server.packs.PackResources
 typealias Text = net.minecraft.network.chat.Component
 typealias MutableText = net.minecraft.network.chat.MutableComponent

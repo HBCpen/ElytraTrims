@@ -2,9 +2,8 @@ package dev.kikugie.elytratrims.api.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,7 @@ public record ETRenderParameters(
     @NotNull PoseStack matrices,
     @NotNull RenderType render,
     @Nullable TextureAtlasSprite sprite,
-    @NotNull ResourceLocation texture,
+    @NotNull net.minecraft.resources.Identifier texture,
     int light,
     int color,
     int overlay,

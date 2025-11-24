@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.resource.reload
 
 import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.elytratrims
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 
 object ElytraTrimsAtlas {
     const val ATLAS_NAME = "decorations"

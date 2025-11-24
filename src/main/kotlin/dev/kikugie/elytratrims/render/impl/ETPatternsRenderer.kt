@@ -16,7 +16,7 @@ import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
 import net.minecraft.world.level.block.entity.BannerPattern

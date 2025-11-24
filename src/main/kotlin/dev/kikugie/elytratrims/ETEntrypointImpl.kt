@@ -59,7 +59,7 @@ object ETEntrypointImpl {
     @Suppress("UnstableApiUsage")
     private fun registerSodiumCompat() {
         //? if sodium {
-        val logger = LoggerFactory.getLogger("ETSodiumCompat")
+        /*val logger = LoggerFactory.getLogger("ETSodiumCompat")
         val reported = AtomicBoolean(false)
 
         wrapRenderCall(ETBadAppleRenderer.type) { parameters, collector, operation ->
@@ -68,7 +68,7 @@ object ETEntrypointImpl {
                 .onFailure { reported.set(true); logger.error("Failed to mark sprite as active", it) }
             operation.apply(parameters, collector)
         }
-        //?}
+        *///?}
     }
 
     private fun registerTrimicaCompat() {
