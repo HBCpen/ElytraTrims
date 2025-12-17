@@ -52,7 +52,7 @@ dependencies {
 }
 
 stonecutter {
-    constants["trimica"] = true
+    constants["trimica"] = false
 }
 
 java {

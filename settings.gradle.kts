@@ -20,7 +20,7 @@ stonecutter {
             version("$version-$it", version).buildscript = "build.$it.gradle.kts"
         }
 
-        match("1.21.11", "fabric")
+        match("1.21.11", "fabric", "neoforge")
 //        version("1.21.11-unobf", "1.21.11").buildscript = "build.unobf.gradle.kts"
         vcsVersion = "1.21.11-fabric"
     }

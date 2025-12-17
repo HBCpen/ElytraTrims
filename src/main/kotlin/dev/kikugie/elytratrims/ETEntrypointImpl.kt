@@ -46,7 +46,6 @@ object ETEntrypointImpl {
         registerDecorator(ETPatternsRenderer)
         registerDecorator(ETTrimsRenderer)
 
-        if (ModData.isModLoaded("sodium")) registerSodiumCompat()
         if (ModData.isModLoaded("trimica")) registerTrimicaCompat()
     }
 
@@ -57,24 +56,9 @@ object ETEntrypointImpl {
         // registerCauldronInteraction(elytratrims("remove_touhou"), REMOVE_TOUHOU)
     }
 
-    @Suppress("UnstableApiUsage")
-    private fun registerSodiumCompat() {
-        //? if sodium {
-        /*val logger = LoggerFactory.getLogger("ETSodiumCompat")
-        val reported = AtomicBoolean(false)
-
-        wrapRenderCall(ETBadAppleRenderer.type) { parameters, collector, operation ->
-            if (parameters.sprite != null && !reported.get()) parameters
-                .runCatching { net.caffeinemc.mods.sodium.api.texture.SpriteUtil.INSTANCE.markSpriteActive(sprite!!) }
-                .onFailure { reported.set(true); logger.error("Failed to mark sprite as active", it) }
-            operation.apply(parameters, collector)
-        }
-        *///?}
-    }
-
     private fun registerTrimicaCompat() {
         //? if trimica {
-        com.bawnorton.trimica.api.TrimicaApi.getInstance().registerBaseTextureInterceptor(
+        /*com.bawnorton.trimica.api.TrimicaApi.getInstance().registerBaseTextureInterceptor(
             1000, object : com.bawnorton.trimica.api.BaseTextureInterceptor {
                 override fun interceptItemTexture(expectedBaseTexture: Identifier?, itemWithTrim: ItemStack, armourTrim: ArmorTrim): Identifier? =
                     if (!itemWithTrim.`is`(ETTags.ELYTRA_DECORATABLE)) expectedBaseTexture
@@ -83,6 +67,6 @@ object ETEntrypointImpl {
                         else withPath { "textures/trims/items/wings/$it.png" }
                     }
             })
-        //?}
+        *///?}
     }
 }
