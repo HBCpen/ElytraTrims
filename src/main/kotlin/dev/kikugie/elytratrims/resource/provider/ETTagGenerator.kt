@@ -29,7 +29,7 @@ class ETTagGenerator(val lookup: ResourceManager) : ETResourceProvider<TagBuilde
     override fun convert(value: TagBuilder): InputSupplier = toJsonSupplier(TagFile.CODEC, TagFile(value.build(), false))
 
     private inline fun MutableMap<PackIdentifier, TagBuilder>.tag(key: TagKey<Item>, action: TagBuilder.() -> Unit) {
-        val path = PackIdentifier.of(PackType.SERVER_DATA, key.location.namespace, "tags/${key.registry.location().path}/${key.location.path}.json")
+        val path = PackIdentifier.of(PackType.SERVER_DATA, key.location.namespace, "tags/${key.registry.identifier().path}/${key.location.path}.json")
         this[path] = TagBuilder.create().apply(action)
     }
 }

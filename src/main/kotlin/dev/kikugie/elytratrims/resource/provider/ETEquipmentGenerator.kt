@@ -34,7 +34,7 @@ class ETEquipmentGenerator(val lookup: ResourceManager) : ETResourceProvider<Equ
         key: ResourceKey<EquipmentAsset>,
         action: EquipmentClientInfo.Builder.() -> Unit
     ) {
-        val path = PackIdentifier.of(PackType.CLIENT_RESOURCES, key.location().namespace, "equipment/${key.location().path}.json")
+        val path = PackIdentifier.of(PackType.CLIENT_RESOURCES, key.identifier().namespace, "equipment/${key.identifier().path}.json")
         this[path] = EquipmentClientInfo.builder().apply(action).build()
     }
 }

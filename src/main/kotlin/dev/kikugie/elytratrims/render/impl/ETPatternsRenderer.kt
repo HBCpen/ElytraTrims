@@ -16,9 +16,11 @@ import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
-import net.minecraft.client.renderer.rendertype.RenderType
+import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
+import net.minecraft.resources.Identifier
 import net.minecraft.world.level.block.entity.BannerPattern
 
 object ETPatternsRenderer : ETDecorator {
@@ -26,35 +28,26 @@ object ETPatternsRenderer : ETDecorator {
 
     private val reported = mutableSetOf<Identifier>()
     private val patterns: Memoizer<Pair<Holder<BannerPattern>, Boolean>, TextureAtlasSprite> = memoize { (pattern, banner) ->
-        ElytraTrimsAtlas./*? if >=1.21.9 {*/ATLAS_ID/*?} else*///ATLAS_SHEET
-            .getSprite(texture(pattern.value().assetId, banner), ::report)
+        ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(pattern.value().assetId, banner), ::report)
     }
-
-    //? if <1.21.9 {
-    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
-        val sprite = checkNotNull(prm.sprite) { "Sprite should be set for pattern rendering" }
-        net.minecraft.client.renderer.entity.ItemRenderer.getArmorFoilBuffer(src, prm.render, prm.stack.hasFoil()).let(sprite::wrap)
-    }
-    *///?}
 
     override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         if (stack.patterns()?.layers.isNullOrEmpty()) return@with parameters
         copy(
-            light = getEffectiveLight(),
-            /*? if <1.21.9*///argument = converterImpl
+            light = getEffectiveLight()
         )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
         val banner = ETItemFlag.BANNER[stack]
         for (it in stack.patterns) {
             val sprite = patterns(it.pattern to banner)
             if (sprite.isMissing && !ETItemFlag.DEBUG[stack]) continue
 
             val blend = Color4i(color).blend(Color4i(it.color))
-            copy(sprite = sprite, color = blend.value, render = RenderType.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)).submitToCollector(collector)
+            copy(sprite = sprite, color = blend.value, render = RenderTypes.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)).submitToCollector(collector)
         }
 
         stack.patterns.isNotEmpty()

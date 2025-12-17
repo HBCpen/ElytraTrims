@@ -28,7 +28,7 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
 
         @JvmStatic
         fun modify(entry: RecipeHolder<Recipe<*>>): RecipeHolder<Recipe<*>> = when (val recipe = entry.value) {
-            is SmithingRecipe -> when (entry.id.location().toString()) {
+            is SmithingRecipe -> when (entry.id.identifier().toString()) {
                 "elytratrims:apply_random_trim" -> entry replace RandomTrimRecipe(recipe, true)
                 "elytratrims:apply_random_trim_reroll" -> entry replace RandomTrimRecipe(recipe, false)
                 "elytratrims:apply_shield_pattern" -> entry replace PatternsRecipe(recipe, false)
@@ -49,14 +49,14 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
     }
 
     open class FlagRecipe(delegate: SmithingRecipe, private val setter: Boolean, private val flag: ETItemFlag) : ETSmithingRecipe(delegate) {
-        override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack? = input.base.copy().apply {
+        override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack = input.base.copy().apply {
             flag[this] = setter
         }
     }
 
     class PatternsRecipe(delegate: SmithingRecipe, setter: Boolean) : FlagRecipe(delegate, setter, ETItemFlag.BANNER) {
-        override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack? =
-            super.assemble(input, provider)?.apply { patterns.copy(input.template) }
+        override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack =
+            super.assemble(input, provider).apply { patterns.copy(input.template) }
     }
 
     class RandomTrimRecipe(delegate: SmithingRecipe, val consistent: Boolean) : ETSmithingRecipe(delegate) {

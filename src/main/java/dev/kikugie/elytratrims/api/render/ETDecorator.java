@@ -1,5 +1,6 @@
 package dev.kikugie.elytratrims.api.render;
 
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.UnaryOperator;
@@ -31,10 +32,7 @@ public interface ETDecorator {
      * @param parameters Processed render parameters.
      * @return {@code true} if something was rendered, or {@code false} if it was cancelled.
      */
-    //? if >=1.21.9 {
-    boolean render(@NotNull ETRenderParameters parameters, @NotNull net.minecraft.client.renderer.SubmitNodeCollector collector);
-    //?} else
-    //boolean render(@NotNull ETRenderParameters parameters, @NotNull net.minecraft.client.renderer.MultiBufferSource source);
+    boolean render(@NotNull ETRenderParameters parameters, @NotNull SubmitNodeCollector collector);
 
     /**
      * Resets the internal state of the renderer.

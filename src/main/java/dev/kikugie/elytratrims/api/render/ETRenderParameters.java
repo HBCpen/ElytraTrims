@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public record ETRenderParameters(
     @NotNull Model/*? if >=1.21.9 >>*/<Object> elytra,
-    @Nullable Object object,
+    @NotNull Object object,
     @NotNull ItemStack stack,
     @NotNull PoseStack matrices,
     @NotNull RenderType render,

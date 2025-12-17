@@ -13,6 +13,7 @@ import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_PATTERNS
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.render.impl.*
 import dev.kikugie.elytratrims.resource.ETTags
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 import org.slf4j.LoggerFactory

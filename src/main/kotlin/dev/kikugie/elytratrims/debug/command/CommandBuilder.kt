@@ -27,7 +27,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.future.asCompletableFuture
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandBuildContext
-import net.minecraft.commands.PermissionSource
 import net.minecraft.commands.SharedSuggestionProvider
 import net.minecraft.commands.arguments.*
 import net.minecraft.commands.arguments.blocks.BlockInput
@@ -67,17 +66,17 @@ inline fun <reified T : Any> CommandContext<*>.get(name: String): T =
     getArgument(name, T::class.java)
 
 inline fun <S> CommandDispatcher<S>.register(name: String, access: CommandBuildContext, builder: LiteralCommandBuilder<S>.() -> Unit)
-where S : SharedSuggestionProvider, S : PermissionSource {
+where S : SharedSuggestionProvider {
     LiteralCommandBuilder<S>(name).apply(builder).toBrigadier(access).forEach(root::addChild)
 }
 
 inline fun <S> ArgumentBuilder<S, *>.literal(name: String, access: CommandBuildContext, builder: LiteralCommandBuilder<S>.() -> Unit): ArgumentBuilder<S, *>
-where S : SharedSuggestionProvider, S : PermissionSource = apply {
+where S : SharedSuggestionProvider = apply {
     LiteralCommandBuilder<S>(name).apply(builder).toBrigadier(access).forEach(::then)
 }
 
 inline fun <S, T> ArgumentBuilder<S, *>.argument(name: String, noinline type: (CommandBuildContext) -> ArgumentType<T>, access: CommandBuildContext, builder: ArgumentCommandBuilder<S, T>.() -> Unit): ArgumentBuilder<S, *>
-where S : SharedSuggestionProvider, S : PermissionSource = apply {
+where S : SharedSuggestionProvider = apply {
     ArgumentCommandBuilder<S, T>(name, type).apply(builder).toBrigadier(access).forEach(::then)
 }
 
@@ -102,7 +101,7 @@ inline fun <reified T> fromReifiedType(context: CommandBuildContext): ArgumentTy
         Coordinates::class -> BlockPosArgument.blockPos()
         BlockInput::class -> BlockStateArgument.block(context)
         ChatFormatting::class -> ColorArgument.color()
-        ResourceLocation::class -> ResourceLocationArgument.id()
+        Identifier::class -> IdentifierArgument.id()
         ItemInput::class -> ItemArgument.item(context)
         CompoundTag::class -> CompoundTagArgument.compoundTag()
         Tag::class -> NbtTagArgument.nbtTag()
@@ -124,7 +123,6 @@ inline fun <reified T> fromReifiedType(context: CommandBuildContext): ArgumentTy
 @NodeDsl
 abstract class CommandBuilder<Source, Builder, Node>
     where Source : SharedSuggestionProvider,
-          Source : PermissionSource,
           Builder : ArgumentBuilder<Source, Builder>,
           Node : CommandNode<Source> {
     @PublishedApi
@@ -285,22 +283,6 @@ abstract class CommandBuilder<Source, Builder, Node>
     }
 
     /**
-     * Specifies that the given permission [level] is required to execute this part of the command tree.
-     * A shortcut delegating to [requires].
-     */
-    @RunsDsl
-    fun requiresPermissionLevel(level: Int) =
-        requires { it.hasPermission(level) }
-
-    /**
-     * Specifies that the [PermissionLevel] given as [level] is required to execute this part of the command tree.
-     * A shortcut delegating to [requires].
-     */
-    @RunsDsl
-    fun requiresPermissionLevel(level: PermissionLevel) =
-        requires { it.hasPermission(level.level) }
-
-    /**
      * This function allows you to access the regular Brigadier builder. The type of
      * `this` in its context will equal the type of [Builder].
      */
@@ -333,8 +315,7 @@ abstract class CommandBuilder<Source, Builder, Node>
 class LiteralCommandBuilder<Source>(
     private val name: String,
 ) : CommandBuilder<Source, LiteralArgumentBuilder<Source>, LiteralCommandNode<Source>>()
-    where Source : SharedSuggestionProvider,
-          Source : PermissionSource {
+    where Source : SharedSuggestionProvider {
 
     override fun createBuilder(context: CommandBuildContext): LiteralArgumentBuilder<Source> =
         LiteralArgumentBuilder.literal(name)
@@ -389,8 +370,7 @@ class ArgumentCommandBuilder<Source, T>(
     private val name: String,
     private val typeProvider: (CommandBuildContext) -> ArgumentType<T>,
 ) : CommandBuilder<Source, RequiredArgumentBuilder<Source, T>, ArgumentCommandNode<Source, T>>()
-    where Source : SharedSuggestionProvider,
-          Source : PermissionSource {
+    where Source : SharedSuggestionProvider {
 
     override fun createBuilder(context: CommandBuildContext): RequiredArgumentBuilder<Source, T> =
         RequiredArgumentBuilder.argument(name, typeProvider(context))

@@ -13,22 +13,18 @@ import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.render.isMissing
 import net.minecraft.client.renderer.Sheets
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
+import net.minecraft.data.AtlasIds
+import net.minecraft.resources.Identifier
 
 object ETBadAppleRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("bad_apple"), ETRenderMethod.POST)
     private val reported = mutableSetOf<Identifier>()
     private val animation: TextureAtlasSprite by memoized {
         // For some reason, it must be in the armor trims atlas, or it will use an invalid texture
-        /*? if >=1.21.9 {*/net.minecraft.data.AtlasIds.ARMOR_TRIMS/*?} else*///Sheets.ARMOR_TRIMS_SHEET
-            .getSprite(elytratrims("feature/bad_apple"), ::report)
+        AtlasIds.ARMOR_TRIMS.getSprite(elytratrims("feature/bad_apple"), ::report)
     }
-    //? if <1.21.9 {
-    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
-        val sprite = checkNotNull(prm.sprite) { "Sprite should be set for bad apple rendering" }
-        net.minecraft.client.renderer.entity.ItemRenderer.getArmorFoilBuffer(src, prm.render, prm.stack.hasFoil()).let(sprite::wrap)
-    }
-    *///?}
 
     override fun getType(): ETRendererID = type
 
@@ -42,7 +38,7 @@ object ETBadAppleRenderer : ETDecorator {
         )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
         runIf(ETItemFlag.BAD_APPLE[stack] && (!sprite.isMissing || ETItemFlag.DEBUG[stack])) { submitToCollector(collector) }
     }
 

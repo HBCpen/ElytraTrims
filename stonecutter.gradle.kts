@@ -17,15 +17,6 @@ stonecutter parameters {
 
         match(identifier, "fabric", "neoforge")
     }
-
-    replacements {
-        string(current.parsed > "1.21.10") {
-            replace("net.minecraft.resources.ResourceLocation", "net.minecraft.resources.Identifier")
-            replace("net/minecraft/resources/ResourceLocation", "net/minecraft/resources/Identifier")
-            replace("net.minecraft.client.renderer.RenderType", "net.minecraft.client.renderer.rendertype.RenderType")
-            replace("net/minecraft/client/renderer/RenderType", "net/minecraft/client/renderer/rendertype/RenderType")
-        }
-    }
 }
 
 stonecutter tasks {

@@ -1,6 +1,5 @@
 package dev.kikugie.elytratrims.resource.pack
 
-import dev.kikugie.elytratrims.Identifier
 import dev.kikugie.elytratrims.Text
 import dev.kikugie.elytratrims.resource.pack.ETRuntimePack.Companion.LOGGER
 import dev.kikugie.elytratrims.resource.provider.ETAtlasGenerator
@@ -8,7 +7,7 @@ import dev.kikugie.elytratrims.resource.provider.ETItemModelGenerator
 import dev.kikugie.elytratrims.resource.provider.ETTagGenerator
 import dev.kikugie.elytratrims.resource.provider.ETTextureGenerator
 import dev.kikugie.elytratrims.then
-import net.minecraft.FileUtil
+import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.AbstractPackResources
 import net.minecraft.server.packs.PackLocationInfo
 import net.minecraft.server.packs.PackResources
@@ -17,10 +16,10 @@ import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.resources.IoSupplier
 import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.util.FileUtil
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.streams.asSequence
 import kotlin.time.measureTime
@@ -48,14 +47,6 @@ private fun collectResources(type: PackType, manager: ResourceManager): Map<Pack
     val time = measureTime {
         for (generator in generatorsFor(type))
             data.putAll(generator(manager).assemble())
-
-//        val futures = generatorsFor(type).map {
-//            val generator = it(manager)
-//            LOGGER.info("Running ${generator::class.simpleName}")
-//            generator.run().thenAccept(data::putAll)
-//        }
-//
-//        CompletableFuture.allOf(*futures.toTypedArray()).join()
     }
 
     LOGGER.info("Collected ${data.size} ${type.directory} resources in $time")
@@ -79,14 +70,14 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
 
     override fun getNamespaces(type: PackType): Set<String> = namespaces[type] ?: emptySet()
 
-    override fun getRootResource(vararg strings: String?): InputSupplier? =
+    override fun getRootResource(vararg strings: String): InputSupplier? =
         FileUtil.validatePath(*strings) then open(strings.joinToString("/"))
 
     override fun getResource(packType: PackType, identifier: Identifier): InputSupplier? =
         open(getFilename(packType, identifier))
 
-    override fun <T> getMetadataSection(reader: MetadataSectionType<T?>): T? =
-        open("pack.mcmeta")?.get()?.use { getMetadataFromStream(reader, it, /*? if >=1.21.9 >> ')'*/ET_PACK_INFO) }
+    override fun <T : Any> getMetadataSection(type: MetadataSectionType<T>): T? =
+        open("pack.mcmeta")?.get()?.use { getMetadataFromStream(type, it, ET_PACK_INFO) }
 
     override fun listResources(type: PackType, namespace: String, path: String, visitor: PackResources.ResourceOutput): Unit =
         locate(PackIdentifier.of(type, namespace, path)).forEach { (id, supplier) -> visitor.accept(id.toIdentifier(), supplier) }

@@ -4,6 +4,7 @@ package dev.kikugie.elytratrims
 
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.Minecraft
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.DyeColor
 import java.util.Optional
 import kotlin.properties.ReadOnlyProperty

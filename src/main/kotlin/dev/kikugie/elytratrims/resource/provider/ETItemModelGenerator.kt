@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.resource.provider
 
 import com.google.gson.JsonElement
 import com.mojang.serialization.JsonOps
-import dev.kikugie.elytratrims.Identifier
+import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
 import net.minecraft.client.color.item.Dye
@@ -31,7 +31,7 @@ private typealias TrimMaterialKey = ResourceKey<TrimMaterial>
 
 class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<JsonElement>() {
     private class ModelProxy(val models: MutableMap<PackIdentifier, JsonElement>) : ItemModelOutput, BiConsumer<Identifier, ModelInstance> {
-        override fun accept(item: Item, model: ItemModel.Unbaked) {
+        override fun accept(item: Item, model: ItemModel.Unbaked, properties: ClientItem.Properties) {
             val id = BuiltInRegistries.ITEM.getKey(item)
             val path = PackIdentifier.of(PackType.CLIENT_RESOURCES, id.withPath { "items/$it.json" })
             models[path] = ClientItem.CODEC.encodeStart(JsonOps.INSTANCE, ClientItem(model, ClientItem.Properties.DEFAULT)).orThrow
@@ -81,7 +81,7 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         }
         val fallback = composite(base, overlay)
         val cases = materials.map {
-            `when`(it, composite(base, overlay, generateTrimModel(item, broken, it.location().path)))
+            `when`(it, composite(base, overlay, generateTrimModel(item, broken, it.identifier().path)))
         }
         return select(TrimMaterialProperty(), fallback, cases)
     }

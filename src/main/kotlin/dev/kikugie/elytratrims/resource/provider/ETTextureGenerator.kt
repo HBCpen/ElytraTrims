@@ -1,7 +1,7 @@
 package dev.kikugie.elytratrims.resource.provider
 
 import com.mojang.blaze3d.platform.NativeImage
-import dev.kikugie.elytratrims.Identifier
+import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier

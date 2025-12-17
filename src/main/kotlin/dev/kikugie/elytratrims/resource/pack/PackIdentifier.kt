@@ -1,6 +1,6 @@
 package dev.kikugie.elytratrims.resource.pack
 
-import dev.kikugie.elytratrims.Identifier
+import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.PackType
 
 data class PackIdentifier(
@@ -19,7 +19,7 @@ data class PackIdentifier(
             return PackIdentifier(entry, namespace, path)
         }
     }
-    fun toIdentifier(): Identifier? = Identifier.fromNamespaceAndPath(namespace, path)
+    fun toIdentifier(): Identifier = Identifier.fromNamespaceAndPath(namespace, path)
     fun toPath(): String = "${type.directory}/$namespace/$path"
     override fun toString(): String = "${type.directory} - $namespace:$path"
 }

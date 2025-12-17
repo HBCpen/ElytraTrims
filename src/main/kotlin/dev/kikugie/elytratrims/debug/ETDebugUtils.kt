@@ -29,7 +29,6 @@ fun registerServerDebugCommands(
     env: Commands.CommandSelection
 ) = with(dispatcher) {
     register("elytratrims:spawn_variants", access) {
-        requiresPermissionLevel(PermissionLevel.OWNER)
         argument("length", IntegerArgumentType.integer(1)) { dim ->
             argument<Boolean>("all") { all ->
                 runs { spawnArmorStands(source, access, dim(), all()) }
@@ -44,7 +43,6 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:configure_elytra", access) {
-        requiresPermissionLevel(PermissionLevel.OWNER)
 
         val (trimLiteral, trimActions) = trim<CommandSourceStack>()
         val (patternLiteral, patternActions) = pattern<CommandSourceStack>()
@@ -58,7 +56,6 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:advance_recipe", access) {
-        requiresPermissionLevel(PermissionLevel.OWNER)
 
         runs { ETSmithingRecipe.advance() }
     }

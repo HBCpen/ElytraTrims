@@ -1,6 +1,5 @@
 package dev.kikugie.elytratrims.mixin.resource;
 
-//? if >=1.21.9 {
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
@@ -21,4 +20,3 @@ public class AtlasManagerMixin {
         return mutableCopy;
     }
 }
-//?}

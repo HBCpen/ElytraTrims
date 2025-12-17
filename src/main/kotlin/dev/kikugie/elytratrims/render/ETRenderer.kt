@@ -1,12 +1,14 @@
 package dev.kikugie.elytratrims.render
 
-import dev.kikugie.elytratrims.Identifier
+import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.MINECRAFT
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.Pose
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import org.slf4j.Logger
@@ -19,9 +21,7 @@ val TextureAtlasSprite?.isMissing
     get() = this == null || contents().name() == MissingTextureAtlasSprite.getLocation()
 
 fun Identifier.getSprite(identifier: Identifier, reporter: (Identifier) -> Unit): TextureAtlasSprite =
-    /*? if >=1.21.9 {*/MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier)
-    /*?} else*///MINECRAFT.getTextureAtlas(this).apply(identifier)
-        .also { if (it.isMissing) reporter(identifier) }
+    MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier).also { if (it.isMissing) reporter(identifier) }
 
 fun renderEntityInInventoryFollowsMouse(
     guiGraphics: GuiGraphics,
@@ -36,43 +36,28 @@ fun renderEntityInInventoryFollowsMouse(
     entity: LivingEntity,
     horizontalAngle: Float
 ) {
-    val centerX = (x1 + x2) / 2.0f
-    val centerY = (y1 + y2) / 2.0f
-    guiGraphics.enableScissor(x1, y1, x2, y2)
+    val f = (x1 + x2).toFloat() / 2.0f
+    val g = (y1 + y2).toFloat() / 2.0f
+    val h = atan(((f - mouseX) / 40.0f).toDouble()).toFloat()
+    val i = atan(((g - mouseY) / 40.0f).toDouble()).toFloat()
+    val quaternionf = (Quaternionf()).rotateZ(Math.PI.toFloat())
+    val quaternionf2 = (Quaternionf()).rotateX(i * 20.0f * (Math.PI.toFloat() / 180f))
+    quaternionf.mul(quaternionf2)
+    val entityRenderState = InventoryScreen.extractRenderState(entity)
+    if (entityRenderState is LivingEntityRenderState) {
+        entityRenderState.bodyRot = 180.0f + h * 20.0f + horizontalAngle
+        entityRenderState.yRot = h * 20.0f + horizontalAngle
+        if (entityRenderState.pose != Pose.FALL_FLYING) {
+            entityRenderState.xRot = -i * 20.0f
+        } else {
+            entityRenderState.xRot = 0.0f
+        }
 
-    val mouseHorizontalAngle = atan(((centerX - mouseX) / 40.0f).toDouble()).toFloat()
-    val mouseVerticalAngle = atan(((centerY - mouseY) / 40.0f).toDouble()).toFloat()
+        entityRenderState.boundingBoxWidth /= entityRenderState.scale
+        entityRenderState.boundingBoxHeight /= entityRenderState.scale
+        entityRenderState.scale = 1.0f
+    }
 
-    val baseRotation = Quaternionf().rotateZ(Math.PI.toFloat())
-    val pitchRotation = Quaternionf().rotateX(mouseVerticalAngle * 20.0f * (Math.PI / 180.0).toFloat())
-    baseRotation.mul(pitchRotation)
-
-    // Store original entity rotations
-    val originalBodyYaw = entity.yBodyRot
-    val originalYaw = entity.yRot
-    val originalPitch = entity.xRot
-    val originalHeadYawOld = entity.yHeadRotO
-    val originalHeadYaw = entity.yHeadRot
-
-    // Apply new rotations based on mouse position and horizontal angle
-    entity.yBodyRot = 180.0f + mouseHorizontalAngle * 20.0f + horizontalAngle
-    entity.yRot = 180.0f + mouseHorizontalAngle * 40.0f + horizontalAngle
-    entity.xRot = -mouseVerticalAngle * 20.0f
-    entity.yHeadRot = entity.yRot
-    entity.yHeadRotO = entity.yRot
-
-    val entityScale = entity.scale
-    val translationOffset = Vector3f(0.0f, entity.bbHeight / 2.0f + yOffset * entityScale, 0.0f)
-    val renderScale = scale / entityScale
-
-    renderEntityInInventory(guiGraphics, x1, y1, x2, y2, renderScale, translationOffset, baseRotation, pitchRotation, entity)
-
-    // Restore original entity rotations
-    entity.yBodyRot = originalBodyYaw
-    entity.yRot = originalYaw
-    entity.xRot = originalPitch
-    entity.yHeadRotO = originalHeadYawOld
-    entity.yHeadRot = originalHeadYaw
-
-    guiGraphics.disableScissor()
+    val vector3f = Vector3f(0.0f, entityRenderState.boundingBoxHeight / 2.0f + yOffset, 0.0f)
+    guiGraphics.submitEntityRenderState(entityRenderState, scale.toFloat(), vector3f, quaternionf, quaternionf2, x1, y1, x2, y2)
 }

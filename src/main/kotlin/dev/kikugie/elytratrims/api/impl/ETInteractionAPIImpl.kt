@@ -1,6 +1,6 @@
 package dev.kikugie.elytratrims.api.impl
 
-import dev.kikugie.elytratrims.Identifier
+import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.api.interaction.ETCauldronInteraction
 
 object ETInteractionAPIImpl {

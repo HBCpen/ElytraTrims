@@ -1,22 +1,15 @@
 package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.elytratrims.api.item.ETItemFlag;
-import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.elytratrims.render.SmithingTableRenderData;
 import dev.kikugie.elytratrims.resource.ETTags;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.client.renderer.entity.state.ArmorStandRenderState;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,16 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SmithingScreen.class)
 public class SmithingScreenMixin {
 	@Shadow
-	private @Nullable ArmorStand armorStandPreview;
+	@Final
+	private ArmorStandRenderState armorStandPreview;
+	@Shadow
+	@Final
+	private static int ARMOR_STAND_Y_ROT;
 
 	@Unique
 	private final SmithingTableRenderData renderData = new SmithingTableRenderData();
-
-	@Inject(method = "containerTick", at = @At("TAIL"))
-	private void tickArmorStand(CallbackInfo ci) {
-		if (armorStandPreview != null)
-			armorStandPreview.tick();
-	}
 
 	@ModifyExpressionValue(method = "updateArmorStandPreview", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copy()Lnet/minecraft/world/item/ItemStack;"))
 	private ItemStack rotateIfHasElytra(ItemStack stack) {
@@ -46,9 +37,9 @@ public class SmithingScreenMixin {
 		return stack;
 	}
 
-	@WrapOperation(method = "renderBg", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-	private void renderArmorStand(GuiGraphics gui, int x1, int y1, int x2, int y2, float scale, Vector3f translation, Quaternionf angle, @Nullable Quaternionf ignored, LivingEntity stand, Operation<Void> original, @Local(argsOnly = true) float partial, @Local(argsOnly = true, ordinal = 0) int mouseX, @Local(argsOnly = true, ordinal = 1) int mouseY) {
-		renderData.tick(partial);
-		ETRendererKt.renderEntityInInventoryFollowsMouse(gui, x1, y1, x2, y2, (int) scale, 0F, mouseX, mouseY, stand, renderData.getRotation());
+	@Inject(method = "renderBg", at = @At("HEAD"))
+	private void rotateArmorStand(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY, CallbackInfo ci) {
+		renderData.tick(partialTick);
+		armorStandPreview.bodyRot = ARMOR_STAND_Y_ROT + renderData.getRotation();
 	}
 }

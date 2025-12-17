@@ -1,6 +1,5 @@
 package dev.kikugie.elytratrims.render.impl
 
-import dev.kikugie.elytratrims.RenderConsumer
 import dev.kikugie.elytratrims.api.impl.copy
 import dev.kikugie.elytratrims.api.impl.submitToCollector
 import dev.kikugie.elytratrims.api.item.ETItemFlag
@@ -11,25 +10,20 @@ import dev.kikugie.elytratrims.api.render.ETRenderMethod
 import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.runIf
+import net.minecraft.client.renderer.SubmitNodeCollector
 
 object ETGatewayRenderer : ETDecorator {
     @JvmField val type: ETRendererID = ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE)
-    //? if <1.21.9 {
-    /*private val converterImpl: ETRenderParameters.VertexConsumerFactory = ETRenderParameters.VertexConsumerFactory { prm, src ->
-        src.getBuffer(prm.render)
-    }
-    *///?}
 
     override fun getType(): ETRendererID = type
 
     override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
         if (!ETItemFlag.GATEWAY[stack]) parameters else copy(
-            render = ElytraRenderLayers.GATEWAY(texture),
-            /*? if <1.21.9*///argument = converterImpl
+            render = ElytraRenderLayers.GATEWAY(texture)
         )
     }
 
-    override fun render(parameters: ETRenderParameters, collector: RenderConsumer): Boolean = with(parameters) {
+    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
         runIf(ETItemFlag.GATEWAY[stack]) { submitToCollector(collector) }
     }
 }

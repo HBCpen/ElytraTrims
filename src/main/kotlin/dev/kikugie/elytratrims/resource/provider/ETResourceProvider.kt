@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
-import net.minecraft.Util
+import net.minecraft.util.Util
 import java.util.concurrent.CompletableFuture
 
 abstract class ETResourceProvider<T> {

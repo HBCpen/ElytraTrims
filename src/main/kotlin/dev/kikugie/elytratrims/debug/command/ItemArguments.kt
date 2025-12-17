@@ -8,10 +8,9 @@ import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
 import dev.kikugie.elytratrims.text
-import net.minecraft.commands.PermissionSource
 import net.minecraft.commands.SharedSuggestionProvider
 import net.minecraft.commands.arguments.ResourceKeyArgument
-import net.minecraft.commands.arguments.ResourceLocationArgument
+import net.minecraft.commands.arguments.IdentifierArgument
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.DyeColor
@@ -31,7 +30,7 @@ val NO_SUCH_FLAG = SimpleCommandExceptionType("Invalid item flag".text())
 typealias ItemModifierAction<Source> = Pair<CommandBuilder<Source, *, *>, ItemModifier<Source>>
 
 fun <Source> trim(): Pair<LiteralCommandBuilder<Source>, List<ItemModifierAction<Source>>>
-where Source : SharedSuggestionProvider, Source : PermissionSource {
+where Source : SharedSuggestionProvider {
     val literal = LiteralCommandBuilder<Source>("trim")
     val actions = mutableListOf<ItemModifierAction<Source>>()
 
@@ -51,7 +50,7 @@ where Source : SharedSuggestionProvider, Source : PermissionSource {
 }
 
 fun <Source> pattern() : Pair<LiteralCommandBuilder<Source>, List<ItemModifierAction<Source>>>
-where Source : SharedSuggestionProvider, Source : PermissionSource {
+where Source : SharedSuggestionProvider {
     val literal = LiteralCommandBuilder<Source>("pattern")
     val actions = mutableListOf<ItemModifierAction<Source>>()
 
@@ -73,7 +72,7 @@ where Source : SharedSuggestionProvider, Source : PermissionSource {
 }
 
 fun <Source> color() : Pair<LiteralCommandBuilder<Source>, List<ItemModifierAction<Source>>>
-where Source : SharedSuggestionProvider, Source : PermissionSource {
+where Source : SharedSuggestionProvider {
     val literal = LiteralCommandBuilder<Source>("color")
     val actions = mutableListOf<ItemModifierAction<Source>>()
 
@@ -89,11 +88,11 @@ where Source : SharedSuggestionProvider, Source : PermissionSource {
 }
 
 fun <Source> flag() : Pair<LiteralCommandBuilder<Source>, List<ItemModifierAction<Source>>>
-    where Source : SharedSuggestionProvider, Source : PermissionSource {
+    where Source : SharedSuggestionProvider {
     val literal = LiteralCommandBuilder<Source>("flag")
     val actions = mutableListOf<ItemModifierAction<Source>>()
 
-    literal.argument("flag", ResourceLocationArgument.id()) { id ->
+    literal.argument("flag", IdentifierArgument.id()) { id ->
         suggestList { ET_FLAGS.keys }
         argument<Boolean>("value") { value ->
             val flag: ArgumentResolver<Source, ETItemFlag> = {

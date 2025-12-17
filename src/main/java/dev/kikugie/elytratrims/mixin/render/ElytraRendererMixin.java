@@ -12,10 +12,12 @@ import dev.kikugie.elytratrims.api.impl.ETRenderingAPIImpl;
 import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
@@ -33,19 +35,13 @@ import java.util.function.Function;
 public class ElytraRendererMixin {
     @Shadow
     @Final
-    private Function<EquipmentLayerRenderer.LayerTextureKey, net.minecraft.resources.Identifier> layerTextureLookup;
+    private Function<EquipmentLayerRenderer.LayerTextureKey, Identifier> layerTextureLookup;
 
     @Unique
     private static final String RENDER_METHOD =
-        //? if >=1.21.9 {
         "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
         "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/world/item/ItemStack;" +
         "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V";
-        //?} else {
-        /*"renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;Lnet/minecraft/resources/ResourceKey;" +
-            "Lnet/minecraft/client/model/Model;Lnet/minecraft/world/item/ItemStack;Lcom/mojang/blaze3d/vertex/PoseStack;" +
-            "Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/resources/ResourceLocation;)V";
-        *///?}
 
     @Unique
     private static final String CANCEL_METHOD =
@@ -53,20 +49,19 @@ public class ElytraRendererMixin {
         /*?} else*///"Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getArmorLayerTintColor(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;II)I";
 
     @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    //? if >=1.21.9 {
     private <S> void invokeETOverrideRenderers(
         EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> resourceKey, Model<? super S> model, S object, ItemStack itemStack,
-        PoseStack poseStack, net.minecraft.client.renderer.SubmitNodeCollector submitNodeCollector, int i, net.minecraft.resources.Identifier resourceLocation, int j,
+        PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, Identifier identifier, int j,
         int k, CallbackInfo ci, @Local List<EquipmentClientInfo.Layer> layers, @Local(ordinal = 4) com.llamalad7.mixinextras.sugar.ref.LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters, @Share("overridden") LocalBooleanRef overridden
     ) {
         if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
         var order = new java.util.concurrent.atomic.AtomicInteger(m.get());
-        var texture = !layers.getFirst().usePlayerTexture() || resourceLocation == null
+        var texture = !layers.getFirst().usePlayerTexture() || identifier == null
             ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, layers.getFirst()))
-            : resourceLocation;
+            : identifier;
         @SuppressWarnings("unchecked") var params = new ETRenderParameters((Model<Object>) model,
-            object, itemStack, poseStack, RenderType.armorEntityGlint(),
+            object, itemStack, poseStack, RenderTypes.armorEntityGlint(),
             null, texture, i, 0xFFFFFFFF, j, k, order);
 
         parameters.set(params);
@@ -76,28 +71,6 @@ public class ElytraRendererMixin {
             overridden.set(true);
         m.set(order.get());
     }
-    //?} else {
-    /*private void invokeETOverrideRenderers(
-        EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAsset, Model armorModel,
-        ItemStack item, PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource bufferSource, int packedLight,
-        net.minecraft.resources.ResourceLocation playerTexture, CallbackInfo ci, @Local List<EquipmentClientInfo.Layer> layers,
-        @Share("parameters") LocalRef<ETRenderParameters> parameters, @Share("overridden") LocalBooleanRef overridden
-    ) {
-        if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
-        var texture = !layers.getFirst().usePlayerTexture() || playerTexture == null
-            ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, layers.getFirst()))
-            : playerTexture;
-        var params = new ETRenderParameters(armorModel,
-            null, item, poseStack, RenderType.armorEntityGlint(),
-            null, texture, packedLight, 0xFFFFFFFF, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0, ETRenderParameters.DUMMY);
-
-        parameters.set(params);
-        // The result for the pre-render doesn't matter
-        ETRenderingAPIImpl.render(params, bufferSource, ETRenderMethod.PRE);
-        if (ETRenderingAPIImpl.render(params, bufferSource, ETRenderMethod.OVERRIDE))
-            overridden.set(true);
-    }
-    *///?}
 
     @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = CANCEL_METHOD))
     private int cancelDefaultRenderer(int original, @Share("overridden") LocalBooleanRef overridden) {
@@ -109,10 +82,9 @@ public class ElytraRendererMixin {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"),
         cancellable = true
     )
-    //? if >=1.21.9 {
     private <S> void invokeETRenderers(
         EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> resourceKey, Model<? super S> model, S object, ItemStack itemStack,
-        PoseStack poseStack, net.minecraft.client.renderer.SubmitNodeCollector submitNodeCollector, int i, net.minecraft.resources.Identifier resourceLocation, int j,
+        PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int i, Identifier identifier, int j,
         int k, CallbackInfo ci, @Local(ordinal = 4) com.llamalad7.mixinextras.sugar.ref.LocalIntRef m,
         @Share("parameters") LocalRef<ETRenderParameters> parameters
     ) {
@@ -123,19 +95,6 @@ public class ElytraRendererMixin {
             ci.cancel();
         m.set(parameters.get().order().get());
     }
-    //?} else {
-    /*private void invokeETRenderers(
-        EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAsset, Model armorModel,
-        ItemStack item, PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource bufferSource, int packedLight,
-        Identifier playerTexture, CallbackInfo ci, @Share("parameters") LocalRef<ETRenderParameters> parameters
-    ) {
-        if (parameters.get() == null || layerType != EquipmentClientInfo.LayerType.WINGS)
-            return;
-        if (ETRenderingAPIImpl.render(parameters.get(), bufferSource, ETRenderMethod.POST))
-            ci.cancel();
-    }
-    *///?}
-
     @Inject(
         method = RENDER_METHOD,
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Sheets;armorTrimsSheet(Z)Lnet/minecraft/client/renderer/rendertype/RenderType;"),
