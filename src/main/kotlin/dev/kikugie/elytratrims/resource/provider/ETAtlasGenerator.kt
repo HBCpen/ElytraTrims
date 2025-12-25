@@ -36,7 +36,7 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
             this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
             this += sources
         }
-        atlas(vanilla("blocks")) {
+        atlas(vanilla("items")) {
             val textures = listOf("trims/items/wings_trim", "trims/items/wings_broken_trim").map(::vanilla)
             this += sources.map {
                 PalettedPermutations(textures, it.paletteKey, it.permutations)
