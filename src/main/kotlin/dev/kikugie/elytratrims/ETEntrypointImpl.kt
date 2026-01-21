@@ -13,6 +13,8 @@ import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_PATTERNS
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.render.impl.*
 import dev.kikugie.elytratrims.resource.ETTags
+import net.irisshaders.iris.api.v0.IrisApi
+import net.irisshaders.iris.api.v0.IrisProgram
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.equipment.trim.ArmorTrim
@@ -47,6 +49,7 @@ object ETEntrypointImpl {
         registerDecorator(ETTrimsRenderer)
 
         if (ModData.isModLoaded("trimica")) registerTrimicaCompat()
+        if (ModData.isModLoaded("iris")) registerIrisCompat()
     }
 
     @JvmStatic fun commonEP() {
@@ -67,6 +70,12 @@ object ETEntrypointImpl {
                         else withPath { "textures/trims/items/wings/$it.png" }
                     }
             })
+        *///?}
+    }
+
+    private fun registerIrisCompat() {
+        //? if iris {
+        /*IrisApi.getInstance().assignPipeline(ElytraRenderLayers.GATEWAY_MASKED, IrisProgram.ENTITIES_TRANSLUCENT)
         *///?}
     }
 }

@@ -1,2 +1,2 @@
 ## Fixes
-- Fixed incorect atlas used for item trims.
+- Fixed the red overlay with Iris Shaders.

@@ -15,6 +15,7 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.Identifier;
@@ -62,7 +63,7 @@ public class ElytraRendererMixin {
             : identifier;
         @SuppressWarnings("unchecked") var params = new ETRenderParameters((Model<Object>) model,
             object, itemStack, poseStack, RenderTypes.armorEntityGlint(),
-            null, texture, i, 0xFFFFFFFF, j, k, order);
+            null, texture, i, 0xFFFFFFFF, OverlayTexture.NO_OVERLAY, k, order);
 
         parameters.set(params);
         // The result for the pre-render doesn't matter

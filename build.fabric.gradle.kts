@@ -49,10 +49,14 @@ dependencies {
     stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
         .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
         .isSuccess
+    stonecutter.constants["iris"] = fletchingTable.runCatching { modrinth("iris", stonecutter.current.version) }
+        .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
+        .isSuccess
 }
 
 stonecutter {
     constants["trimica"] = false
+    constants["iris"] = false
 }
 
 java {

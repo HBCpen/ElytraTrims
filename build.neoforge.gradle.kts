@@ -46,10 +46,14 @@ dependencies {
     stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
         .onSuccess { compileOnly(it) }
         .isSuccess
+    stonecutter.constants["iris"] = fletchingTable.runCatching { modrinth("iris", stonecutter.current.version) }
+        .onSuccess { compileOnly(it) }
+        .isSuccess
 }
 
 stonecutter {
     constants["trimica"] = false
+    constants["iris"] = false
 }
 
 tasks {
