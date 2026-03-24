@@ -56,6 +56,10 @@ stonecutter {
     constants["iris"] = false
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 tasks {
     processResources {
         exclude("**/fabric.mod.json", "**/elytratrims.accesswidener", "gen.sh")

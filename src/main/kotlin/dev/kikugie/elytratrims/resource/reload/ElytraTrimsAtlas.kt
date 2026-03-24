@@ -14,8 +14,8 @@ object ElytraTrimsAtlas {
     @JvmField val ELYTRA_TRIMS_RENDER_DECAL: RenderType = RenderTypes.createArmorDecalCutoutNoCull(ATLAS_SHEET)
 
     //? if >=1.21.9 {
-    @JvmStatic fun createAtlasConfig(): net.minecraft.client.resources.model.AtlasManager.AtlasConfig =
-        net.minecraft.client.resources.model.AtlasManager.AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
+    @JvmStatic fun createAtlasConfig(): net.minecraft.client.resources.model.sprite.AtlasManager.AtlasConfig =
+        net.minecraft.client.resources.model.sprite.AtlasManager.AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
     //?}
 
     @JvmStatic fun elytraTrimsSheet(decal: Boolean): RenderType =

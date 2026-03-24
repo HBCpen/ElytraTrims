@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.render
 
 import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.MINECRAFT
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
@@ -24,7 +24,7 @@ fun Identifier.getSprite(identifier: Identifier, reporter: (Identifier) -> Unit)
     MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier).also { if (it.isMissing) reporter(identifier) }
 
 fun renderEntityInInventoryFollowsMouse(
-    guiGraphics: GuiGraphics,
+    guiGraphics: GuiGraphicsExtractor,
     x1: Int,
     y1: Int,
     x2: Int,
@@ -59,5 +59,6 @@ fun renderEntityInInventoryFollowsMouse(
     }
 
     val vector3f = Vector3f(0.0f, entityRenderState.boundingBoxHeight / 2.0f + yOffset, 0.0f)
-    guiGraphics.submitEntityRenderState(entityRenderState, scale.toFloat(), vector3f, quaternionf, quaternionf2, x1, y1, x2, y2)
+    //~ if >26 submitEntityRenderState -> entity
+    guiGraphics.entity(entityRenderState, scale.toFloat(), vector3f, quaternionf, quaternionf2, x1, y1, x2, y2)
 }

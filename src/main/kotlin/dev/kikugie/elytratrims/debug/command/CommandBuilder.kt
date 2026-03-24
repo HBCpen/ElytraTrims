@@ -3,7 +3,7 @@ Sourced from https://github.com/SilkMC/silk/blob/main/silk-commands/src/main/kot
 which is licensed under GPL v3.0. The command API is adapted to be standalone and adjusted for Elytra Trims' needs.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "DSL_MARKER_APPLIED_TO_WRONG_TARGET")
 
 package dev.kikugie.elytratrims.debug.command
 

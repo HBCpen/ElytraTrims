@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.mixin.resource;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

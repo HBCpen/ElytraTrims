@@ -4,7 +4,6 @@ import dev.kikugie.elytratrims.api.ETClientInitializer
 import dev.kikugie.elytratrims.api.ETCommonInitializer
 import dev.kikugie.elytratrims.api.interaction.ETInteractionAPI.registerCauldronInteraction
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI.registerDecorator
-import dev.kikugie.elytratrims.api.render.ETRenderingAPI.wrapRenderCall
 import dev.kikugie.elytratrims.debug.registerServerDebugCommands
 import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteraction
 import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_COLOR
@@ -12,14 +11,6 @@ import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_GLOW
 import dev.kikugie.elytratrims.recipe.cauldron.REMOVE_PATTERNS
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
 import dev.kikugie.elytratrims.render.impl.*
-import dev.kikugie.elytratrims.resource.ETTags
-import net.irisshaders.iris.api.v0.IrisApi
-import net.irisshaders.iris.api.v0.IrisProgram
-import net.minecraft.resources.Identifier
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.equipment.trim.ArmorTrim
-import org.slf4j.LoggerFactory
-import java.util.concurrent.atomic.AtomicBoolean
 
 object ETEntrypointImpl {
     @JvmStatic fun clientInit(entrypoints: Iterable<ETClientInitializer>) {

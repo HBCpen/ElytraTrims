@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 
 plugins {
     kotlin("jvm")
@@ -60,16 +61,13 @@ stonecutter {
 }
 
 kotlin {
-    compilerOptions {
-        languageVersion = KotlinVersion.KOTLIN_2_2
-    }
+    jvmToolchain(25)
 }
 
 tasks {
     processResources {
         exclude("**/neoforge.mods.toml", "gen.sh")
     }
-
     register<Copy>("buildAndCollect") {
         group = "build"
         from(fabric.modJar.map { it.archiveFile })

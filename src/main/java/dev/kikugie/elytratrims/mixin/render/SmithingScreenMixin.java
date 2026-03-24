@@ -5,7 +5,7 @@ import dev.kikugie.elytratrims.api.item.ETItemFlag;
 import dev.kikugie.elytratrims.render.SmithingTableRenderData;
 import dev.kikugie.elytratrims.resource.ETTags;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.renderer.entity.state.ArmorStandRenderState;
 import net.minecraft.world.item.ItemStack;
@@ -37,8 +37,10 @@ public class SmithingScreenMixin {
 		return stack;
 	}
 
-	@Inject(method = "renderBg", at = @At("HEAD"))
-	private void rotateArmorStand(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY, CallbackInfo ci) {
+	//~ if >26 renderBg -> extractBackground
+	@Inject(method = "extractBackground", at = @At("HEAD"))
+	//~ if >26 'float partialTick, int mouseX, int mouseY' -> 'int mouseX, int mouseY, float partialTick'
+	private void rotateArmorStand(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
 		renderData.tick(partialTick);
 		armorStandPreview.bodyRot = ARMOR_STAND_Y_ROT + renderData.getRotation();
 	}

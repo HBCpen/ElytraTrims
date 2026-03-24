@@ -60,7 +60,8 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         // for (it in BuiltInRegistries.ITEM.get(ETTags.ELYTRA_DECORATABLE).getOrElse { return@buildMap })
         //     generators.generateElytraModel(it.value(), materials)
         // FIXME: tags are not available at this point, so maybe add an API call to register custom elytras
-        generators.generateElytraModel(Items.ELYTRA, materials)
+        // FIXME: This shit generates an empty model now, great
+//        generators.generateElytraModel(Items.ELYTRA, materials)
     }
 
     private fun ItemModelGenerators.generateElytraModel(item: Item, materials: Iterable<TrimMaterialKey>) {
@@ -76,7 +77,7 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         val base = plainModel(item.model(broken))
         val overlay = run {
             val destination = item.model(broken, true)
-            FLAT_ITEM.create(destination, TextureMapping.layer0(item.texture(broken, true)), modelOutput)
+            FLAT_ITEM.create(destination, TextureMapping.layer0(item.texture(broken, true).toMaterial()), modelOutput)
             tintedModel(destination, Dye(0))
         }
         val fallback = composite(base, overlay)
@@ -90,7 +91,7 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         val destination = item.model(broken, false, material)
         val trim = BuiltInRegistries.ITEM.getKey(item).withPath("trims/items/wings${buildSuffix(material = material)}")
 
-        FLAT_ITEM.create(destination, TextureMapping.layer0(trim), modelOutput)
+        FLAT_ITEM.create(destination, TextureMapping.layer0(trim.toMaterial()), modelOutput)
         return plainModel(destination)
     }
 
@@ -104,5 +105,8 @@ class ETItemModelGenerator(val lookup: ResourceManager) : ETResourceProvider<Jso
         ModelLocationUtils.getModelLocation(this, buildSuffix(broken, overlay, material))
 
     private fun Item.texture(broken: Boolean = false, overlay: Boolean = false, material: String = ""): Identifier =
-        TextureMapping.getItemTexture(this, buildSuffix(broken, overlay, material))
+        TextureMapping.getItemTexture(this, buildSuffix(broken, overlay, material)).sprite
+
+    private fun Identifier.toMaterial(): net.minecraft.client.resources.model.sprite.Material =
+        net.minecraft.client.resources.model.sprite.Material(this)
 }

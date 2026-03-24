@@ -16,11 +16,13 @@ import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.resources.IoSupplier
 import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.server.packs.resources.ResourceMetadata
 import net.minecraft.util.FileUtil
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.jvm.optionals.getOrNull
 import kotlin.streams.asSequence
 import kotlin.time.measureTime
 
@@ -67,6 +69,8 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
             "Missing 'elytratrims' pack, present packs:\n" + packs.joinToString("\n") { "  - ${it.packId()}" }
         }
     }
+    //? if >=26
+    private lateinit var metadata: ResourceMetadata
 
     override fun getNamespaces(type: PackType): Set<String> = namespaces[type] ?: emptySet()
 
@@ -84,6 +88,13 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
 
     override fun close() {
     }
+
+    //? if >=26 {
+    private fun <T : Any> getMetadataFromStream(type: MetadataSectionType<T>, input: InputStream, unused: PackLocationInfo): T? {
+        if (!::metadata.isInitialized) metadata = ResourceMetadata.fromJsonStream(input)
+        return metadata.getSection(type).getOrNull()
+    }
+    //?}
 
     private fun open(file: String): InputSupplier? =
         if ('/' !in file) base.getRootResource(file)

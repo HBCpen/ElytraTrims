@@ -4,6 +4,7 @@ import dev.kikugie.elytratrims.api.impl.ETInteractionAPIImpl
 import dev.kikugie.elytratrims.resource.ETTags
 import net.minecraft.core.BlockPos
 import net.minecraft.core.cauldron.CauldronInteraction
+import net.minecraft.core.cauldron.CauldronInteractions
 import net.minecraft.stats.Stats
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -17,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState
 object ETCauldronInteraction : CauldronInteraction {
     @JvmStatic fun register() {
         // TODO: Multi-item support
-        CauldronInteraction.WATER.map.compute(Items.ELYTRA) { _, it ->
-            if (it == null) this else composeInteractions(it)
-        }
+//        CauldronInteractions.WATER.map.compute(Items.ELYTRA) { _, it ->
+//            if (it == null) this else composeInteractions(it)
+//        }
     }
 
     override fun interact(state: BlockState, level: Level, pos: BlockPos, player: Player, hand: InteractionHand, stack: ItemStack): InteractionResult {

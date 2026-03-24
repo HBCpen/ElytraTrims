@@ -27,8 +27,9 @@ open class FabricPlugin : Plugin<Project> {
 
         for (it in names) {
             val loomified = "mod" + it.replaceFirstChar(Char::uppercaseChar)
-            configurations.register(loomified) {
-                extendsFrom(configurations.named(it))
+            val new = configurations.create(loomified)
+            configurations.named(it) {
+                extendsFrom(new)
             }
         }
 
