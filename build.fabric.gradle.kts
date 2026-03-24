@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     kotlin("jvm")
-    id("fabric-loom")
-    id("elytratrims.common")
+    id("elytratrims-common")
+    id("elytratrims-fabric")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
     id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
@@ -15,7 +15,11 @@ version = "${property("mod.version")}+${property("deps.minecraft")}"
 base.archivesName = "${property("mod.id")}-fabric"
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/elytratrims.accesswidener")
+    accessWidenerPath = sc.process(
+        rootProject.file("src/main/resources/elytratrims.accesswidener"),
+        "build/processed/elytratrims.accesswidener"
+    )
+
     runs.named("client") {
         ideConfigGenerated(true)
         runDir = "../../run"
@@ -35,17 +39,13 @@ dependencies {
     }
 
     minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
-    mappings(loom.layered {
-        officialMojangMappings()
-        if (hasProperty("deps.parchment"))
-            parchment("org.parchmentmc.data:parchment-${property("deps.parchment")}@zip")
-    })
+    if (sc.current.parsed < "26") mappings(loom.officialMojangMappings())
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
 
-    modCompileOnly("com.bawnorton.trimica:trimica-fabric:${property("deps.trimica")}")
+    if (hasProperty("deps.trimica")) modCompileOnly("com.bawnorton.trimica:trimica-fabric:${property("deps.trimica")}")
     stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
         .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
         .isSuccess
@@ -57,12 +57,6 @@ dependencies {
 stonecutter {
     constants["trimica"] = false
     constants["iris"] = false
-}
-
-java {
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
 }
 
 kotlin {
@@ -78,13 +72,9 @@ tasks {
 
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile })
+        from(fabric.modJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
-    }
-
-    register("publishElytraTrims") {
-        dependsOn("publishMods")
     }
 }
 
@@ -109,8 +99,8 @@ publishMods {
     dryRun = mr == null || cf == null
 
     type = BETA
-    file = tasks.remapJar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
+    file = fabric.modJar.map { it.archiveFile.get() }
+    additionalFiles.from(fabric.modSourcesJar.map { it.archiveFile.get() })
 
     displayName = "Elytra Trims Fabric ${property("mod.version")} for ${stonecutter.current.version}"
     version = property("mod.version") as String

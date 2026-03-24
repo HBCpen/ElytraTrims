@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("elytratrims.common")
+    id("elytratrims-common")
     id("net.neoforged.moddev")
     id("com.google.devtools.ksp")
     id("me.modmuss50.mod-publish-plugin")
@@ -71,12 +71,6 @@ tasks {
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
-}
-
-java {
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
 }
 
 fletchingTable {

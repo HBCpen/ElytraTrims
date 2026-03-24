@@ -11,7 +11,7 @@ pluginManagement {
 plugins {
     // For some reason, this plugin is crucial - do not remove
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.8.3"
+    id("dev.kikugie.stonecutter") version "0.9"
 }
 
 stonecutter {
@@ -21,7 +21,11 @@ stonecutter {
         }
 
         match("1.21.11", "fabric", "neoforge")
+        match("26.1", "fabric")
+
 //        version("1.21.11-unobf", "1.21.11").buildscript = "build.unobf.gradle.kts"
         vcsVersion = "1.21.11-fabric"
     }
 }
+
+includeBuild("build-logic")
