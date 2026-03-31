@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.api.item.ETItemFlag;
-import dev.kikugie.elytratrims.render.SmithingTableRenderData;
+import dev.kikugie.elytratrims.render.PreviewElytraAnimationState;
 import dev.kikugie.elytratrims.resource.ETTags;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -28,11 +28,11 @@ public class SmithingScreenMixin {
 	private static int ARMOR_STAND_Y_ROT;
 
 	@Unique
-	private final SmithingTableRenderData renderData = new SmithingTableRenderData();
+	private final PreviewElytraAnimationState elytratrims$renderData = new PreviewElytraAnimationState();
 
 	@ModifyExpressionValue(method = "updateArmorStandPreview", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copy()Lnet/minecraft/world/item/ItemStack;"))
 	private ItemStack rotateIfHasElytra(ItemStack stack) {
-		renderData.update(stack.is(ETTags.ELYTRA_DECORATABLE));
+		elytratrims$renderData.update(stack.is(ETTags.ELYTRA_DECORATABLE));
 		ETItemFlag.DEBUG.set(stack, true);
 		return stack;
 	}
@@ -41,7 +41,9 @@ public class SmithingScreenMixin {
 	@Inject(method = "extractBackground", at = @At("HEAD"))
 	//~ if >26 'float partialTick, int mouseX, int mouseY' -> 'int mouseX, int mouseY, float partialTick'
 	private void rotateArmorStand(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-		renderData.tick(partialTick);
-		armorStandPreview.bodyRot = ARMOR_STAND_Y_ROT + renderData.getRotation();
+		elytratrims$renderData.tick(partialTick);
+		armorStandPreview.bodyRot = ARMOR_STAND_Y_ROT + elytratrims$renderData.getBodyRot();
+		armorStandPreview.elytraRotX = elytratrims$renderData.getElytraXRot();
+		armorStandPreview.elytraRotZ = elytratrims$renderData.getElytraZRot();
 	}
 }

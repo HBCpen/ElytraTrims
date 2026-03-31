@@ -92,7 +92,7 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
             val material = input.addition.get(DataComponents.PROVIDES_TRIM_MATERIAL)
                 ?: return ItemStack.EMPTY
             val existingTrim = input.base.get(DataComponents.TRIM)
-            val allPatterns = FUCK_YOU_MOJANG.get()?.listElements()?.toList()
+            val allPatterns = BULLSHIT_I_HAVE_TO_DEAL_WITH.get()?.listElements()?.toList()
                 ?: return ItemStack.EMPTY
 
             val applied: ArmorTrim

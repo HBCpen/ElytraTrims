@@ -1,2 +1,3 @@
-## Fixes
-- Fixed the red overlay with Iris Shaders.
+## Changes
+- Updated to 26.1.
+- Improved armor stand preview animation.

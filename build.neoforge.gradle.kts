@@ -40,9 +40,9 @@ neoForge {
 }
 
 dependencies {
-    jarJar("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")
-    compileOnly("dev.nyon:KotlinLangForge:2.10.6-k2.2.21-3.1+neoforge")
-    compileOnly("com.bawnorton.trimica:trimica-neoforge:${property("deps.trimica")}")
+    jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")!!)
+    jarJar(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("deps.kotlin-coroutines")}")!!)
+    if (hasProperty("deps.trimica")) compileOnly("com.bawnorton.trimica:trimica-neoforge:${property("deps.trimica")}")
     stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
         .onSuccess { compileOnly(it) }
         .isSuccess
@@ -57,7 +57,7 @@ stonecutter {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 tasks {

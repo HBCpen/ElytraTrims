@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.recipe.cauldron
 
 import dev.kikugie.elytratrims.api.impl.ETInteractionAPIImpl
+import dev.kikugie.elytratrims.mixin.recipe.CauldronInteractionDispatcherAccessor
 import dev.kikugie.elytratrims.resource.ETTags
 import net.minecraft.core.BlockPos
 import net.minecraft.core.cauldron.CauldronInteraction
@@ -21,6 +22,9 @@ object ETCauldronInteraction : CauldronInteraction {
 //        CauldronInteractions.WATER.map.compute(Items.ELYTRA) { _, it ->
 //            if (it == null) this else composeInteractions(it)
 //        }
+        val water = CauldronInteractions.WATER
+        water as CauldronInteractionDispatcherAccessor
+        water.`elytratrims$put`(ETTags.ELYTRA_DECORATABLE, ::interact)
     }
 
     override fun interact(state: BlockState, level: Level, pos: BlockPos, player: Player, hand: InteractionHand, stack: ItemStack): InteractionResult {
