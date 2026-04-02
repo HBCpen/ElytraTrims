@@ -1,13 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-
 plugins {
     kotlin("jvm")
     id("elytratrims-common")
-    id("elytratrims-fabric")
     id("com.google.devtools.ksp")
+    id("dev.kikugie.loom-back-compat")
     id("me.modmuss50.mod-publish-plugin")
     id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
 }
@@ -40,7 +37,7 @@ dependencies {
     }
 
     minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
-    if (sc.current.parsed < "26") mappings(loom.officialMojangMappings())
+    loomx.applyMojangMappings()
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
@@ -70,7 +67,7 @@ tasks {
     }
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(fabric.modJar.map { it.archiveFile })
+        from(loomx.modJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
@@ -97,8 +94,8 @@ publishMods {
     dryRun = mr == null || cf == null
 
     type = BETA
-    file = fabric.modJar.map { it.archiveFile.get() }
-    additionalFiles.from(fabric.modSourcesJar.map { it.archiveFile.get() })
+    file = loomx.modJar.map { it.archiveFile.get() }
+    additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
     displayName = "Elytra Trims Fabric ${property("mod.version")} for ${stonecutter.current.version}"
     version = property("mod.version") as String

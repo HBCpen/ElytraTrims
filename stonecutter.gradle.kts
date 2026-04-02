@@ -7,14 +7,12 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.6" apply false
 }
 
-stonecutter active "26.1-fabric"
+val ci: String? = System.getenv("MATRIX_INSTANCE")
+if (ci != null) sc active ci else stonecutter active "26.1-fabric"
 
 stonecutter parameters {
     constants {
-        var identifier = node.metadata.project.substringAfterLast('-')
-        if (identifier == "unobf") identifier = "fabric"
-
-        match(identifier, "fabric", "neoforge")
+        match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
     }
 
     replacements {

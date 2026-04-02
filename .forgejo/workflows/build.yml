@@ -1,0 +1,58 @@
+name: Build
+on: push
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: kiku-server
+    container: alpine
+    outputs:
+      versions: ${{ steps.set-versions.outputs.versions }}
+    steps:
+      - name: Setup deps
+        run: |
+          apk add --no-cache jq nodejs
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.CB_TOKEN }}
+      - name: Extract versions
+        id: set-versions
+        run: |
+          set -x
+          VERSIONS=$(jq -c '.versions | map(split(":")[0])' versions.json)
+          echo "versions=$VERSIONS" >> "$FORGEJO_OUTPUT"
+
+  build:
+    name: Build
+    needs: setup
+    runs-on: kiku-server
+    container: eclipse-temurin:25-jdk-alpine
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJson(needs.setup.outputs.versions) }}
+    steps:
+      - name: Install deps
+        run: |
+          apk add --no-cache nodejs tar
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.CB_TOKEN }}
+      - name: Setup Gradle
+        run: |
+          chmod +x ./gradlew
+      - name: Build version
+        env:
+          MATRIX_INSTANCE: ${{ matrix.version }}
+        run: |
+          ./gradlew "Refresh active project" --stacktrace
+          ./gradlew build --build-cache --stacktrace
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-libs-${{ matrix.version }}
+          path: versions/${{ matrix.version }}/build/libs/*
