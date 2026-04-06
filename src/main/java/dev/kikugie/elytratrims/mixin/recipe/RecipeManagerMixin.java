@@ -11,8 +11,9 @@ import org.spongepowered.asm.mixin.injection.At;
 public class RecipeManagerMixin {
     @Unique
     private static final String METHOD =
-        /*? if >26 {*/"lambda$prepare$0";
-        /*?} elif fabric {*//*"method_64689";
+        /*? if >26 && fabric {*/"lambda$prepare$0";
+        /*?} elif >26 {*//*"lambda$prepare$1";
+        *//*?} elif fabric {*//*"method_64689";
         *//*?} else*///"lambda$prepare$3";
 
     @SuppressWarnings("unchecked")
