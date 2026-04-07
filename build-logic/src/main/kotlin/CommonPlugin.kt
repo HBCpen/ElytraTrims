@@ -35,7 +35,9 @@ private fun Project.configure() {
     }
 
     tasks.named<ProcessResources>("processResources") {
-        fun prop(name: String) = project.property(name) as String
+        fun prop(name: String) = project.property(name).toString().also {
+            inputs.property(name, it)
+        }
 
         val props = HashMap<String, String>().apply {
             this["version"] = prop("mod.version")
