@@ -19,5 +19,5 @@ object ElytraTrimsAtlas {
     //?}
 
     @JvmStatic fun elytraTrimsSheet(decal: Boolean): RenderType =
-        if (decal) ELYTRA_TRIMS_RENDER_DECAL else ELYTRA_TRIMS_RENDER
+        RenderTypes.armorTranslucent(ATLAS_SHEET)
 }
