@@ -42,14 +42,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
-
-    if (hasProperty("deps.trimica")) modCompileOnly("com.bawnorton.trimica:trimica-fabric:${property("deps.trimica")}")
-    stonecutter.constants["sodium"] = fletchingTable.runCatching { modrinth("sodium", stonecutter.current.version) }
-        .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
-        .isSuccess
-    stonecutter.constants["iris"] = fletchingTable.runCatching { modrinth("iris", stonecutter.current.version) }
-        .onSuccess { modCompileOnly(it); modLocalRuntime(it) }
-        .isSuccess
 }
 
 stonecutter {
