@@ -11,8 +11,11 @@ val ci: String? = System.getenv("MATRIX_INSTANCE")
 if (ci != null) sc active ci else stonecutter active "26.1-fabric"
 
 stonecutter parameters {
+    val (version, loader) = current.project.split('-', limit = 2)
+    properties.tags(version, loader)
+    
     constants {
-        match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
+        match(loader, "fabric", "neoforge")
     }
 
     replacements {

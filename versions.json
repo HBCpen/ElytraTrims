@@ -1,5 +1,5 @@
 {
-  "$schema": "https://codeberg.org/stonecutter/stonecutter/src/branch/0.9/tools/settings-schema.json",
+  "$schema": "https://stonecutter.kikugie.dev/settings-schema/latest.json",
   "versions": [
     "26.1-fabric:26.1:build.fabric.gradle.kts",
     "26.1-neoforge:26.1:build.neoforge.gradle.kts"

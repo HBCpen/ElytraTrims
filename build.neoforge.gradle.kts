@@ -16,7 +16,7 @@ repositories {
 }
 
 neoForge {
-    version = property("deps.neoforge") as String
+    version = property("deps.neo-loader") as String
     validateAccessTransformers = true
 
     if (hasProperty("deps.parchment")) parchment {
@@ -100,18 +100,20 @@ publishMods {
     version = property("mod.version") as String
     changelog = provider { rootProject.file("CHANGELOG.md").readText() }
     modLoaders.add("neoforge")
+    
+    val versions = sc.properties.raw("mod:releases").to<List<String>>()
 
     modrinth {
         projectId = property("publish.modrinth") as String
         accessToken = mr
-        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
+        minecraftVersions.addAll(versions)
         optional("kotlin-for-forge", "kotlin-lang-forge")
     }
 
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = cf
-        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
+        minecraftVersions.addAll(versions)
         optional("kotlin-for-forge", "kotlinlangforge")
     }
 }

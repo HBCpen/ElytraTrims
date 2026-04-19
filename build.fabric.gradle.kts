@@ -101,18 +101,20 @@ publishMods {
     version = property("mod.version") as String
     changelog = provider { rootProject.file("CHANGELOG.md").readText() }
     modLoaders.add("fabric")
+    
+    val versions = sc.properties.raw("mod:releases").to<List<String>>()
 
     modrinth {
         projectId = property("publish.modrinth") as String
         accessToken = mr
-        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
+        minecraftVersions.addAll(versions)
         requires("fabric-api", "fabric-language-kotlin")
     }
 
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = cf
-        minecraftVersions.addAll(property("mod.releases").toString().split(' '))
+        minecraftVersions.addAll(versions)
         requires("fabric-api", "fabric-language-kotlin")
     }
 }
