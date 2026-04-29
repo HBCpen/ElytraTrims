@@ -24,7 +24,7 @@ deps.neoforge.neo-loader="21.11.10-beta"
 
 ["26.1"]
 mod.fabric.compat="~26.1"
-mod.neoforge.compat="[1.21.11, 1.21.11]"
+mod.neoforge.compat="[26.1.2, 26.2)"
 mod.fabric.releases=["26.1", "26.1.1", "26.1.2"]
 mod.neoforge.releases=["26.1.2"]
 
