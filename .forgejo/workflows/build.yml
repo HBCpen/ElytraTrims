@@ -45,17 +45,6 @@ jobs:
       - name: Setup Gradle
         run: |
           chmod +x ./gradlew
-      - name: Generate Mincraft artifacts
-        if: contains(matrix.version, 'forge')
-        env:
-          MATRIX_INSTANCE: ${{ matrix.version }}
-        run: |
-          ./gradlew createMinecraftArtifacts --stacktrace
-      - name: Refresh codebase
-        env:
-          MATRIX_INSTANCE: ${{ matrix.version }}
-        run: |
-          ./gradlew "Refresh active project" --stacktrace
       - name: Build version
         env:
           MATRIX_INSTANCE: ${{ matrix.version }}
