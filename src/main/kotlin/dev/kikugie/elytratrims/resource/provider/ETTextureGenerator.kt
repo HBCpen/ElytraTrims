@@ -13,83 +13,52 @@ import dev.kikugie.elytratrims.vanilla
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.resources.ResourceManager
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.nio.channels.Channels
 import kotlin.jvm.optionals.getOrNull
 
-class ETTextureGenerator(val lookup: ResourceManager) : ETResourceProvider<EditableImage>() {
-    override fun generate(): Map<PackIdentifier, EditableImage> = buildMap {
-        fun replaced(pattern: String, value: String): (String) -> String = { it.replace(pattern, value)}
+object ETTextureGenerator : ETResourceProvider {
+    private val overlays = listOf("entity/equipment/wings/elytra", "item/elytra", "item/elytra_broken")
+    private val outlines = listOf("elytra", "nether_star", "paper", "leather", "glow_ink_sac")
 
-        val saturated = listOf(
-            "entity/equipment/wings/elytra.png",
-            "item/elytra.png",
-            "item/elytra_broken.png",
-        )
-        for (image in saturated) texture(vanilla(image), replaced("/elytra", "/elytra_overlay")) {
-            use(EditableImage::saturated)
+    override fun collect(lookup: ResourceManager, to: MutableMap<PackIdentifier, InputSupplier>) {
+        for (it in overlays) {
+            val id = vanilla("${it}_overlay.png")
+            to[texture(id)] = imageSupplier(lookup, vanilla("$it.png")) { use(EditableImage::saturated) }
         }
 
-        val outlined = listOf(
-            "item/elytra.png",
-            "item/nether_star.png",
-            "item/paper.png",
-            "item/leather.png",
-            "item/glow_ink_sac.png"
-        )
-        for (image in outlined) texture(vanilla(image), { "gui/sprites/container/slot/${it.substringAfterLast('/')}" }) {
-            use { it.outlined(Color4i(0xFF373737)) }
+        for (it in outlines) {
+            val id = vanilla("gui/sprites/container/slot/$it.png")
+            to[texture(id)] = imageSupplier(lookup, vanilla("item/$it.png")) { use { it.outlined(Color4i(0xFF373737)) } }
         }
 
-        texture(vanilla("trims/items/wings_trim.png"), replaced("/wings", "/wings_broken")) {
-            load(vanilla("item/elytra_broken.png"))?.use { mask -> use { it.masked(mask) } } ?: this
+        to[texture(vanilla("trims/items/wings_broken_trim.png"))] = imageSupplier(lookup, vanilla("trims/items/wings_trim.png")) {
+            load(lookup, vanilla("item/elytra_broken.png"))?.use { m -> use { it.masked(m) } } ?: this
         }
 
-        load(vanilla("entity/equipment/wings/elytra.png"))?.use { base ->
-            for (it in ETAtlasGenerator(lookup).collectPatterns(true)) {
-                val texture = load(it.withSuffix(".png"))?.use { it.resized(x2 = it.dims.height * 2) } ?: continue
-                val identifier = it.withPath { "entity/wings/banner/${it.substringAfterLast('/')}.png" }
-                val image = base.applyPattern(texture, true)
-                texture(identifier, image)
+        val base by lazy { load(lookup, vanilla("entity/equipment/wings/elytra.png")) }
+
+        for (it in ETAtlasGenerator.collectPatterns(lookup, useBanners = true)) {
+            val id = it.withPath { "entity/wings/banner/${it.substringAfterLast('/')}.png" }
+            to[texture(id)] = imageSupplier(lookup, it.withSuffix(".png")) {
+                val pattern = use { it.resized(x2 = it.dims.height * 2) }
+                base?.applyPattern(pattern, isBanner = true) ?: pattern
             }
-            for (it in ETAtlasGenerator(lookup).collectPatterns(false)) {
-                val texture = load(it.withSuffix(".png"))?.use { it.resized(y2 = it.dims.width / 2) } ?: continue
-                val identifier = it.withPath { "entity/wings/shield/${it.substringAfterLast('/')}.png" }
-                val image = base.applyPattern(texture, false)
-                texture(identifier, image)
+        }
+
+        for (it in ETAtlasGenerator.collectPatterns(lookup, useBanners = false)) {
+            val id = it.withPath { "entity/wings/shield/${it.substringAfterLast('/')}.png" }
+            to[texture(id)] = imageSupplier(lookup, it.withSuffix(".png")) {
+                val pattern = use { it.resized(y2 = it.dims.width / 2) }
+                base?.applyPattern(pattern, isBanner = false) ?: pattern
             }
         }
     }
 
-    override fun convert(value: EditableImage): InputSupplier {
-        val output = ByteArrayOutputStream()
-        val channel = Channels.newChannel(output)
-        value.use { it.native.writeToChannel(channel) }
-        return BytesSupplier(output.toByteArray())
-    }
+    private fun texture(id: Identifier): PackIdentifier =
+        PackIdentifier.of(PackType.CLIENT_RESOURCES, id.namespace, "textures/${id.path}")
 
-    private inline fun MutableMap<PackIdentifier, EditableImage>.texture(
-        source: Identifier,
-        noinline dest: (String) -> String,
-        action: EditableImage.() -> EditableImage
-    ) = texture(source, source.withPath(dest), action)
-
-    private inline fun MutableMap<PackIdentifier, EditableImage>.texture(
-        source: Identifier,
-        dest: Identifier = source,
-        action: EditableImage.() -> EditableImage
-    ) {
-        texture(dest, load(source)?.action() ?: return)
-    }
-
-    private fun MutableMap<PackIdentifier, EditableImage>.texture(
-        dest: Identifier,
-        image: EditableImage,
-    ) {
-        val path = PackIdentifier.of(PackType.CLIENT_RESOURCES, dest.namespace, "textures/${dest.path}")
-        this[path] = image
-    }
-
-    private fun load(identifier: Identifier): EditableImage? {
+    private fun load(lookup: ResourceManager, identifier: Identifier): EditableImage? {
         val path = identifier.withPrefix("textures/")
         val resource = lookup.getResource(path).getOrNull() ?: return null.also {
             LOGGER.warn("Resource '$path' wasn't found")
@@ -98,6 +67,21 @@ class ETTextureGenerator(val lookup: ResourceManager) : ETResourceProvider<Edita
             NativeImage.read(open()).toEditable()
         }.getOrElse {
             LOGGER.warn("Error while reading resource '$path'", it) then null
+        }
+    }
+
+    private fun imageSupplier(lookup: ResourceManager, identifier: Identifier, transform: EditableImage.() -> EditableImage) = object : InputSupplier {
+        val value by lazy { load(lookup, identifier)?.transform().bytes() }
+
+        override fun get(): InputStream = value.inputStream()
+
+        private fun EditableImage?.bytes(): ByteArray {
+            if (this == null) return byteArrayOf()
+
+            val output = ByteArrayOutputStream()
+            val channel = Channels.newChannel(output)
+            native.writeToChannel(channel)
+            return output.toByteArray()
         }
     }
 

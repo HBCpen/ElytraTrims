@@ -23,31 +23,27 @@ private typealias TrimTextures = MutableSet<Identifier>
 private typealias TrimPalette = Identifier
 private typealias TrimMaterials = MutableMap<String, Identifier>
 
-class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<SpriteSource>>() {
-    companion object {
-        val LOGGER: Logger = LoggerFactory.getLogger("ET Atlas Generator")
-    }
+object ETAtlasGenerator : ETResourceProvider {
+    private val LOGGER: Logger = LoggerFactory.getLogger("ET Atlas Generator")
 
-    override fun generate(): Map<PackIdentifier, List<SpriteSource>> = buildMap {
-        val sources = collectPalettedPermutations()
+    override fun collect(lookup: ResourceManager, to: MutableMap<PackIdentifier, InputSupplier>) {
+        val sources by lazy { collectPalettedPermutations(lookup) }
 
-        atlas(ElytraTrimsAtlas.ATLAS_ID) {
-            this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
-            this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
-            this += sources
-        }
-        atlas(vanilla("items")) {
-            val textures = listOf("trims/items/wings_trim", "trims/items/wings_broken_trim").map(::vanilla)
-            this += sources.map {
-                PalettedPermutations(textures, it.paletteKey, it.permutations)
+        to[atlas(ElytraTrimsAtlas.ATLAS_ID)] = jsonSupplier(SpriteSources.FILE_CODEC) {
+            buildList {
+                this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
+                this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
+                this += sources
             }
         }
+
+        to[atlas(vanilla("items"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
+            val textures = listOf(vanilla("trims/items/wings_trim"), vanilla("trims/items/wings_broken_trim"))
+            sources.map { PalettedPermutations(textures, it.paletteKey, it.permutations) }
+        }
     }
 
-    override fun convert(value: List<SpriteSource>): InputSupplier =
-        toJsonSupplier(SpriteSources.FILE_CODEC, value)
-
-    fun collectPatterns(useBanners: Boolean): Collection<Identifier> {
+    fun collectPatterns(lookup: ResourceManager, useBanners: Boolean): Collection<Identifier> {
         val type = if (useBanners) "banner" else "shield"
         val atlases = lookup.listResourceStacks("atlases") { it.path.endsWith("${type}_patterns.json") }
         val proxy = ProxyOutput(mutableSetOf())
@@ -62,7 +58,7 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
         return proxy.delegate
     }
 
-    fun collectPalettedPermutations(): Collection<PalettedPermutations> {
+    fun collectPalettedPermutations(lookup: ResourceManager): Collection<PalettedPermutations> {
         val builder = TrimPermutationsStorage()
         val sources = lookup.listResourceStacks("atlases") { it.path.endsWith("armor_trims.json") }
             .values.asSequence().flatten()
@@ -83,10 +79,8 @@ class ETAtlasGenerator(val lookup: ResourceManager) : ETResourceProvider<List<Sp
         return builder.build()
     }
 
-    private inline fun MutableMap<PackIdentifier, List<SpriteSource>>.atlas(id: Identifier, action: MutableList<SpriteSource>.() -> Unit) {
-        val path = PackIdentifier.of(PackType.CLIENT_RESOURCES, id.namespace, "atlases/${id.path}.json")
-        this[path] = mutableListOf<SpriteSource>().apply(action)
-    }
+    private fun atlas(id: Identifier): PackIdentifier =
+        PackIdentifier.of(PackType.CLIENT_RESOURCES, id.namespace, "atlases/${id.path}.json")
 
     private class ProxyOutput(val delegate: MutableSet<Identifier>) : SpriteSource.Output {
         override fun add(identifier: Identifier, discardableLoader: SpriteSource.DiscardableLoader) {
