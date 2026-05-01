@@ -2,6 +2,8 @@ package dev.kikugie.elytratrims.resource.image
 
 import com.mojang.blaze3d.platform.NativeImage
 
+private val offsets = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
+
 @Suppress("NOTHING_TO_INLINE")
 private inline fun NativeImage.get(x: Int, y: Int) =
     /*? if >=1.21.4 {*/ getPixel(x, y)
@@ -127,8 +129,11 @@ value class EditableImage(val native: NativeImage) : AutoCloseable by native, It
         val image = emptyCopy()
         forEachPixel { x, y, color ->
             if (!color.isVisible()) return@forEachPixel
-            forInBox(x - 1, y - 1, x + 2, y + 2) { ox, oy ->
-                if ((ox == 0 && oy == 0) || ox to oy in this && this[ox, oy].isVisible()) return@forInBox
+            for ((dx, dy) in offsets) {
+                val ox = x + dx
+                val oy = y + dy
+
+                if (ox to oy in this && this[ox, oy].isVisible()) continue
                 image[x, y] = edge
                 return@forEachPixel
             }

@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.resource.provider
 
 import com.mojang.blaze3d.platform.NativeImage
+import dev.kikugie.elytratrims.elytratrims
 import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.resource.image.Color4i
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
@@ -19,7 +20,7 @@ import kotlin.jvm.optionals.getOrNull
 
 object ETTextureGenerator : ETResourceProvider {
     private val overlays = listOf("entity/equipment/wings/elytra", "item/elytra", "item/elytra_broken")
-    private val outlines = listOf("elytra", "nether_star", "paper", "leather", "glow_ink_sac")
+    private val outlines = listOf("elytra", "nether_star", "paper", "leather", "glow_ink_sac", "golden_apple", "ominous_trial_key", "trial_key")
 
     override fun collect(lookup: ResourceManager, to: MutableMap<PackIdentifier, InputSupplier>) {
         for (it in overlays) {
@@ -28,8 +29,8 @@ object ETTextureGenerator : ETResourceProvider {
         }
 
         for (it in outlines) {
-            val id = vanilla("gui/sprites/container/slot/$it.png")
-            to[texture(id)] = imageSupplier(lookup, vanilla("item/$it.png")) { use { it.outlined(Color4i(0xFF373737)) } }
+            val id = elytratrims("gui/sprites/container/slot/$it.png")
+            to[texture(id)] = imageSupplier(lookup, vanilla("item/$it.png")) { use { it.outlined(Color4i(0xFF555555)) } }
         }
 
         to[texture(vanilla("trims/items/wings_broken_trim.png"))] = imageSupplier(lookup, vanilla("trims/items/wings_trim.png")) {
