@@ -20,6 +20,7 @@ repositories {
 neoForge {
     version = property("deps.neo-loader") as String
     validateAccessTransformers = true
+    accessTransformers.from(rootProject.file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     if (hasProperty("deps.parchment")) parchment {
         val (mc, ver) = (property("deps.parchment") as String).split(':')
@@ -85,7 +86,7 @@ fletchingTable {
 publishMods {
     val mr = findProperty("publish.modrinth.key") as? String
     val cf = findProperty("publish.curseforge.key") as? String
-    dryRun = mr == null || cf == null
+    dryRun = mr == null || cf == null || sc.properties.getOrNull<Boolean>("publish.dry_run") == true
 
     type = ReleaseType.of(sc.properties["publish.status"])
     file = tasks.jar.map { it.archiveFile.get() }

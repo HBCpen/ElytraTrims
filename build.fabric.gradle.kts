@@ -86,7 +86,7 @@ fletchingTable {
 publishMods {
     val mr = findProperty("publish.modrinth.key") as? String
     val cf = findProperty("publish.curseforge.key") as? String
-    dryRun = mr == null || cf == null
+    dryRun = mr == null || cf == null || sc.properties.getOrNull<Boolean>("publish.dry_run") == true
 
     type = ReleaseType.of(sc.properties["publish.status"])
     file = loomx.modJar.map { it.archiveFile.get() }
