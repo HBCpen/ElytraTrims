@@ -2,6 +2,7 @@ package dev.kikugie.elytratrims.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.CommonsKt;
+import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import kotlin.collections.CollectionsKt;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.SmithingTemplateItem;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.List;
 
+@MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(SmithingTemplateItem.class)
 public class SmithingTemplateItemMixin {
     @Unique

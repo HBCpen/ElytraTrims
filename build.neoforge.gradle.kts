@@ -1,3 +1,5 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     kotlin("jvm")
     id("elytratrims-common")
@@ -85,13 +87,13 @@ publishMods {
     val cf = findProperty("publish.curseforge.key") as? String
     dryRun = mr == null || cf == null
 
-    type = BETA
+    type = ReleaseType.of(sc.properties["publish.status"])
     file = tasks.jar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
     displayName = "Elytra Trims Neoforge ${property("mod.version")} for ${stonecutter.current.version}"
     version = property("mod.version") as String
-    changelog = provider { rootProject.file("CHANGELOG.md").readText() }
+    changelog = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
     modLoaders.add("neoforge")
     
     val versions = sc.properties.raw("mod:releases").to<List<String>>()
