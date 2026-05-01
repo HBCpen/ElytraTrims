@@ -51,22 +51,22 @@ object ETEntrypointImpl {
     }
 
     private fun registerTrimicaCompat() {
-        //? if trimica {
-        /*com.bawnorton.trimica.api.TrimicaApi.getInstance().registerBaseTextureInterceptor(
-            1000, object : com.bawnorton.trimica.api.BaseTextureInterceptor {
-                override fun interceptItemTexture(expectedBaseTexture: Identifier?, itemWithTrim: ItemStack, armourTrim: ArmorTrim): Identifier? =
-                    if (!itemWithTrim.`is`(ETTags.ELYTRA_DECORATABLE)) expectedBaseTexture
-                    else with(armourTrim.pattern.value().assetId) {
-                        if (namespace != "minecraft") vanilla("textures/trims/items/wings_trim.png")
-                        else withPath { "textures/trims/items/wings/$it.png" }
-                    }
-            })
-        *///?}
+//        //? if trimica {
+//        /*com.bawnorton.trimica.api.TrimicaApi.getInstance().registerBaseTextureInterceptor(
+//            1000, object : com.bawnorton.trimica.api.BaseTextureInterceptor {
+//                override fun interceptItemTexture(expectedBaseTexture: Identifier?, itemWithTrim: ItemStack, armourTrim: ArmorTrim): Identifier? =
+//                    if (!itemWithTrim.`is`(ETTags.ELYTRA_DECORATABLE)) expectedBaseTexture
+//                    else with(armourTrim.pattern.value().assetId) {
+//                        if (namespace != "minecraft") vanilla("textures/trims/items/wings_trim.png")
+//                        else withPath { "textures/trims/items/wings/$it.png" }
+//                    }
+//            })
+//        *///?}
     }
 
     private fun registerIrisCompat() {
-        //? if iris {
-        /*IrisApi.getInstance().assignPipeline(ElytraRenderLayers.GATEWAY_MASKED, IrisProgram.ENTITIES_TRANSLUCENT)
-        *///?}
+//        //? if iris {
+//        /*IrisApi.getInstance().assignPipeline(ElytraRenderLayers.GATEWAY_MASKED, IrisProgram.ENTITIES_TRANSLUCENT)
+//        *///?}
     }
 }
