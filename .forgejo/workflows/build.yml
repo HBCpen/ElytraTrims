@@ -11,12 +11,7 @@ jobs:
     steps:
       - name: Setup deps
         run: |
-          apk add --no-cache jq nodejs
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-          token: ${{ secrets.CB_TOKEN }}
+          apk add --no-cache jq
       - name: Extract versions
         id: set-versions
         run: |
@@ -34,14 +29,6 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.setup.outputs.versions) }}
     steps:
-      - name: Install deps
-        run: |
-          apk add --no-cache nodejs tar
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-          token: ${{ secrets.CB_TOKEN }}
       - name: Setup Gradle
         run: |
           chmod +x ./gradlew
