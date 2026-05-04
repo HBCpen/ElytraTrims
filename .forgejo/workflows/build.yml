@@ -11,7 +11,12 @@ jobs:
     steps:
       - name: Setup deps
         run: |
-          apk add --no-cache jq
+          apk add --no-cache jq nodejs
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.CB_TOKEN }}
       - name: Extract versions
         id: set-versions
         run: |
