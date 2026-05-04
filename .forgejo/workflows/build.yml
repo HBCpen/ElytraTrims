@@ -7,7 +7,7 @@ jobs:
     runs-on: kiku-server
     container: alpine
     outputs:
-      versions: ${{ steps.set-versions.outputs.versions }}
+      projects: ${{ steps.set-versions.outputs.projects }}
     steps:
       - name: Setup deps
         run: |
@@ -21,8 +21,8 @@ jobs:
         id: set-versions
         run: |
           set -x
-          VERSIONS=$(jq -c '.versions | map(split(":")[0])' versions.json)
-          echo "versions=$VERSIONS" >> "$FORGEJO_OUTPUT"
+          PROJECTS=$(jq -c '.versions | map(split(":") | { project: .[0], version: .[1] })' versions.json)
+          echo "projects=$PROJECTS" >> "$FORGEJO_OUTPUT"
 
   build:
     name: Build
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ${{ fromJson(needs.setup.outputs.versions) }}
+        include: ${{ fromJson(needs.setup.outputs.projects) }}
     steps:
       - name: Setup deps
         run: |
@@ -47,11 +47,12 @@ jobs:
           chmod +x ./gradlew
       - name: Build version
         env:
-          MATRIX_INSTANCE: ${{ matrix.version }}
+          MATRIX_INSTANCE: ${{ matrix.project }}
+          MATRIX_VERSION: ${{ matrix.version }}
         run: |
           ./gradlew build --stacktrace --no-daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-libs-${{ matrix.version }}
-          path: versions/${{ matrix.version }}/build/libs/*
+          name: build-libs-${{ matrix.project }}
+          path: versions/${{ matrix.project }}/build/libs/*

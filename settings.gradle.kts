@@ -23,7 +23,7 @@ stonecutter {
     create(rootProject) {
         mapBuilds { _, node -> "build.${node.project.substringAfterLast('-')}.gradle.kts" }
 
-        if (matrix != null) version(matrix)
+        if (matrix != null) version(matrix, System.getenv("MATRIX_VERSION"))
         else load(file("versions.json"))
     }
 }
