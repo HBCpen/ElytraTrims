@@ -2,14 +2,13 @@
 
 import me.modmuss50.mpp.ReleaseType
 
-
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.mpp)
+    alias(libs.plugins.loomx)
+    alias(libs.plugins.ft.fabric)
     id("elytratrims-common")
-    id("com.google.devtools.ksp")
-    id("dev.kikugie.loom-back-compat")
-    id("me.modmuss50.mod-publish-plugin")
-    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}"

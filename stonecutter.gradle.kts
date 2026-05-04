@@ -1,10 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.3.20" apply false
-    id("dev.kikugie.stonecutter")
-    id("co.uzzu.dotenv.gradle") version "4.0.0"
-    id("net.neoforged.moddev") version "2.0.140" apply false
-    id("me.modmuss50.mod-publish-plugin") version "1.0.+" apply false
-    id("com.google.devtools.ksp") version "2.3.6" apply false
+    alias(libs.plugins.stonecutter)
 }
 
 val ci: String? = System.getenv("MATRIX_INSTANCE")

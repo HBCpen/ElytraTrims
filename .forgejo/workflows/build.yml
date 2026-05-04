@@ -49,7 +49,7 @@ jobs:
         env:
           MATRIX_INSTANCE: ${{ matrix.version }}
         run: |
-          ./gradlew build --stacktrace
+          ./gradlew build --stacktrace --no-daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:

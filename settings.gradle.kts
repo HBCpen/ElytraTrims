@@ -20,6 +20,10 @@ includeBuild("build-logic")
 stonecutter {
     val matrix = System.getenv("MATRIX_INSTANCE")
 
-    if (matrix != null) create(rootProject) { versions(matrix) }
-    else create(rootProject, file("versions.json"))
+    create(rootProject) {
+        mapBuilds { _, node -> "build.${node.project.substringAfterLast('-')}.gradle.kts" }
+
+        if (matrix != null) version(matrix)
+        else load(file("versions.json"))
+    }
 }
