@@ -100,7 +100,6 @@ inline fun <reified T> fromReifiedType(context: CommandBuildContext): ArgumentTy
 
         Coordinates::class -> BlockPosArgument.blockPos()
         BlockInput::class -> BlockStateArgument.block(context)
-        ChatFormatting::class -> ColorArgument.color()
         Identifier::class -> IdentifierArgument.id()
         ItemInput::class -> ItemArgument.item(context)
         CompoundTag::class -> CompoundTagArgument.compoundTag()

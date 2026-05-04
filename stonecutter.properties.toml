@@ -32,3 +32,12 @@ mod.neoforge.releases=["26.1.2"]
 deps.minecraft="26.1.2"
 deps.fabric.fabric-api="0.146.1+26.1.2"
 deps.neoforge.neo-loader="26.1.2.17-beta"
+
+["26.2"]
+publish.dry_run=true
+
+mod.fabric.compat=">=26.2-alpha.5 <26.3"
+mod.fabric.releases=["26.5-snapshot-5"]
+
+deps.minecraft="26.2-snapshot-5"
+deps.fabric.fabric-api="0.148.0+26.2"

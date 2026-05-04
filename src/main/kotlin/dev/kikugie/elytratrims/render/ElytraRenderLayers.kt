@@ -13,10 +13,13 @@ import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer
 import net.minecraft.client.renderer.rendertype.RenderSetup
 import net.minecraft.client.renderer.rendertype.RenderType
 
-object ElytraRenderLayers {
-    private val SNIPPET_ARGS = arrayOf(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
+//? if >=26.2
+private typealias BindGroups = net.minecraft.client.renderer.BindGroupLayouts
 
-    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline.builder(*SNIPPET_ARGS)
+object ElytraRenderLayers {
+    //? if ~26.1 {
+    /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+        .builder(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
         .withFragmentShader(elytratrims("core/elytratrims_gateway"))
         .withSampler("Sampler0")
@@ -25,6 +28,17 @@ object ElytraRenderLayers {
         .withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS)
         .withCull(false)
         .buildSnippet()
+    *///?} else {
+    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+        .builder(MATRICES_FOG_SNIPPET)
+        .withBindGroupLayout(BindGroups.GLOBALS)
+        .withVertexShader(elytratrims("core/elytratrims_gateway"))
+        .withFragmentShader(elytratrims("core/elytratrims_gateway"))
+        .withBindGroupLayout(BindGroups.SAMPLER0_SAMPLER1_SAMPLER2)
+        .withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS)
+        .withCull(false)
+        .buildSnippet()
+    //?}
 
     @JvmField val GATEWAY_MASKED: RenderPipeline = RenderPipeline.builder(GATEWAY_MASKED_SNIPPET)
         .withLocation(elytratrims("pipeline/elytratrims_gateway"))

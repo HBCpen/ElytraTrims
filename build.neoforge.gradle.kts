@@ -1,7 +1,7 @@
 import me.modmuss50.mpp.ReleaseType
 
 plugins {
-    alias(libs.plugins.kotlin)
+    kotlin("jvm")
     alias(libs.plugins.ksp)
     alias(libs.plugins.mpp)
     alias(libs.plugins.neoforge)
