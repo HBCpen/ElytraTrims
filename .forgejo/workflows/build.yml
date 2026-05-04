@@ -23,7 +23,6 @@ jobs:
           set -x
           PROJECTS=$(jq -c '.versions | map(split(":") | { project: .[0], version: .[1] })' versions.json)
           echo "projects=$PROJECTS" >> "$FORGEJO_OUTPUT"
-
   build:
     name: Build
     needs: setup
