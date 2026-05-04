@@ -34,6 +34,14 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.setup.outputs.versions) }}
     steps:
+      - name: Setup deps
+        run: |
+          apk add --no-cache git jq nodejs
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.CB_TOKEN }}
       - name: Setup Gradle
         run: |
           chmod +x ./gradlew
