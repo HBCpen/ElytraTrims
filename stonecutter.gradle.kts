@@ -4,7 +4,7 @@ plugins {
 }
 
 val ci: String? = System.getenv("MATRIX_INSTANCE")
-if (ci != null) sc active null else stonecutter active "26.2-fabric"
+if (ci != null) sc active null else stonecutter active "26.1-fabric"
 
 stonecutter parameters {
     val (version, loader) = current.project.split('-', limit = 2)
