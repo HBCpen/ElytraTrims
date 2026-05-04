@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Setup deps
         run: |
-          apk add --no-cache jq nodejs
+          apk add --no-cache git jq nodejs
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
