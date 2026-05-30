@@ -5,25 +5,22 @@ import dev.kikugie.elytratrims.mixin.recipe.CauldronInteractionDispatcherAccesso
 import dev.kikugie.elytratrims.resource.ETTags
 import net.minecraft.core.BlockPos
 import net.minecraft.core.cauldron.CauldronInteraction
-import net.minecraft.core.cauldron.CauldronInteractions
 import net.minecraft.stats.Stats
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.LayeredCauldronBlock
 import net.minecraft.world.level.block.state.BlockState
 
+//~ if >=26.1 'CauldronInteraction' -> 'CauldronInteractions'
+private typealias Interactions = net.minecraft.core.cauldron.CauldronInteractions
+
 object ETCauldronInteraction : CauldronInteraction {
+    @Suppress("CAST_NEVER_SUCCEEDS")
     @JvmStatic fun register() {
-        // TODO: Multi-item support
-//        CauldronInteractions.WATER.map.compute(Items.ELYTRA) { _, it ->
-//            if (it == null) this else composeInteractions(it)
-//        }
-        val water = CauldronInteractions.WATER
-        water as CauldronInteractionDispatcherAccessor
+        val water = Interactions.WATER as CauldronInteractionDispatcherAccessor
         water.`elytratrims$put`(ETTags.ELYTRA_DECORATABLE, ::interact)
     }
 

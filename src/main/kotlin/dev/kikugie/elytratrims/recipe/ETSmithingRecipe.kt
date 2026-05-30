@@ -4,14 +4,17 @@ import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import dev.kikugie.elytratrims.mixin.recipe.SmithingTransformRecipeAccessor
+import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.item.equipment.trim.ArmorTrim
+import net.minecraft.world.item.equipment.trim.TrimMaterial
 import net.minecraft.world.item.equipment.trim.TrimMaterials
 import net.minecraft.world.item.equipment.trim.TrimPattern
+import kotlin.jvm.optionals.getOrNull
 import kotlin.random.Random
 
 abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRecipe(
@@ -53,64 +56,47 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
     }
 
     open class FlagRecipe(delegate: SmithingRecipe, private val setter: Boolean, private val flag: ETItemFlag) : ETSmithingRecipe(delegate) {
-        override fun assemble(input: SmithingRecipeInput, /*? if <26 >> ')'*//*provider: net.minecraft.core.HolderLookup.Provider*/): ItemStack =
+        override fun assemble(input: SmithingRecipeInput, /*? if <26 >> ')'*//*provider: HolderLookup.Provider*/): ItemStack =
             input.base.copy().apply { flag[this] = setter }
     }
 
     class PatternsRecipe(delegate: SmithingRecipe, setter: Boolean) : FlagRecipe(delegate, setter, ETItemFlag.BANNER) {
-        override fun assemble(input: SmithingRecipeInput, /*? if <26 >> ')'*//*provider: net.minecraft.core.HolderLookup.Provider*/): ItemStack =
+        override fun assemble(input: SmithingRecipeInput, /*? if <26 >> ')'*//*provider: HolderLookup.Provider*/): ItemStack =
             super.assemble(input, /*? if <26 >> ')'*//*provider*/).apply { patterns.copy(input.template) }
     }
 
     class RandomTrimRecipe(delegate: SmithingRecipe, val consistent: Boolean) : ETSmithingRecipe(delegate) {
         //? if <26 {
-        /*override fun assemble(input: SmithingRecipeInput, provider: net.minecraft.core.HolderLookup.Provider): ItemStack {
-            val material = TrimMaterials.getFromIngredient(provider, input.addition)
-                .getOrElse { return ItemStack.EMPTY }
-
-            val existingTrim = input.base.get(DataComponents.TRIM)
-            val allMaterials = provider.lookupOrThrow(Registries.TRIM_PATTERN)
+        /*override fun assemble(input: SmithingRecipeInput, provider: HolderLookup.Provider): ItemStack {
+            val trim = input.base.get(DataComponents.TRIM)
+            val material = TrimMaterials.getFromIngredient(provider, input.addition).getOrNull()
+                ?: return ItemStack.EMPTY
+            val patterns = provider.lookupOrThrow(Registries.TRIM_PATTERN)
                 .listElements().toList()
 
-            val applied: ArmorTrim
-            val random = if (consistent) Random(seed) else null
-            while (true) {
-                val pattern = random?.let(allMaterials::random)
-                    ?: allMaterials.random()
-                if (pattern != existingTrim?.pattern || material != existingTrim.material) {
-                    applied = ArmorTrim(material, pattern)
-                    break
-                }
-            }
-
-            return input.base.copyWithCount(1).apply {
-                set(DataComponents.TRIM, applied)
-            }
+            return input.base.copyWithCount(1).apply { set(DataComponents.TRIM, getRandomTrim(material, trim, patterns)) }
         }
         *///?} else {
         override fun assemble(input: SmithingRecipeInput): ItemStack {
+            val trim = input.base.get(DataComponents.TRIM)
             val material = input.addition.get(DataComponents.PROVIDES_TRIM_MATERIAL)
                 ?: return ItemStack.EMPTY
-            val existingTrim = input.base.get(DataComponents.TRIM)
-            val allPatterns = BULLSHIT_I_HAVE_TO_DEAL_WITH.get()?.listElements()?.toList()
+            val patterns = BULLSHIT_I_HAVE_TO_DEAL_WITH.get()?.listElements()?.toList()
                 ?: return ItemStack.EMPTY
 
-            val applied: ArmorTrim
-            val random = if (consistent) Random(seed) else null
-            while (true) {
-                val pattern = random?.let(allPatterns::random)
-                    ?: allPatterns.random()
-                if (pattern != existingTrim?.pattern || material != existingTrim.material) {
-                    applied = ArmorTrim(material, pattern)
-                    break
-                }
-            }
-
-            return input.base.copyWithCount(1).apply {
-                set(DataComponents.TRIM, applied)
-            }
+            return input.base.copyWithCount(1).apply { set(DataComponents.TRIM, getRandomTrim(material, trim, patterns)) }
         }
         //?}
+
+        private fun getRandomTrim(material: Holder<TrimMaterial>, trim: ArmorTrim?, variants: List<Holder<TrimPattern>>): ArmorTrim {
+            val rng = if (consistent) Random(seed) else Random
+            repeat(9) {
+                val pattern = variants.random(rng)
+                if (pattern != trim?.pattern || material != trim.material)
+                    return ArmorTrim(material, pattern)
+            }
+            return ArmorTrim(material, variants.random(rng))
+        }
     }
 }
 

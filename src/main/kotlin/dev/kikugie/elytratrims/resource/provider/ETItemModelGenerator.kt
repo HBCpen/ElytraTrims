@@ -14,9 +14,7 @@ import net.minecraft.client.renderer.item.ClientItem
 import net.minecraft.client.renderer.item.ItemModel
 import net.minecraft.client.renderer.item.properties.conditional.Broken
 import net.minecraft.client.renderer.item.properties.conditional.HasComponent
-import net.minecraft.client.renderer.item.properties.select.ComponentContents
 import net.minecraft.client.renderer.item.properties.select.TrimMaterialProperty
-import net.minecraft.client.resources.model.sprite.Material
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -30,6 +28,13 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial
 import java.util.function.BiConsumer
 
 private typealias TrimMaterialKey = ResourceKey<TrimMaterial>
+
+private typealias TrimMaterialId =
+    /*? if >=26.1 {*/net.minecraft.client.resources.model.sprite.Material
+    /*?} else*///Identifier
+
+//~ if >=26.2 'model' -> 'model.sprite'
+private typealias Material = net.minecraft.client.resources.model.Material
 
 object ETItemModelGenerator : ETResourceProvider {
     override fun collect(lookup: ResourceManager, to: MutableMap<PackIdentifier, InputSupplier>) {
@@ -92,10 +97,11 @@ object ETItemModelGenerator : ETResourceProvider {
         ModelLocationUtils.getModelLocation(this, buildSuffix(isBroken, isOverlay, itsMaterial))
 
     private fun Item.texture(isBroken: Boolean = false, isOverlay: Boolean = false, itsMaterial: String = ""): Identifier =
-        TextureMapping.getItemTexture(this, buildSuffix(isBroken, isOverlay, itsMaterial)).sprite
+        TextureMapping.getItemTexture(this, buildSuffix(isBroken, isOverlay, itsMaterial))
+        /*? if >=26.1*/.sprite
 
-    private fun Identifier.toMaterial(): Material =
-        Material(this)
+    private fun Identifier.toMaterial(): TrimMaterialId =
+        /*$ if >=26.1 'Material(this)' else 'this'*/Material(this)
 
     private class LazyModelOutput(val to: MutableMap<PackIdentifier, InputSupplier>) : ItemModelOutput, BiConsumer<Identifier, ModelInstance> {
         override fun accept(item: Item, generator: ItemModel.Unbaked, properties: ClientItem.Properties) {

@@ -15,7 +15,7 @@ stonecutter parameters {
     }
 
     replacements {
-        string(current.parsed > "26.0") {
+        string(current.parsed > "26") {
             replace("accessWidener v2 named", "accessWidener v2 official")
             replace("GuiGraphics", "GuiGraphicsExtractor")
             replace("net.minecraft.client.resources.model.AtlasManager", "net.minecraft.client.resources.model.sprite.AtlasManager")

@@ -1,7 +1,7 @@
 mod.id="elytratrims"
 mod.name="Elytra Trims"
 mod.group="dev.kikugie"
-mod.version="4.8.0"
+mod.version="4.8.1-beta"
 
 deps.fabric-loader="0.19.2"
 deps.fabric-kotlin="1.13.10+kotlin.2.3.20"
@@ -15,29 +15,27 @@ publish.modrinth="XpzGz7KD"
 publish.curseforge="876199"
 
 ["1.21.11"]
-mod.fabric.compat=">1.21.10 <=1.21.11"
-mod.neoforge.compat="[1.21.11, 1.21.11]"
+mod.compat.fabric=">1.21.10 <=1.21.11"
+mod.compat.neoforge="[1.21.11, 1.21.11]"
 mod.releases=["1.21.11"]
 
 deps.minecraft = "1.21.11"
-deps.fabric.fabric-api="0.141.3+1.21.11"
-deps.neoforge.neo-loader="21.11.10-beta"
+deps.fabric-api="0.141.3+1.21.11"
+deps.neo-loader="21.11.10-beta"
 
 ["26.1"]
-mod.fabric.compat="~26.1"
-mod.neoforge.compat="[26.1.2, 26.2)"
-mod.fabric.releases=["26.1", "26.1.1", "26.1.2"]
-mod.neoforge.releases=["26.1.2"]
+mod.compat.fabric="~26.1"
+mod.compat.neoforge="[26.1.2, 26.2)"
+mod.releases.fabric=["26.1", "26.1.1", "26.1.2"]
+mod.releases.neoforge=["26.1.2"]
 
 deps.minecraft="26.1.2"
-deps.fabric.fabric-api="0.146.1+26.1.2"
-deps.neoforge.neo-loader="26.1.2.17-beta"
+deps.fabric-api="0.146.1+26.1.2"
+deps.neo-loader="26.1.2.17-beta"
 
 ["26.2"]
-publish.dry_run=true
+mod.compat.fabric=">=26.2-alpha.8 <26.3"
+mod.releases.fabric=["26.5-pre-2"]
 
-mod.fabric.compat=">=26.2-alpha.5 <26.3"
-mod.fabric.releases=["26.5-snapshot-5"]
-
-deps.minecraft="26.2-snapshot-5"
-deps.fabric.fabric-api="0.148.0+26.2"
+deps.minecraft="26.2-pre-2"
+deps.fabric-api="0.150.1+26.2"

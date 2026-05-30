@@ -1,8 +1,10 @@
 package dev.kikugie.elytratrims.resource.provider
 
 import com.google.gson.JsonParser
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.serialization.Dynamic
 import com.mojang.serialization.JsonOps
+import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
 import dev.kikugie.elytratrims.resource.pack.PackIdentifier
 import dev.kikugie.elytratrims.resource.pack.readJsonWith
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.texture.atlas.SpriteSource
 import net.minecraft.client.renderer.texture.atlas.SpriteSources
 import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister
 import net.minecraft.client.renderer.texture.atlas.sources.PalettedPermutations
+import net.minecraft.client.renderer.texture.atlas.sources.SingleFile
 import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.resources.ResourceManager
@@ -36,6 +39,12 @@ object ETAtlasGenerator : ETResourceProvider {
                 this += sources
             }
         }
+
+        //? if >=26.2
+        //if (RenderSystem.tryGetDevice()?.deviceInfo?.backendName != "Vulkan")
+            to[atlas(vanilla("armor_trims"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
+                listOf(SingleFile(elytratrims("feature/bad_apple")))
+            }
 
         to[atlas(vanilla("items"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
             val textures = listOf(vanilla("trims/items/wings_trim"), vanilla("trims/items/wings_broken_trim"))
