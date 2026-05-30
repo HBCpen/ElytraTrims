@@ -3,7 +3,7 @@ kotlin = "2.3.20"
 ksp = "2.3.7"
 fletching-table = "0.1.0-alpha.23"
 neoforged-moddev = "2.0.140"
-mod-publish-plugin = "1.0.+"
+mod-publish-plugin = "2.0.+"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

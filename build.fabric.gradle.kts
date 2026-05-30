@@ -109,6 +109,7 @@ publishMods {
         projectId = property("publish.curseforge") as String
         accessToken = cf
         minecraftVersions.addAll(versions)
+        client = true
         requires("fabric-api", "fabric-language-kotlin")
     }
 }

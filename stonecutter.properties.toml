@@ -34,6 +34,8 @@ deps.fabric-api="0.146.1+26.1.2"
 deps.neo-loader="26.1.2.17-beta"
 
 ["26.2"]
+publish.status="BETA"
+
 mod.compat.fabric=">=26.2-alpha.8 <26.3"
 mod.releases.fabric=["26.5-pre-2"]
 

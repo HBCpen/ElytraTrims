@@ -110,6 +110,7 @@ publishMods {
         projectId = property("publish.curseforge") as String
         accessToken = cf
         minecraftVersions.addAll(versions)
+        client = true
         optional("kotlin-for-forge", "kotlinlangforge")
     }
 }
