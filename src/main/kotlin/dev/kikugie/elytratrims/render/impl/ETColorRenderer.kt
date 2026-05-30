@@ -12,6 +12,7 @@ import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
 import dev.kikugie.elytratrims.item.invoke
 import dev.kikugie.elytratrims.resource.image.Color4i
+import dev.kikugie.elytratrims.resource.image.blend
 import dev.kikugie.elytratrims.runIf
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -30,14 +31,14 @@ object ETColorRenderer : ETDecorator {
             stack.displayName.string.trim('[', ']') == "jeb_" ->
                 Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
 
-            Color4i(stack.color()).isVisible() ->
+            Color4i(stack.color()).b > 0 ->
                 Color4i(stack.color())
 
             else ->
                 return@with parameters.copy(color = 0)
         }
         parameters.copy(
-            color = Color4i(color).blend(custom).value,
+            color = Color4i(color).blend(custom).packed,
             light = getEffectiveLight(),
             render = RenderTypes.armorTranslucent(elytraSpriteFor(stack.item))
         )

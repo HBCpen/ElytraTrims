@@ -15,6 +15,7 @@ import dev.kikugie.elytratrims.render.RENDER_LOGGER
 import dev.kikugie.elytratrims.render.getSprite
 import dev.kikugie.elytratrims.render.isMissing
 import dev.kikugie.elytratrims.resource.image.Color4i
+import dev.kikugie.elytratrims.resource.image.blend
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.rendertype.RenderTypes
@@ -47,7 +48,7 @@ object ETPatternsRenderer : ETDecorator {
             if (sprite.isMissing && !ETItemFlag.DEBUG[stack]) continue
 
             val blend = Color4i(color).blend(Color4i(it.color))
-            copy(sprite = sprite, color = blend.value, render = RenderTypes.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)).submitToCollector(collector)
+            copy(sprite = sprite, color = blend.packed, render = RenderTypes.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)).submitToCollector(collector)
         }
 
         stack.patterns.isNotEmpty()

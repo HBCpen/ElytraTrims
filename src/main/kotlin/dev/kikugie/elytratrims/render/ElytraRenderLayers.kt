@@ -20,8 +20,8 @@ private typealias Topology =
 //private typealias BindGroups = net.minecraft.client.renderer.BindGroupLayouts
 
 object ElytraRenderLayers {
-    //? if >=26.1 {
-    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+    //? if >=26.2 {
+    /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_FOG_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
         .withFragmentShader(elytratrims("core/elytratrims_gateway"))
@@ -31,8 +31,8 @@ object ElytraRenderLayers {
         .withDepthStencilState(com.mojang.blaze3d.pipeline.DepthStencilState.DEFAULT)
         .withCull(false)
         .buildSnippet()
-    //?} elif >=26.1 {
-    /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+    *///?} elif >=26.1 {
+    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
         .withFragmentShader(elytratrims("core/elytratrims_gateway"))
@@ -42,7 +42,7 @@ object ElytraRenderLayers {
         .withVertexFormat(DefaultVertexFormat.POSITION_TEX, Topology.QUADS)
         .withCull(false)
         .buildSnippet()
-    *///?} elif >=1.21.11 {
+    //?} elif >=1.21.11 {
     /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))

@@ -33,9 +33,6 @@ private typealias TrimMaterialId =
     /*? if >=26.1 {*/net.minecraft.client.resources.model.sprite.Material
     /*?} else*///Identifier
 
-//~ if >=26.2 'model' -> 'model.sprite'
-private typealias Material = net.minecraft.client.resources.model.Material
-
 object ETItemModelGenerator : ETResourceProvider {
     override fun collect(lookup: ResourceManager, to: MutableMap<PackIdentifier, InputSupplier>) {
         val generators: ItemModelGenerators = LazyModelOutput(to).let { ItemModelGenerators(it, it) }
@@ -101,7 +98,7 @@ object ETItemModelGenerator : ETResourceProvider {
         /*? if >=26.1*/.sprite
 
     private fun Identifier.toMaterial(): TrimMaterialId =
-        /*$ if >=26.1 'Material(this)' else 'this'*/Material(this)
+        /*$ if >=26.1 'TrimMaterialId(this)' else 'this'*/TrimMaterialId(this)
 
     private class LazyModelOutput(val to: MutableMap<PackIdentifier, InputSupplier>) : ItemModelOutput, BiConsumer<Identifier, ModelInstance> {
         override fun accept(item: Item, generator: ItemModel.Unbaked, properties: ClientItem.Properties) {
