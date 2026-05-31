@@ -1,8 +1,8 @@
 package dev.kikugie.elytratrims.resource.image
 
 @Suppress("NOTHING_TO_INLINE")
-@JvmInline value class Color4i(val packed: Int) {
-    constructor(value: Int, alpha: Int) : this(value or (alpha shl 24))
+@JvmInline value class Color4i private constructor(val packed: Int) {
+    constructor(value: Int, alpha: Int = 0xFF) : this(value or (alpha shl 24))
     constructor(red: Int, green: Int, blue: Int, alpha: Int = 0xFF) : this(pack(red, green, blue, alpha))
 
     val a: Int inline get() = packed shr 24 and 0xFF
@@ -21,6 +21,8 @@ package dev.kikugie.elytratrims.resource.image
     companion object {
         val TRANSPARENT = Color4i(0)
         val WHITE = Color4i(-1)
+
+        operator fun invoke(value: UInt): Color4i = Color4i(value.toInt())
     }
 }
 

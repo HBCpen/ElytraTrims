@@ -20,7 +20,7 @@ value class EditableImage(val native: NativeImage) : AutoCloseable by native {
     val width: Int inline get() = native.width
     val height: Int inline get() = native.height
 
-    inline operator fun get(x: Int, y: Int): Color4i = Color4i(native.getPixel(x, y))
+    inline operator fun get(x: Int, y: Int): Color4i = Color4i(native.getPixel(x, y).toUInt())
     inline operator fun set(x: Int, y: Int, color: Color4i): Unit = native.setPixel(x, y, color.packed)
 
     inline fun contains(x: Int, y: Int): Boolean = x >= 0 && y >= 0 && x < width && y < height
