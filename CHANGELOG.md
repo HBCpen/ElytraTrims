@@ -1,4 +1,6 @@
 ## Changes
-- Ported to `26.2-pre.2`.
-- Bad Apple animation is disabled when using Vulkan Graphics API
-  because of [MC-307899](https://mojira.dev/MC-307899).
+- Improved performance of image processing.
+
+## Fixes
+- Fixed `jeb_` elytra having broken colours.
+- Fixed banner patterns not wrapping the elytra model.
