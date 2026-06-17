@@ -40,11 +40,9 @@ object ETAtlasGenerator : ETResourceProvider {
             }
         }
 
-        //? if >=26.2
-        //if (RenderSystem.tryGetDevice()?.deviceInfo?.backendName != "Vulkan")
-            to[atlas(vanilla("armor_trims"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
-                listOf(SingleFile(elytratrims("feature/bad_apple")))
-            }
+        to[atlas(vanilla("armor_trims"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
+            listOf(SingleFile(elytratrims("feature/bad_apple")))
+        }
 
         to[atlas(vanilla("items"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
             val textures = listOf(vanilla("trims/items/wings_trim"), vanilla("trims/items/wings_broken_trim"))

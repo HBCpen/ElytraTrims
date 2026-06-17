@@ -21,10 +21,11 @@ loom {
     )
 
     runs.named("client") {
-        ideConfigGenerated(true)
-        runDir = "../../run"
-        if (environment == "client")
-            programArgs("--username=KikuGie")
+        preferGradleTask = true
+        generateRunConfig = true
+        runDirectory = rootProject.file("run")
+        jvmArguments.add("-Dmixin.debug.export=true")
+        programArguments.add("--username=KikuGie")
     }
 }
 

@@ -12,8 +12,8 @@ pluginManagement {
 plugins {
     // For some reason, this plugin is crucial - do not remove
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.9.3"
-    id("dev.kikugie.loom-back-compat") version "0.2.1"
+    id("dev.kikugie.stonecutter") version "0.9.6"
+    id("dev.kikugie.loom-back-compat") version "0.3"
 }
 
 includeBuild("build-logic")
@@ -23,7 +23,7 @@ stonecutter {
     create(rootProject) {
         mapBuilds { _, node -> "build.${node.project.substringAfterLast('-')}.gradle.kts" }
 
-        if (matrix != null) version(matrix, System.getenv("MATRIX_VERSION"))
-        else load(file("versions.json"))
+        if (matrix == null) load(file("versions.json"))
+        else version(matrix, System.getenv("MATRIX_VERSION"))
     }
 }
