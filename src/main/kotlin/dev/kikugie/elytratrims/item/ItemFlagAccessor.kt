@@ -1,8 +1,13 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package dev.kikugie.elytratrims.item
 
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.CustomData
+
+inline infix fun ItemStack.has(flag: ETItemFlag): Boolean = flag[this]
+inline infix fun ItemStack.hasNot(flag: ETItemFlag): Boolean = !flag[this]
 
 fun ItemStack.hasCustomFlag(key: String) =
     get(DataComponents.CUSTOM_DATA)?.copyTag()?.contains(key) == true

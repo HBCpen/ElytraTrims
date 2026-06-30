@@ -1,6 +1,5 @@
 package dev.kikugie.elytratrims.item
 
-import dev.kikugie.elytratrims.api.item.ETItemFlag
 import dev.kikugie.elytratrims.translatable
 import net.minecraft.core.component.DataComponentGetter
 import net.minecraft.core.component.DataComponents

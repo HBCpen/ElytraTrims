@@ -1,20 +1,17 @@
 package dev.kikugie.elytratrims.recipe
 
-import dev.kikugie.elytratrims.api.item.ETItemFlag
+import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import dev.kikugie.elytratrims.mixin.recipe.SmithingTransformRecipeAccessor
 import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
-import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 import net.minecraft.world.item.equipment.trim.TrimMaterial
-import net.minecraft.world.item.equipment.trim.TrimMaterials
 import net.minecraft.world.item.equipment.trim.TrimPattern
-import kotlin.jvm.optionals.getOrNull
 import kotlin.random.Random
 
 abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRecipe(

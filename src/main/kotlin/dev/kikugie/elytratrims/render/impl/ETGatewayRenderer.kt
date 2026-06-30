@@ -1,29 +1,18 @@
 package dev.kikugie.elytratrims.render.impl
 
-import dev.kikugie.elytratrims.api.impl.copy
-import dev.kikugie.elytratrims.api.impl.submitToCollector
-import dev.kikugie.elytratrims.api.item.ETItemFlag
-import dev.kikugie.elytratrims.elytratrims
+import dev.kikugie.elytratrims.item.ETItemFlag
+import dev.kikugie.elytratrims.item.hasNot
 import dev.kikugie.elytratrims.render.ElytraRenderLayers
-import dev.kikugie.elytratrims.api.render.ETDecorator
-import dev.kikugie.elytratrims.api.render.ETRenderMethod
-import dev.kikugie.elytratrims.api.render.ETRenderParameters
-import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.runIf
+import dev.kikugie.elytratrims.render.api.ETDecorator
+import dev.kikugie.elytratrims.render.api.ETParameters
+import dev.kikugie.elytratrims.render.submitModel
 import net.minecraft.client.renderer.SubmitNodeCollector
+import java.util.concurrent.atomic.AtomicInteger
 
 object ETGatewayRenderer : ETDecorator {
-    @JvmField val type: ETRendererID = ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE)
-
-    override fun getType(): ETRendererID = type
-
-    override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
-        if (!ETItemFlag.GATEWAY[stack]) parameters else copy(
-            render = ElytraRenderLayers.GATEWAY(texture)
-        )
-    }
-
-    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
-        runIf(ETItemFlag.GATEWAY[stack]) { submitToCollector(collector) }
+    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+        if (stack hasNot ETItemFlag.GATEWAY) return false
+        collector.submitModel(i, renderType = ElytraRenderLayers.GATEWAY(texture))
+        return true
     }
 }

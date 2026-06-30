@@ -1,7 +1,7 @@
 package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import dev.kikugie.elytratrims.api.item.ETItemFlag;
+import dev.kikugie.elytratrims.item.ETItemFlag;
 import dev.kikugie.elytratrims.render.PreviewElytraAnimationState;
 import dev.kikugie.elytratrims.render.gui.SlotDoohickeyManager;
 import dev.kikugie.elytratrims.resource.ETTags;

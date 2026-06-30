@@ -3,10 +3,11 @@ package dev.kikugie.elytratrims.debug.command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
-import dev.kikugie.elytratrims.api.item.ETItemFlag
+import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
 import dev.kikugie.elytratrims.item.PatternsAccess.Companion.patterns
 import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
+import dev.kikugie.elytratrims.resource.image.toColor4i
 import dev.kikugie.elytratrims.text
 import net.minecraft.commands.SharedSuggestionProvider
 import net.minecraft.commands.arguments.ResourceKeyArgument
@@ -132,7 +133,7 @@ interface ItemModifier<Source> where Source : SharedSuggestionProvider {
 
     class Color<Source>(val color: ArgumentResolver<Source, DyeColor>) : ItemModifier<Source> where Source : SharedSuggestionProvider {
         override fun apply(context:CommandContext<Source>, stack: ItemStack) {
-            stack.color set context.color().textureDiffuseColor
+            stack.color set context.color().textureDiffuseColor.toColor4i()
         }
     }
 

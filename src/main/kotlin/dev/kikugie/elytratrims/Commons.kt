@@ -47,5 +47,3 @@ class MemoizedProperty<T>(private val supplier: () -> T) : ReadOnlyProperty<Any?
         value = null
     }
 }
-
-fun Color4i(dye: DyeColor) = Color4i(dye.textureDiffuseColor)

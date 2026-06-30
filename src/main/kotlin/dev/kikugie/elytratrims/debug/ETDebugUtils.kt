@@ -3,7 +3,7 @@ package dev.kikugie.elytratrims.debug
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
-import dev.kikugie.elytratrims.api.item.ETItemFlag
+import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.debug.command.*
 import dev.kikugie.elytratrims.recipe.ETSmithingRecipe
 import net.minecraft.commands.CommandBuildContext
@@ -98,6 +98,7 @@ private fun interface ArmorStandSummoner {
     class Trimmed(val pattern: Holder<TrimPattern>, val material: Holder<TrimMaterial>) : ArmorStandSummoner {
         override fun summon(source: CommandSourceStack, x: Double, y: Double, z: Double) {
             val pattern = pattern.value().assetId()
+            //~ if >=26.3 'assets().base().suffix()' -> 'paletteId'
             val material = material.value().assets().base().suffix()
             val command =
                 "summon minecraft:armor_stand $x $y $z {equipment: {chest: {components: {\"minecraft:trim\": {pattern: \"$pattern\", material: \"$material\"}}, count: 1, id: \"minecraft:elytra\"}}}"

@@ -2,13 +2,18 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 
+@Suppress("unused")
 class CommonPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = target.configure()
 }
+
+interface NeoForgeMutex : BuildService<BuildServiceParameters.None>
 
 @Suppress("UnstableApiUsage")
 private fun Project.configure() {
@@ -47,5 +52,13 @@ private fun Project.configure() {
         filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
             expand(props)
         }
+    }
+
+    val mutex = gradle.sharedServices.registerIfAbsent("createMinecraftArtifactsMutex", NeoForgeMutex::class.java) {
+        maxParallelUsages.set(1)
+    }
+
+    tasks.named { it == "createMinecraftArtifacts" }.configureEach {
+        usesService(mutex)
     }
 }

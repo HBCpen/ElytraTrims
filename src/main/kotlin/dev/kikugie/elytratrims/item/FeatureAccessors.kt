@@ -3,18 +3,22 @@
 
 package dev.kikugie.elytratrims.item
 
-import dev.kikugie.elytratrims.api.item.ETFeatureAccess
+import dev.kikugie.elytratrims.resource.image.Color4i
+import dev.kikugie.elytratrims.resource.image.isVisible
+import dev.kikugie.elytratrims.resource.image.toUColor4i
 import net.minecraft.core.component.DataComponentType
-import net.minecraft.core.component.DataComponents.TRIM
-import net.minecraft.core.component.DataComponents.DYED_COLOR
-import net.minecraft.core.component.DataComponents.BANNER_PATTERNS
+import net.minecraft.core.component.DataComponents.*
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.item.equipment.trim.ArmorTrim
 import net.minecraft.world.level.block.entity.BannerPatternLayers
 
-inline operator fun <T> ETFeatureAccess<T>.invoke(): T = get()
-inline operator fun <T> ETFeatureAccess<T>.invoke(value: T) = set(value)
+interface ETFeatureAccess<T> {
+    fun get(): T
+    fun set(value: T)
+    fun copy(stack: ItemStack)
+    fun clear()
+}
 
 private fun <T : Any> ItemStack.setOrRemove(type: DataComponentType<T>, value: T?) {
     if (value != null) set(type, value) else remove(type)
@@ -31,15 +35,18 @@ class TrimAccess(private val owner: ItemStack) : ETFeatureAccess<ArmorTrim?> {
     override fun clear() = set(null)
 }
 
-class ColorAccess(private val owner: ItemStack) : ETFeatureAccess<Int> {
+class ColorAccess(private val owner: ItemStack) : ETFeatureAccess<Color4i> {
     companion object {
         val ItemStack.color: ColorAccess
             inline get() = ColorAccess(this)
     }
-    override fun get(): Int = DyedItemColor.getOrDefault(owner, 0)
-    override infix fun set(value: Int) = owner.setOrRemove(DYED_COLOR, value.takeIf { it > 0 }?.let(::DyedItemColor))
-    override infix fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, 0))
-    override fun clear() = set(0)
+    override fun get(): Color4i = DyedItemColor.getOrDefault(owner, 0).toUColor4i()
+    override infix fun set(value: Color4i) {
+        if (!value.isVisible) owner.remove(DYED_COLOR)
+        else owner.set(DYED_COLOR, DyedItemColor(value.packed))
+    }
+    override infix fun copy(stack: ItemStack) = set(DyedItemColor.getOrDefault(stack, 0).toUColor4i())
+    override fun clear() = set(Color4i.TRANSPARENT)
 }
 
 class PatternsAccess(private val owner: ItemStack) : ETFeatureAccess<BannerPatternLayers?>, Collection<BannerPatternLayers.Layer> {

@@ -1,8 +1,10 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package dev.kikugie.elytratrims.resource.image
 
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE") @JvmExposeBoxed @OptIn(ExperimentalStdlibApi::class)
 @JvmInline value class Color4i private constructor(val packed: Int) {
-    constructor(value: Int, alpha: Int = 0xFF) : this(value or (alpha shl 24))
+    constructor(value: Int, alpha: Int = 0xFF) : this((value and 0xFFFFFF) or (alpha shl 24))
     constructor(red: Int, green: Int, blue: Int, alpha: Int = 0xFF) : this(pack(red, green, blue, alpha))
 
     val a: Int inline get() = packed shr 24 and 0xFF
@@ -25,6 +27,16 @@ package dev.kikugie.elytratrims.resource.image
         operator fun invoke(value: UInt): Color4i = Color4i(value.toInt())
     }
 }
+
+inline fun Int.toColor4i(alpha: Int = 0xFF): Color4i = Color4i(this, alpha)
+
+inline fun Int.toUColor4i(): Color4i = Color4i(toUInt())
+
+val Color4i.isVisible: Boolean
+    get() = a >= 0xFF / 20
+
+fun Color4i.withAlpha(alpha: Int): Color4i =
+    Color4i(packed, alpha)
 
 fun Color4i.blend(other: Color4i) = when (packed) {
     0 -> this

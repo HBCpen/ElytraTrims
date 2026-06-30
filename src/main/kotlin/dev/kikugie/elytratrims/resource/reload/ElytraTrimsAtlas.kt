@@ -15,6 +15,6 @@ object ElytraTrimsAtlas {
         net.minecraft.client.resources.model.sprite.AtlasManager.AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
     //?}
 
-    @JvmStatic fun elytraTrimsSheet(decal: Boolean): RenderType =
+    @JvmStatic fun elytraTrimsSheet(): RenderType =
         RenderTypes.armorTranslucent(ATLAS_SHEET)
 }

@@ -1,57 +1,39 @@
 package dev.kikugie.elytratrims.render.impl
 
-import net.minecraft.resources.Identifier
-import dev.kikugie.elytratrims.api.impl.copy
-import dev.kikugie.elytratrims.api.impl.getEffectiveLight
-import dev.kikugie.elytratrims.api.impl.submitToCollector
-import dev.kikugie.elytratrims.api.render.ETDecorator
-import dev.kikugie.elytratrims.api.render.ETRenderMethod
-import dev.kikugie.elytratrims.api.render.ETRenderParameters
-import dev.kikugie.elytratrims.api.render.ETRendererID
-import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
-import dev.kikugie.elytratrims.item.invoke
+import dev.kikugie.elytratrims.render.api.ETDecorator
+import dev.kikugie.elytratrims.render.api.ETParameters
+import dev.kikugie.elytratrims.render.effectiveLightCoords
+import dev.kikugie.elytratrims.render.submitModel
 import dev.kikugie.elytratrims.resource.image.Color4i
-import dev.kikugie.elytratrims.resource.image.blend
-import dev.kikugie.elytratrims.runIf
+import dev.kikugie.elytratrims.resource.image.isVisible
+import dev.kikugie.elytratrims.resource.image.toUColor4i
+import dev.kikugie.elytratrims.resource.image.withAlpha
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.Mth
-import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import java.util.concurrent.atomic.AtomicInteger
 
 object ETColorRenderer : ETDecorator {
-    @JvmField val type: ETRendererID = ETRendererID(elytratrims("color"), ETRenderMethod.POST)
+    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+        val custom = stack.determineColor(color).apply { if (!isVisible) return false }
+        collector.submitModel(i, renderType = stack.getRenderType(), lightCoords = effectiveLightCoords, color = custom)
+        return true
+    }
 
-    override fun getType(): ETRendererID = type
-
-    override fun prepare(parameters: ETRenderParameters): ETRenderParameters = with(parameters) {
-        val custom = when {
-            stack.displayName.string.trim('[', ']') == "jeb_" ->
-                Color4i(Mth.hsvToRgb((Minecraft.getInstance().level?.gameTime ?: 0) % 360 / 360F, 1F, 1F))
-
-            Color4i(stack.color()).b > 0 ->
-                Color4i(stack.color())
-
-            else ->
-                return@with parameters.copy(color = 0)
+    private fun ItemStack.determineColor(base: Color4i): Color4i = when {
+        displayName.string.trim('[', ']') == "jeb_" -> {
+            val time = Minecraft.getInstance().level?.gameTime ?: 0
+            Mth.hsvToArgb(time % 360L / 360F, 1F, 1F, base.a).toUColor4i()
         }
-        parameters.copy(
-            color = Color4i(color).blend(custom).packed,
-            light = getEffectiveLight(),
-            render = RenderTypes.armorTranslucent(elytraSpriteFor(stack.item))
-        )
+        else -> color.get().withAlpha(base.a)
     }
 
-    override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean = with(parameters) {
-        runIf(color != 0) { submitToCollector(collector) }
-    }
-
-    override fun reset() {
-        // TODO: Report missing sprites
-    }
-
-    private fun elytraSpriteFor(item: Item): Identifier = BuiltInRegistries.ITEM.getKey(item)
+    private fun ItemStack.getRenderType(): RenderType = BuiltInRegistries.ITEM.getKey(item)
         .withPath { "textures/entity/equipment/wings/${it}_overlay.png" }
+        .let(RenderTypes::armorTranslucent)
 }

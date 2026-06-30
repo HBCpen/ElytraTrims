@@ -40,7 +40,7 @@ object ETAtlasGenerator : ETResourceProvider {
             }
         }
 
-        to[atlas(vanilla("armor_trims"))] = jsonSupplier(SpriteSources.FILE_CODEC) {
+        to[atlas(ElytraTrimsAtlas.ATLAS_ID)] = jsonSupplier(SpriteSources.FILE_CODEC) {
             listOf(SingleFile(elytratrims("feature/bad_apple")))
         }
 
