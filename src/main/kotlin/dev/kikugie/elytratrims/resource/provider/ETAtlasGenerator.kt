@@ -67,7 +67,7 @@ object ETAtlasGenerator : ETResourceProvider {
 
     fun collectPalettedPermutations(lookup: ResourceManager): Collection<PalettedPermutations> {
         val builder = TrimPermutationsStorage()
-        val sources = lookup.listResourceStacks("atlases") { it.path.endsWith("armor_trims.json") }
+        val sources = lookup.listResourceStacks("atlases") { it.isFile("armor_trims.json") || it.isFile("items.json") }
             .values.asSequence().flatten()
 
         for (res in sources) try {
@@ -88,6 +88,9 @@ object ETAtlasGenerator : ETResourceProvider {
 
     private fun atlas(id: Identifier): PackIdentifier =
         PackIdentifier.of(PackType.CLIENT_RESOURCES, id.namespace, "atlases/${id.path}.json")
+
+    private fun Identifier.isFile(name: String): Boolean =
+        path.substringAfterLast('/') == name
 
     private class ProxyOutput(val delegate: MutableSet<Identifier>) : SpriteSource.Output {
         override fun add(identifier: Identifier, discardableLoader: SpriteSource.DiscardableLoader) {

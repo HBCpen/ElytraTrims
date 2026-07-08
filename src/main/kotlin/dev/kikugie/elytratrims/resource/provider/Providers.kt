@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.Strictness
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
 import com.mojang.serialization.JsonOps
 import dev.kikugie.elytratrims.resource.image.EditableImage
 import dev.kikugie.elytratrims.resource.pack.InputSupplier
@@ -34,5 +35,7 @@ internal fun lazySupplier(provider: () -> String): InputSupplier = object : Inpu
 
 internal fun JsonElement.asString(): String = GSON.toJson(this)
 
-private fun <T> encode(codec: Codec<T>, value: T): String =
-    codec.encodeStart(JsonOps.INSTANCE, value).orThrow.asString()
+private fun <T> encode(codec: Codec<T>, value: T): String = when (val it = codec.encodeStart(JsonOps.INSTANCE, value)) {
+    is DataResult.Success<*> -> it.value.toString()
+    is DataResult.Error<*> -> throw IllegalStateException("Couldn't serialize $value:\n${it.messageSupplier()}")
+}

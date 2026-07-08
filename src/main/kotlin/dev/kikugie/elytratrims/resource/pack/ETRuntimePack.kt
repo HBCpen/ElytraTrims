@@ -9,7 +9,6 @@ import dev.kikugie.elytratrims.resource.provider.ETResourceProvider
 import dev.kikugie.elytratrims.resource.provider.ETTextureGenerator
 import dev.kikugie.elytratrims.then
 import net.minecraft.resources.Identifier
-import net.minecraft.server.packs.AbstractPackResources
 import net.minecraft.server.packs.PackLocationInfo
 import net.minecraft.server.packs.PackResources
 import net.minecraft.server.packs.PackType
@@ -39,7 +38,7 @@ private val CLIENT_GENERATORS: List<ETResourceProvider> = listOf(
 )
 private val SERVER_GENERATORS: List<ETResourceProvider> = emptyList()
 
-class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPackResources(ET_PACK_INFO) {
+class ETRuntimePack(type: PackType, val manager: ResourceManager) : PackResources {
     private val packs get() = manager.listPacks().asSequence()
     private val resources: Map<PackIdentifier, InputSupplier> by lazy { collectResources(type, manager) }
     private val namespaces: Map<PackType, Set<String>> by lazy {
@@ -57,6 +56,8 @@ class ETRuntimePack(type: PackType, val manager: ResourceManager) : AbstractPack
 
     //? if >=26
     private lateinit var metadata: ResourceMetadata
+
+    override fun location(): PackLocationInfo = ET_PACK_INFO
 
     override fun getNamespaces(type: PackType): Set<String> = namespaces[type] ?: emptySet()
 

@@ -23,6 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger
 val TextureAtlasSprite?.isMissing
     get() = this == null || contents().name() == MissingTextureAtlasSprite.getLocation()
 
+val Identifier?.isMissing
+    get() = this == MissingTextureAtlasSprite.getLocation()
+
 fun Identifier.getSprite(identifier: Identifier, reporter: (Identifier) -> Unit): TextureAtlasSprite =
     MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier).also { if (it.isMissing) reporter(identifier) }
 
