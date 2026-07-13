@@ -1,26 +1,18 @@
 package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.kikugie.elytratrims.render.ETRendererKt;
 import dev.kikugie.elytratrims.render.api.ETParameters;
-import dev.kikugie.elytratrims.render.impl.ETBadAppleRenderer;
-import dev.kikugie.elytratrims.render.impl.ETColorRenderer;
-import dev.kikugie.elytratrims.render.impl.ETGatewayRenderer;
-import dev.kikugie.elytratrims.render.impl.ETPatternsRenderer;
+import dev.kikugie.elytratrims.render.impl.*;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -98,95 +90,24 @@ public class ElytraRendererMixin {
         return overrideRef.get() ? 0 : original;
     }
 
-    @Inject(
-        method = RENDER_METHOD,
-        at = @At(value = "TAIL"),
-        cancellable = true
-    )
-    private <S> void invokeETRenderers(
-        EquipmentClientInfo.LayerType layerType,
-        ResourceKey<EquipmentAsset> equipmentAssetId,
-        Model<? super S> model,
-        S state,
-        ItemStack itemStack,
-        PoseStack poseStack,
-        SubmitNodeCollector submitNodeCollector,
-        int lightCoords,
-        @Nullable Identifier playerTextureOverride,
-        int outlineColor,
-        int oldOrder,
-        CallbackInfo ci,
+    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
+    private Object cancelTrimRender(
+        Object original,
+        @Local(argsOnly = true) SubmitNodeCollector submitNodeCollector,
         @Local(name = "nextOrder") LocalIntRef nextOrder,
         @Share("parameters") LocalRef<ETParameters> paramsRef
     ) {
         var params = paramsRef.get();
-        if (params == null || layerType != EquipmentClientInfo.LayerType.WINGS)
-            return;
+        if (params == null) return original;
+
         var order = new AtomicInteger(nextOrder.get());
         var proceed = true;
         proceed = ETBadAppleRenderer.INSTANCE.render(params, submitNodeCollector, order);
         proceed = ETColorRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
         proceed = ETPatternsRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
+        proceed = ETTrimsRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
 
-        if (!proceed) ci.cancel();
         nextOrder.set(order.get());
+        return null;
     }
-    
-    //? if >=26.3 {
-    /*@WrapWithCondition(
-        method = RENDER_METHOD,
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;" +
-                "Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;" +
-                "IIILnet/minecraft/client/renderer/texture/UvMapping;" +
-                "ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
-            ordinal = 2
-        )
-    )
-    private <S> boolean cancelMissingTrimRender(
-        OrderedSubmitNodeCollector instance,
-        Model<S> model,
-        Object o,
-        PoseStack poseStack,
-        RenderType renderType,
-        int a,
-        int b,
-        int c,
-        net.minecraft.client.renderer.texture.UvMapping uvMapping,
-        int d,
-        ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
-        @Local(name = "textureHandle") net.minecraft.client.resources.palette.PalettedTextureManager.Handle textureHandle
-    ) {
-        return !ETRendererKt.isMissing(textureHandle.textureLocation());
-    }
-    *///?} else {
-    @WrapWithCondition(
-        method = RENDER_METHOD,
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;" +
-                "Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;" +
-                "IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;" +
-                "ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
-            ordinal = 2
-        )
-    )
-    private <S> boolean cancelMissingTrimRender(
-        OrderedSubmitNodeCollector instance,
-        Model<? super S> model,
-        S s,
-        PoseStack poseStack,
-        RenderType renderType,
-        int a,
-        int b,
-        int c,
-        net.minecraft.client.renderer.texture.TextureAtlasSprite textureAtlasSprite,
-        int i,
-        ModelFeatureRenderer.CrumblingOverlay crumblingOverlay,
-        @Local(name = "sprite") net.minecraft.client.renderer.texture.TextureAtlasSprite sprite
-    ) {
-        return !ETRendererKt.isMissing(sprite.contents().name());
-    }
-    //?}
 }

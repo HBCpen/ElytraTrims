@@ -34,14 +34,11 @@ object ETAtlasGenerator : ETResourceProvider {
 
         to[atlas(ElytraTrimsAtlas.ATLAS_ID)] = jsonSupplier(SpriteSources.FILE_CODEC) {
             buildList {
+                this += SingleFile(elytratrims("feature/bad_apple"))
                 this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
                 this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
                 this += sources
             }
-        }
-
-        to[atlas(ElytraTrimsAtlas.ATLAS_ID)] = jsonSupplier(SpriteSources.FILE_CODEC) {
-            listOf(SingleFile(elytratrims("feature/bad_apple")))
         }
 
         to[atlas(vanilla("items"))] = jsonSupplier(SpriteSources.FILE_CODEC) {

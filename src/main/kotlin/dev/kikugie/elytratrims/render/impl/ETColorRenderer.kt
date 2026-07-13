@@ -30,7 +30,11 @@ object ETColorRenderer : ETDecorator {
             val time = Minecraft.getInstance().level?.gameTime ?: 0
             Mth.hsvToArgb(time % 360L / 360F, 1F, 1F, base.a).toUColor4i()
         }
-        else -> color.get().withAlpha(base.a)
+
+        else -> color.get().let {
+            if (it.isVisible) it.withAlpha(base.a)
+            else Color4i.TRANSPARENT
+        }
     }
 
     private fun ItemStack.getRenderType(): RenderType = BuiltInRegistries.ITEM.getKey(item)

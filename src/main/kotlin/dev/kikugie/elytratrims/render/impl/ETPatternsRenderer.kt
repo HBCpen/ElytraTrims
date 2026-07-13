@@ -18,10 +18,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
 import net.minecraft.resources.Identifier
 import net.minecraft.world.level.block.entity.BannerPattern
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
 
 object ETPatternsRenderer : ETDecorator {
-    private val reported = mutableSetOf<Identifier>()
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val reported: MutableSet<Identifier> = mutableSetOf()
     private val patterns: Memoizer<Pair<Holder<BannerPattern>, Boolean>, TextureAtlasSprite> = memoize { (pattern, banner) ->
         ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(pattern.value().assetId, banner), ::report)
     }
@@ -42,7 +45,7 @@ object ETPatternsRenderer : ETDecorator {
     }
 
     private fun report(id: Identifier) {
-        if (reported.add(id)) RENDER_LOGGER.warn("Missing pattern texture: $id")
+        if (reported.add(id)) logger.warn("Missing pattern texture: $id")
     }
 
     private fun texture(asset: Identifier, banner: Boolean): Identifier =

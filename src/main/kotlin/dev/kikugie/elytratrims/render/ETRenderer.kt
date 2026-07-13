@@ -14,11 +14,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.resources.Identifier
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
-
-@JvmField val RENDER_LOGGER: Logger = LoggerFactory.getLogger("ETRenderer")
 
 val TextureAtlasSprite?.isMissing
     get() = this == null || contents().name() == MissingTextureAtlasSprite.getLocation()
