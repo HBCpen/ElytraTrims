@@ -23,6 +23,7 @@ loom {
     runs.named("client") {
         preferGradleTask = true
         generateRunConfig = true
+        ideConfigFolder = "Fabric"
         runDirectory = rootProject.file("run")
         jvmArguments.add("-Dmixin.debug.export=true")
         programArguments.add("--username=KikuGie")
@@ -44,7 +45,7 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
+    fapi("command-api-v2", "resource-loader-v1", "data-generation-api-v1", "transitive-access-wideners-v1", "registry-sync-v0")
 }
 
 stonecutter {
@@ -63,6 +64,7 @@ tasks {
     processResources {
         exclude("**/neoforge.mods.toml", "gen.sh")
     }
+
     register<Copy>("buildAndCollect") {
         group = "build"
         from(loomx.modJar.map { it.archiveFile })
@@ -78,11 +80,6 @@ fletchingTable {
 
     lang.register("main") {
         patterns.add("assets/elytratrims/lang/*.yml")
-    }
-
-    fabric {
-        entrypointMappings.put("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
-        entrypointMappings.put("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
     }
 }
 

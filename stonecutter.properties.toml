@@ -45,8 +45,10 @@ deps.fabric-api="0.152.1+26.2"
 deps.neo-loader="26.2.0.1-beta"
 
 ["26.3"]
-mod.compat.fabric=">=26.1-alpha.1 <26.4"
-mod.releases=["26.3-snapshot-1"]
+publish.status="ALPHA"
 
-deps.minecraft="26.3-snapshot-1"
-deps.fabric-api="0.153.1+26.3"
+mod.compat.fabric=">=26.1-alpha.1 <26.4"
+mod.releases=["26.3-snapshot-3"]
+
+deps.minecraft="26.3-snapshot-3"
+deps.fabric-api="0.154.2+26.3"
