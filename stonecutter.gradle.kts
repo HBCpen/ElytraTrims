@@ -4,7 +4,7 @@ plugins {
 }
 
 val ci: String? = System.getenv("MATRIX_INSTANCE")
-if (ci != null) sc active null else stonecutter active "26.1-fabric"
+if (ci != null) sc active null else stonecutter active "26.3-fabric"
 
 stonecutter parameters {
     val (version, loader) = current.project.split('-', limit = 2)
@@ -19,6 +19,12 @@ stonecutter parameters {
             replace("accessWidener v2 named", "accessWidener v2 official")
             replace("GuiGraphics", "GuiGraphicsExtractor")
             replace("net.minecraft.client.resources.model.AtlasManager", "net.minecraft.client.resources.model.sprite.AtlasManager")
+        }
+
+        string(current.parsed >= "26.3") {
+            replace("com.mojang.blaze3d.pipeline", "com.mojang.renderpearl.api.pipeline")
+            replace("com/mojang/blaze3d/pipeline", "com/mojang/renderpearl/api/pipeline")
+            replace("com.mojang.blaze3d.PrimitiveTopology", "com.mojang.renderpearl.api.pipeline.PrimitiveTopology")
         }
     }
 }

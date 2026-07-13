@@ -38,7 +38,8 @@ object ETPatternsRenderer : ETDecorator {
             if (sprite.isMissing && stack hasNot ETItemFlag.DEBUG) continue
 
             val color = layer.color.textureDiffuseColor.toColor4i(color.a)
-            val renderType = RenderTypes.armorTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)
+            //~ if >=26.3 armorTranslucent -> armorCutoutNoCull
+            val renderType = RenderTypes.armorCutoutNoCull(ElytraTrimsAtlas.ATLAS_SHEET)
             collector.submitModel(i, renderType = renderType, lightCoords = effectiveLightCoords, sprite = sprite, color = color)
         }
         return true

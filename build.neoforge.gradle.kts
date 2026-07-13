@@ -20,7 +20,10 @@ repositories {
 neoForge {
     version = property("deps.neo-loader") as String
     validateAccessTransformers = true
-    accessTransformers.from(rootProject.file("src/main/resources/META-INF/accesstransformer.cfg"))
+    accessTransformers.from(sc.process(
+        rootProject.file("src/main/resources/META-INF/accesstransformer.cfg"),
+        "build/processed/elytratrims.accesstransformer.cfg"
+    ))
 
     if (hasProperty("deps.parchment")) parchment {
         val (mc, ver) = (property("deps.parchment") as String).split(':')

@@ -39,5 +39,6 @@ object ETColorRenderer : ETDecorator {
 
     private fun ItemStack.getRenderType(): RenderType = BuiltInRegistries.ITEM.getKey(item)
         .withPath { "textures/entity/equipment/wings/${it}_overlay.png" }
-        .let(RenderTypes::armorTranslucent)
+        //~ if >=26.3 armorTranslucent -> armorCutoutNoCull
+        .let(RenderTypes::armorCutoutNoCull)
 }

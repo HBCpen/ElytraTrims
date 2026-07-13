@@ -16,5 +16,6 @@ object ElytraTrimsAtlas {
     //?}
 
     @JvmStatic fun elytraTrimsSheet(): RenderType =
-        RenderTypes.armorTranslucent(ATLAS_SHEET)
+        //~ if >=26.3 armorTranslucent -> armorCutoutNoCull
+        RenderTypes.armorCutoutNoCull(ATLAS_SHEET)
 }

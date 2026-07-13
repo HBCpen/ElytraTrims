@@ -22,8 +22,11 @@ import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -39,36 +42,68 @@ public class ElytraRendererMixin {
     @Unique
     private static final String RENDER_METHOD =
         "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
-        "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/world/item/ItemStack;" +
-        "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V";
+            "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/world/item/ItemStack;" +
+            "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V";
+
+    @ModifyArg(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;order(I)Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;"), index = 0)
+    private int storeGlobalRenderOrder(int order, @Share("elytratrims$order") LocalIntRef orderRef) {
+        orderRef.set(order + 1);
+        return order;
+    }
+
+    @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
+    private void configureElytraTrimsParameters(
+        EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId, Model<?> model, Object state,
+        ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords,
+        @Nullable Identifier playerTextureOverride, int outlineColor, int order, CallbackInfo ci,
+        @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
+        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
+        @Share("elytratrims$order") LocalIntRef orderRef
+    ) {
+        ETParameters params = buildParameters(layerType, layers, model, state, itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor);
+        paramsRef.set(params);
+        orderRef.set(order);
+    }
+
+    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+    private Iterator<Object> renderElytraTrimsDecorationsPre(
+        Iterator<Object> original,
+        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
+        @Share("elytratrims$order") LocalIntRef orderRef,
+        @Local(argsOnly = true) SubmitNodeCollector collector,
+        @Local(name = "hasTrim") LocalBooleanRef hasTrimRef
+    ) {
+        ETParameters params = paramsRef.get();
+        if (params == null) return original;
+
+        AtomicInteger order = new AtomicInteger(orderRef.get());
+        boolean overwriteOriginal = renderReplDecorations(collector, params, order);
+
+        orderRef.set(order.get());
+        hasTrimRef.set(false);
+
+        return overwriteOriginal ? Collections.emptyIterator() : original;
+    }
+
+    @Inject(method = RENDER_METHOD, at = @At("RETURN"))
+    private void renderElytraTrimsDecorationsPost(
+        CallbackInfo ci,
+        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
+        @Share("elytratrims$order") LocalIntRef orderRef,
+        @Local(argsOnly = true) SubmitNodeCollector collector
+    ) {
+        ETParameters params = paramsRef.get();
+        if (params == null) return;
+
+        AtomicInteger order = new AtomicInteger(orderRef.get());
+        renderPostDecorations(collector, params, order);
+    }
 
     @Unique
-    private static final String CANCEL_METHOD =
-        /*? if fabric {*/"Lnet/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer;getColorForLayer(Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;I)I";
-        /*?} else*///"Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getArmorLayerTintColor(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;II)I";
+    private ETParameters buildParameters(EquipmentClientInfo.LayerType type, List<EquipmentClientInfo.Layer> layers, Model<?> model, Object state, ItemStack itemStack, PoseStack poseStack, Identifier playerTextureOverride, int lightCoords, int outlineColor) {
+        if (type != EquipmentClientInfo.LayerType.WINGS || layers.isEmpty()) return null;
 
-    @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private <S> void invokeETOverrideRenderers(
-        EquipmentClientInfo.LayerType layerType,
-        ResourceKey<EquipmentAsset> equipmentAssetId,
-        Model<? super S> model,
-        S state,
-        ItemStack itemStack,
-        PoseStack poseStack,
-        SubmitNodeCollector submitNodeCollector,
-        int lightCoords,
-        @Nullable Identifier playerTextureOverride,
-        int outlineColor,
-        int oldOrder,
-        CallbackInfo ci,
-        @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
-        @Local(name = "nextOrder") LocalIntRef nextOrder,
-        @Share("parameters") LocalRef<ETParameters> paramsRef,
-        @Share("overridden") LocalBooleanRef overrideRef
-    ) {
-        if (layerType != EquipmentClientInfo.LayerType.WINGS) return;
-        var order = new AtomicInteger(nextOrder.get());
-        var params = new ETParameters();
+        ETParameters params = new ETParameters();
         params.model = model;
         params.state = state;
         params.stack = itemStack;
@@ -76,38 +111,27 @@ public class ElytraRendererMixin {
         params.lightCoords = lightCoords;
         params.outlineColour = outlineColor;
         params.texture = !layers.getFirst().usePlayerTexture() || playerTextureOverride == null
-            ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(layerType, layers.getFirst()))
+            ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(type, layers.getFirst()))
             : playerTextureOverride;
-
-        paramsRef.set(params);
-        if (ETGatewayRenderer.INSTANCE.render(params, submitNodeCollector, order))
-            overrideRef.set(true);
-        nextOrder.set(order.get());
+        return params;
     }
 
-    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = CANCEL_METHOD))
-    private int cancelDefaultRenderer(int original, @Share("overridden") LocalBooleanRef overrideRef) {
-        return overrideRef.get() ? 0 : original;
+    @Unique
+    private static boolean renderReplDecorations(SubmitNodeCollector collector, ETParameters parameters, AtomicInteger order) {
+        if (collector == null || parameters == null || order == null) return false;
+
+        return ETGatewayRenderer.INSTANCE.render(parameters, collector, order);
     }
 
-    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
-    private Object cancelTrimRender(
-        Object original,
-        @Local(argsOnly = true) SubmitNodeCollector submitNodeCollector,
-        @Local(name = "nextOrder") LocalIntRef nextOrder,
-        @Share("parameters") LocalRef<ETParameters> paramsRef
-    ) {
-        var params = paramsRef.get();
-        if (params == null) return original;
+    @Unique
+    private static boolean renderPostDecorations(SubmitNodeCollector collector, ETParameters parameters, AtomicInteger order) {
+        if (collector == null || parameters == null || order == null) return false;
 
-        var order = new AtomicInteger(nextOrder.get());
-        var proceed = true;
-        proceed = ETBadAppleRenderer.INSTANCE.render(params, submitNodeCollector, order);
-        proceed = ETColorRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
-        proceed = ETPatternsRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
-        proceed = ETTrimsRenderer.INSTANCE.render(params, submitNodeCollector, order) && proceed;
-
-        nextOrder.set(order.get());
-        return null;
+        boolean rendered;
+        rendered = ETBadAppleRenderer.INSTANCE.render(parameters, collector, order);
+        rendered = ETColorRenderer.INSTANCE.render(parameters, collector, order) || rendered;
+        rendered = ETPatternsRenderer.INSTANCE.render(parameters, collector, order) || rendered;
+        rendered = ETTrimsRenderer.INSTANCE.render(parameters, collector, order) || rendered;
+        return rendered;
     }
 }

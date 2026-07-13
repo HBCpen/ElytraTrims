@@ -2,6 +2,7 @@ package dev.kikugie.elytratrims.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import dev.kikugie.elytratrims.MINECRAFT
+import dev.kikugie.elytratrims.SpriteMapping
 import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.item.has
 import dev.kikugie.elytratrims.render.api.ETParameters
@@ -39,9 +40,8 @@ inline fun SubmitNodeCollector.submitModel(
     lightCoords: Int = params.lightCoords,
     overlay: Int = OverlayTexture.NO_OVERLAY,
     color: Color4i = params.color,
-    sprite: TextureAtlasSprite? = null,
+    sprite: SpriteMapping? = null,
     outlineColour: Int = params.outlineColour,
-    crumblingOverlay: CrumblingOverlay? = params.crumblingOverlay,
 ): Unit = order(order.getAndIncrement()).submitModel(
     model as Model<Any>,
     state,
@@ -52,5 +52,5 @@ inline fun SubmitNodeCollector.submitModel(
     color.packed,
     sprite,
     outlineColour,
-    crumblingOverlay
+    /*? if <26.3*///params.crumblingOverlay,
 )

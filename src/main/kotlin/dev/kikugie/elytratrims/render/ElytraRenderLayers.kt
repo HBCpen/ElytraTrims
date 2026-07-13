@@ -1,6 +1,6 @@
 package dev.kikugie.elytratrims.render
 
-import com.mojang.blaze3d.pipeline.RenderPipeline
+import com.mojang.renderpearl.api.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.resources.Identifier
 import dev.kikugie.elytratrims.Memoizer
@@ -13,26 +13,28 @@ import net.minecraft.client.renderer.rendertype.RenderSetup
 import net.minecraft.client.renderer.rendertype.RenderType
 
 private typealias Topology =
-    /*? if >=26.2 {*//*com.mojang.blaze3d.PrimitiveTopology
-    *//*?} else*/com.mojang.blaze3d.vertex.VertexFormat.Mode
+    /*? if >=26.2 {*/com.mojang.renderpearl.api.pipeline.PrimitiveTopology
+    /*?} else*///com.mojang.blaze3d.vertex.VertexFormat.Mode
 
 //? if >=26.2
-//private typealias BindGroups = net.minecraft.client.renderer.BindGroupLayouts
+private typealias BindGroups = net.minecraft.client.renderer.BindGroupLayouts
 
 object ElytraRenderLayers {
     //? if >=26.2 {
-    /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_FOG_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
         .withFragmentShader(elytratrims("core/elytratrims_gateway"))
         .withBindGroupLayout(BindGroups.SAMPLER0_SAMPLER1_SAMPLER2)
         .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX)
         .withPrimitiveTopology(Topology.QUADS)
-        .withDepthStencilState(com.mojang.blaze3d.pipeline.DepthStencilState.DEFAULT)
+        .withDepthStencilState(com.mojang.renderpearl.api.pipeline.DepthStencilState.DEFAULT)
+        //? if >=26.3
+        .withColorTargetState(com.mojang.renderpearl.api.pipeline.ColorTargetState.DEFAULT)
         .withCull(false)
         .buildSnippet()
-    *///?} elif >=26.1 {
-    @JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
+    //?} elif >=26.1 {
+    /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))
         .withFragmentShader(elytratrims("core/elytratrims_gateway"))
@@ -42,7 +44,7 @@ object ElytraRenderLayers {
         .withVertexFormat(DefaultVertexFormat.POSITION_TEX, Topology.QUADS)
         .withCull(false)
         .buildSnippet()
-    //?} elif >=1.21.11 {
+    *///?} elif >=1.21.11 {
     /*@JvmField val GATEWAY_MASKED_SNIPPET: RenderPipeline.Snippet = RenderPipeline
         .builder(MATRICES_PROJECTION_SNIPPET, ENTITY_SNIPPET, FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader(elytratrims("core/elytratrims_gateway"))

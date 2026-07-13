@@ -19,5 +19,6 @@ class ETParameters {
     var color: Color4i = Color4i.WHITE
     @JvmField var lightCoords: Int = 0
     @JvmField var outlineColour: Int = 0
-    @JvmField var crumblingOverlay: CrumblingOverlay? = null
+    //? if <26.3
+    //@JvmField var crumblingOverlay: CrumblingOverlay? = null
 }

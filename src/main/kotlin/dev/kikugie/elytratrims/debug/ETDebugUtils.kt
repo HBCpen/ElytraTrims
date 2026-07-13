@@ -99,7 +99,7 @@ private fun interface ArmorStandSummoner {
         override fun summon(source: CommandSourceStack, x: Double, y: Double, z: Double) {
             val pattern = pattern.value().assetId()
             //~ if >=26.3 'assets().base().suffix()' -> 'paletteId'
-            val material = material.value().assets().base().suffix()
+            val material = material.value().paletteId
             val command =
                 "summon minecraft:armor_stand $x $y $z {equipment: {chest: {components: {\"minecraft:trim\": {pattern: \"$pattern\", material: \"$material\"}}, count: 1, id: \"minecraft:elytra\"}}}"
             source.dispatcher().execute(command, source)
