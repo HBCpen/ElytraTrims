@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class RecipeManagerMixin {
     @Unique
     private static final String RECIPE_LAMBDA =
-        //$ if fabric '"lambda$prepare$0";' else '"lambda$prepare$1"'
+        //$ if fabric '"lambda$prepare$0";' else '"lambda$prepare$1;"'
         "lambda$prepare$0";
 
     @SuppressWarnings("unchecked")
