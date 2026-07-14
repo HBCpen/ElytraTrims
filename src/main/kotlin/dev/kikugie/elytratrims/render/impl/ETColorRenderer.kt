@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack
 import java.util.concurrent.atomic.AtomicInteger
 
 object ETColorRenderer : ETDecorator {
-    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+    override fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean = with(parameters) {
         val custom = stack.determineColor(color).apply { if (!isVisible) return false }
         collector.submitModel(i, renderType = stack.getRenderType(), lightCoords = effectiveLightCoords, color = custom)
         return true

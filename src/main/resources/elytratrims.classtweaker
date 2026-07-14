@@ -6,3 +6,7 @@ accessible class net/minecraft/client/renderer/entity/layers/EquipmentLayerRende
 
 accessible method com/mojang/blaze3d/platform/NativeImage writeToChannel (Ljava/nio/channels/WritableByteChannel;)Z
 accessible method net/minecraft/world/item/SmithingTemplateItem createTrimmableMaterialIconList ()Ljava/util/List;
+
+accessible field net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer layerTextureLookup Ljava/util/function/Function;
+#? if >=26.3
+accessible field net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer trimTextureLookup Ljava/util/function/Function;

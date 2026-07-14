@@ -4,5 +4,5 @@ import net.minecraft.client.renderer.SubmitNodeCollector
 import java.util.concurrent.atomic.AtomicInteger
 
 interface ETDecorator {
-    fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean
+    fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean
 }

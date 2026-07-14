@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.kikugie.elytratrims.render.ETRenderingActionsKt;
 import dev.kikugie.elytratrims.render.api.ETParameters;
 import dev.kikugie.elytratrims.render.impl.*;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
@@ -35,10 +36,6 @@ import java.util.function.Function;
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
-    @Shadow @Final private Function<EquipmentLayerRenderer.LayerTextureKey, Identifier> layerTextureLookup;
-
-    //? if >=26.3
-    @Shadow @Final private Function<EquipmentLayerRenderer.TrimTextureKey, net.minecraft.client.resources.palette.PalettedTextureManager.Handle> trimTextureLookup;
 
     @Unique
     private static final String RENDER_METHOD =
@@ -64,7 +61,10 @@ public class ElytraRendererMixin {
         @Share("elytratrims$order") LocalIntRef orderRef
     ) {
         //~ if >=26.3 null -> equipmentInfo
-        ETParameters params = buildParameters(layerType, layers, equipmentInfo, model, state, itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor);
+        ETParameters params = ETRenderingActionsKt.buildParameters(
+            (EquipmentLayerRenderer) (Object) this, layerType, layers, equipmentInfo, model, state,
+            itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor
+        );
         paramsRef.set(params);
         orderRef.set(order);
     }
@@ -82,7 +82,7 @@ public class ElytraRendererMixin {
         if (params == null) return original;
 
         AtomicInteger order = new AtomicInteger(orderRef.get());
-        boolean overwriteOriginal = renderReplDecorations(collector, params, order);
+        boolean overwriteOriginal = ETRenderingActionsKt.renderReplDecorations(collector, params, order);
 
         orderRef.set(order.get());
         //? if >=26.3
@@ -109,53 +109,6 @@ public class ElytraRendererMixin {
         if (params == null) return;
 
         AtomicInteger order = new AtomicInteger(orderRef.get());
-        renderPostDecorations(collector, params, order);
-    }
-
-    @Unique
-    private ETParameters buildParameters(
-        EquipmentClientInfo.LayerType type, List<EquipmentClientInfo.Layer> layers, EquipmentClientInfo info,
-        Model<?> model, Object state, ItemStack itemStack, PoseStack poseStack, Identifier playerTextureOverride,
-        int lightCoords, int outlineColor
-    ) {
-        if (type != EquipmentClientInfo.LayerType.WINGS || layers.isEmpty()) return null;
-
-        ETParameters params = new ETParameters();
-        params.model = model;
-        params.state = state;
-        params.stack = itemStack;
-        params.matrices = poseStack;
-        params.lightCoords = lightCoords;
-        params.outlineColour = outlineColor;
-        params.texture = !layers.getFirst().usePlayerTexture() || playerTextureOverride == null
-            ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(type, layers.getFirst()))
-            : playerTextureOverride;
-
-        //? if >=26.3 {
-        var trim = itemStack.get(net.minecraft.core.component.DataComponents.TRIM);
-        if (trim != null) params.trimTextureHandle = trimTextureLookup
-            .apply(new EquipmentLayerRenderer.TrimTextureKey(trim, type, info));
-        //?}
-
-        return params;
-    }
-
-    @Unique
-    private static boolean renderReplDecorations(SubmitNodeCollector collector, ETParameters parameters, AtomicInteger order) {
-        if (collector == null || parameters == null || order == null) return false;
-
-        return ETGatewayRenderer.INSTANCE.render(parameters, collector, order);
-    }
-
-    @Unique
-    private static boolean renderPostDecorations(SubmitNodeCollector collector, ETParameters parameters, AtomicInteger order) {
-        if (collector == null || parameters == null || order == null) return false;
-
-        boolean rendered;
-        rendered = ETBadAppleRenderer.INSTANCE.render(parameters, collector, order);
-        rendered = ETColorRenderer.INSTANCE.render(parameters, collector, order) || rendered;
-        rendered = ETPatternsRenderer.INSTANCE.render(parameters, collector, order) || rendered;
-        rendered = ETTrimsRenderer.INSTANCE.render(parameters, collector, order) || rendered;
-        return rendered;
+        ETRenderingActionsKt.renderPostDecorations(collector, params, order);
     }
 }

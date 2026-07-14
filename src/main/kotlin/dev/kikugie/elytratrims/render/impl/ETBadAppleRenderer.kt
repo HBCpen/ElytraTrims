@@ -21,7 +21,7 @@ object ETBadAppleRenderer : ETDecorator {
     private val sprite by lazy { ElytraTrimsAtlas.ATLAS_ID.getSprite(elytratrims("feature/bad_apple"), ::report) }
     private var reported: Boolean = false
 
-    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+    override fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean = with(parameters) {
         if (stack hasNot ETItemFlag.BAD_APPLE || sprite.isMissing && stack hasNot ETItemFlag.DEBUG) return false
         collector.submitModel(i, renderType = ElytraTrimsAtlas.elytraDecorations(), lightCoords = effectiveLightCoords, sprite = sprite)
         return true

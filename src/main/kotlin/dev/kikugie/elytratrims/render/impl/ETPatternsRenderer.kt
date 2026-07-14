@@ -28,7 +28,7 @@ object ETPatternsRenderer : ETDecorator {
         ElytraTrimsAtlas.ATLAS_ID.getSprite(texture(pattern.value().assetId, banner), ::report)
     }
 
-    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+    override fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean = with(parameters) {
         if (stack.patterns.isEmpty() || !color.isVisible) return false
 
         val isBanner = stack has ETItemFlag.BANNER

@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector
 import java.util.concurrent.atomic.AtomicInteger
 
 object ETGatewayRenderer : ETDecorator {
-    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+    override fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean = with(parameters) {
         if (stack hasNot ETItemFlag.GATEWAY) return false
         collector.submitModel(i, renderType = ElytraRenderTypes.cosmic(texture))
         return true

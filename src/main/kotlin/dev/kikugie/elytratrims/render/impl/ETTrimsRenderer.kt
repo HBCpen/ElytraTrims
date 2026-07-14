@@ -32,7 +32,7 @@ object ETTrimsRenderer : ETDecorator {
     }
     *///?}
 
-    override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
+    override fun render(parameters: ETParameters, collector: SubmitNodeCollector, i: AtomicInteger): Boolean = with(parameters) {
         //? if >=26.3 {
         val sprite = trimTextureHandle ?: return false
         if (sprite.textureLocation().isMissing) return stack has ETItemFlag.DEBUG
