@@ -60,8 +60,8 @@ public class ElytraRendererMixin {
         @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
         @Share("elytratrims$order") LocalIntRef orderRef
     ) {
-        //~ if >=26.3 null -> equipmentInfo
         ETParameters params = ETRenderingActionsKt.buildParameters(
+            //~ if >=26.3 null -> equipmentInfo
             (EquipmentLayerRenderer) (Object) this, layerType, layers, equipmentInfo, model, state,
             itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor
         );
