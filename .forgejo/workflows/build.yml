@@ -61,4 +61,4 @@ jobs:
           MATRIX_INSTANCE: ${{ matrix.project }}
           MATRIX_VERSION: ${{ matrix.version }}
         run: |
-          ./gradlew :${{ matrix.project }}:runClientGameTest -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon
+          ./gradlew :${{ matrix.project }}:runProductionClientGameTest -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon

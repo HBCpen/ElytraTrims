@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import me.modmuss50.mpp.ReleaseType
+import net.fabricmc.loom.task.prod.ClientProductionRunTask
 
 plugins {
     kotlin("jvm")
@@ -55,9 +56,13 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
-    fapi("command-api-v2", "resource-loader-v1", "data-generation-api-v1", "transitive-access-wideners-v1", "registry-sync-v0")
 
-    fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
+    val mainFapiModules = arrayOf("command-api-v2", "resource-loader-v1", "data-generation-api-v1", "transitive-access-wideners-v1", "registry-sync-v0")
+    val testFapiModiles = arrayOf("client-gametest-api-v1")
+
+    fapi(*mainFapiModules)
+    fapi(*testFapiModiles) { "modGametestImplementation"(it) }
+    fapi(*mainFapiModules, *testFapiModiles) { "productionRuntimeMods"(it) }
 }
 
 stonecutter {
@@ -89,6 +94,10 @@ tasks {
     register<Sync>("copyGametestFmj") {
         from(rootProject.file("src/gametest/resources"))
         into(layout.buildDirectory.dir("resources/gametest"))
+    }
+
+    register<ClientProductionRunTask>("runProductionClientGameTest") {
+        jvmArgs.add("-Dfabric.client.gametest")
     }
 
     register<Copy>("buildAndCollect") {
