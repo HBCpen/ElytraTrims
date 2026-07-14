@@ -56,7 +56,6 @@ fun registerServerDebugCommands(
     }
 
     register("elytratrims:advance_recipe", access) {
-
         runs { ETSmithingRecipe.advance() }
     }
 }

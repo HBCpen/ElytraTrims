@@ -18,6 +18,7 @@ class ItemFlagTooltipProvider(val flag: ETItemFlag) : TooltipProvider {
 
     companion object {
         @JvmField val GLOW = ItemFlagTooltipProvider(ETItemFlag.GLOW)
+        @JvmField val BANNER = ItemFlagTooltipProvider(ETItemFlag.BANNER)
         @JvmField val COSMIC = ItemFlagTooltipProvider(ETItemFlag.GATEWAY)
         @JvmField val BAD_APPLE = ItemFlagTooltipProvider(ETItemFlag.BAD_APPLE)
     }

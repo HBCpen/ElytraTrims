@@ -32,5 +32,6 @@ public abstract class ItemStackMixin {
         ItemFlagTooltipProvider.GLOW.addToTooltip(context, adder, flag, getComponents());
         ItemFlagTooltipProvider.COSMIC.addToTooltip(context, adder, flag, getComponents());
         ItemFlagTooltipProvider.BAD_APPLE.addToTooltip(context, adder, flag, getComponents());
+        ItemFlagTooltipProvider.BANNER.addToTooltip(context, adder, flag, getComponents());
     }
 }
