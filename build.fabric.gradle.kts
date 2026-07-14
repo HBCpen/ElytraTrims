@@ -16,8 +16,8 @@ base.archivesName = "${property("mod.id")}-fabric"
 
 loom {
     accessWidenerPath = sc.process(
-        rootProject.file("src/main/resources/elytratrims.accesswidener"),
-        "build/processed/elytratrims.accesswidener"
+        rootProject.file("src/main/resources/elytratrims.classtweaker"),
+        "build/processed/elytratrims.classtweaker"
     )
 
     runs.named("client") {

@@ -9,7 +9,6 @@ import dev.kikugie.elytratrims.render.api.ETParameters
 import dev.kikugie.elytratrims.resource.image.Color4i
 import net.minecraft.client.model.Model
 import net.minecraft.client.renderer.SubmitNodeCollector
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.client.renderer.texture.OverlayTexture

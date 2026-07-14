@@ -2,11 +2,11 @@ package dev.kikugie.elytratrims
 
 import dev.kikugie.elytratrims.debug.registerServerDebugCommands
 import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteractions
-import dev.kikugie.elytratrims.render.ElytraRenderLayers
+import dev.kikugie.elytratrims.render.ElytraRenderPipelines
 
 fun clientInit() {
     // Inits the value
-    ElytraRenderLayers.GATEWAY_MASKED
+    ElytraRenderPipelines.init()
     if (ModData.isModLoaded("trimica")) registerTrimicaCompat()
     if (ModData.isModLoaded("iris")) registerIrisCompat()
 }

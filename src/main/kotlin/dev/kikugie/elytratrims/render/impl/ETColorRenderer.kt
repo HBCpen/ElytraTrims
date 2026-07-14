@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.render.impl
 
 import dev.kikugie.elytratrims.item.ColorAccess.Companion.color
+import dev.kikugie.elytratrims.render.ElytraRenderTypes
 import dev.kikugie.elytratrims.render.api.ETDecorator
 import dev.kikugie.elytratrims.render.api.ETParameters
 import dev.kikugie.elytratrims.render.effectiveLightCoords
@@ -12,7 +13,6 @@ import dev.kikugie.elytratrims.resource.image.withAlpha
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.rendertype.RenderType
-import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemStack
@@ -39,6 +39,5 @@ object ETColorRenderer : ETDecorator {
 
     private fun ItemStack.getRenderType(): RenderType = BuiltInRegistries.ITEM.getKey(item)
         .withPath { "textures/entity/equipment/wings/${it}_overlay.png" }
-        //~ if >=26.3 armorTranslucent -> armorCutoutNoCull
-        .let(RenderTypes::armorCutoutNoCull)
+        .let(ElytraRenderTypes::elytraTranslucent)
 }

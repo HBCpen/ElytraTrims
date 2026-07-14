@@ -13,7 +13,6 @@ import dev.kikugie.elytratrims.resource.image.isVisible
 import dev.kikugie.elytratrims.resource.image.toColor4i
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.renderer.SubmitNodeCollector
-import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.core.Holder
 import net.minecraft.resources.Identifier
@@ -38,8 +37,7 @@ object ETPatternsRenderer : ETDecorator {
             if (sprite.isMissing && stack hasNot ETItemFlag.DEBUG) continue
 
             val color = layer.color.textureDiffuseColor.toColor4i(color.a)
-            //~ if >=26.3 armorTranslucent -> armorCutoutNoCull
-            val renderType = RenderTypes.armorCutoutNoCull(ElytraTrimsAtlas.ATLAS_SHEET)
+            val renderType = ElytraRenderTypes.elytraTranslucent(ElytraTrimsAtlas.ATLAS_SHEET)
             collector.submitModel(i, renderType = renderType, lightCoords = effectiveLightCoords, sprite = sprite, color = color)
         }
         return true

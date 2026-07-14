@@ -1,4 +1,4 @@
-package dev.kikugie.elytratrims.render
+package dev.kikugie.elytratrims.render.gui
 
 import kotlin.math.PI
 import kotlin.math.pow
