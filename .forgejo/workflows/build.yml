@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Setup deps
         run: |
-          apk add --no-cache git jq nodejs
+          apk add --no-cache git jq nodejs xvfb
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
@@ -49,7 +49,7 @@ jobs:
           MATRIX_INSTANCE: ${{ matrix.project }}
           MATRIX_VERSION: ${{ matrix.version }}
         run: |
-          ./gradlew :${{ matrix.project }}:build --stacktrace --no-daemon
+          ./gradlew :${{ matrix.project }}:build -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -61,4 +61,4 @@ jobs:
           MATRIX_INSTANCE: ${{ matrix.project }}
           MATRIX_VERSION: ${{ matrix.version }}
         run: |
-          ./gradlew :${{ matrix.project }}:runClientGameTest --stacktrace --no-daemon
+          ./gradlew :${{ matrix.project }}:runClientGameTest -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon
