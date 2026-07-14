@@ -26,6 +26,17 @@
     "fabric-language-kotlin": ">=0.13",
     "minecraft": "${minecraft}"
   },
+  "entrypoints": {
+    "client": [
+      "dev.kikugie.elytratrims.FabricClientEntrypoint"
+    ],
+    "main": [
+      "dev.kikugie.elytratrims.FabricCommonEntrypoint"
+    ]
+  },
+  "mixins": [
+    "elytratrims.mixins.json"
+  ],
   "custom": {
     "modmenu": {
       "links": {

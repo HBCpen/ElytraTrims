@@ -74,8 +74,8 @@ public class ElytraRendererMixin {
         Iterator<Object> original,
         @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
         @Share("elytratrims$order") LocalIntRef orderRef,
-        //~ if >=26.3 '@Share("elytratrims$hasTrim")' -> '@Local(name = "hasTrim")'
-        @Share("elytratrims$has_trim") LocalBooleanRef hasTrimRef,
+        //? if >=26.3
+        @Local(name = "hasTrim") LocalBooleanRef hasTrimRef,
         @Local(argsOnly = true) SubmitNodeCollector collector
     ) {
         ETParameters params = paramsRef.get();
@@ -85,6 +85,7 @@ public class ElytraRendererMixin {
         boolean overwriteOriginal = renderReplDecorations(collector, params, order);
 
         orderRef.set(order.get());
+        //? if >=26.3
         hasTrimRef.set(false);
 
         return overwriteOriginal ? Collections.emptyIterator() : original;
@@ -92,8 +93,8 @@ public class ElytraRendererMixin {
 
     //? if <26.3 {
     /*@ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
-    private Object cancelTrimRender(Object original, @Share("elytratrims$has_trim") LocalBooleanRef hasTrimRef) {
-        return hasTrimRef.get() ? original : null;
+    private Object cancelTrimRender(Object original, @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef) {
+        return paramsRef.get() == null ? original : null;
     }
     *///?}
 

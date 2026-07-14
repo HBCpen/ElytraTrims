@@ -14,6 +14,17 @@ plugins {
 version = "${property("mod.version")}+${property("deps.minecraft")}"
 base.archivesName = "${property("mod.id")}-fabric"
 
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "elytratrims-test"
+
+        eula = true
+        enableGameTests = false
+        enableClientGameTests = true
+    }
+}
+
 loom {
     accessWidenerPath = sc.process(
         rootProject.file("src/main/resources/elytratrims.classtweaker"),
@@ -26,7 +37,6 @@ loom {
         ideConfigFolder = "Fabric"
         runDirectory = rootProject.file("run")
         jvmArguments.add("-Dmixin.debug.export=true")
-        programArguments.add("--username=KikuGie")
     }
 }
 
@@ -46,6 +56,8 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
     fapi("command-api-v2", "resource-loader-v1", "data-generation-api-v1", "transitive-access-wideners-v1", "registry-sync-v0")
+
+    fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
 }
 
 stonecutter {
@@ -63,6 +75,20 @@ kotlin {
 tasks {
     processResources {
         exclude("**/neoforge.mods.toml", "gen.sh")
+    }
+
+    named("runClientGameTest") {
+        mustRunAfter("copyGametestFmj")
+    }
+
+    named<ProcessResources>("processGametestResources") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        finalizedBy("copyGametestFmj")
+    }
+
+    register<Sync>("copyGametestFmj") {
+        from(rootProject.file("src/gametest/resources"))
+        into(layout.buildDirectory.dir("resources/gametest"))
     }
 
     register<Copy>("buildAndCollect") {

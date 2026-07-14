@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "elytratrims-test",
+  "version": "1.0.0",
+  "name": "Elytra Trims Test",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.elytratrims.test.ElytraTrimsGameTest"
+      }
+    ]
+  }
+}
