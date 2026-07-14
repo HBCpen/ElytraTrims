@@ -12,7 +12,7 @@ import java.util.ServiceLoader;
 @Mod("elytratrims")
 public class NeoforgeEntrypoint {
     public NeoforgeEntrypoint(IEventBus bus, ModContainer container) {
-        ETEntrypointImpl.commonInit(ServiceLoader.load(ETCommonInitializer.class));
+        ETEntrypointImplKt.commonInit(ServiceLoader.load(ETCommonInitializer.class));
         if (ModData.INSTANCE.isClient())
             ETEntrypointImplKt.clientInit(ServiceLoader.load(ETClientInitializer.class));
     }

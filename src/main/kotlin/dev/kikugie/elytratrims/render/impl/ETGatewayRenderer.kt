@@ -13,7 +13,7 @@ import dev.kikugie.elytratrims.render.submitToCollector
 import net.minecraft.client.renderer.SubmitNodeCollector
 
 object ETGatewayRenderer : ETDecorator {
-    @JvmField val ID: ETRendererID = ETRendererID(elytratrims("cosmic"), ETRenderMethod.POST)
+    @JvmField val ID: ETRendererID = ETRendererID(elytratrims("cosmic"), ETRenderMethod.OVERRIDE)
 
     override fun getType(): ETRendererID = ID
 

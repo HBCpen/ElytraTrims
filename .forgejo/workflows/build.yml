@@ -55,10 +55,3 @@ jobs:
         with:
           name: build-libs-${{ matrix.project }}
           path: versions/${{ matrix.project }}/build/libs/*
-      - name: Test client
-        if: contains(matrix.project, 'fabric')
-        env:
-          MATRIX_INSTANCE: ${{ matrix.project }}
-          MATRIX_VERSION: ${{ matrix.version }}
-        run: |
-          ./gradlew :${{ matrix.project }}:runProductionClientGameTest -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon

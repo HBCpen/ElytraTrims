@@ -73,8 +73,10 @@ fun ETRenderParameters.render(id: ETRendererID, collector: SubmitNodeCollector) 
         ?: this.submitToCollector(collector)
 
 fun ETRenderParameters.submitToCollector(collector: SubmitNodeCollector): Boolean {
-    collector.order(order.getAndIncrement())
-        .submitModel(model, state, matrices, renderType, lightCoords, OverlayTexture.NO_OVERLAY, tintedColor, sprite, outlineColor)
+    collector.order(order.getAndIncrement()).submitModel(
+        model, state, matrices, renderType, lightCoords, OverlayTexture.NO_OVERLAY,
+        tintedColor, sprite, outlineColor, /*? if <26.3*///null
+    )
     return true
 }
 
@@ -116,7 +118,7 @@ fun renderDecorators(method: ETRenderMethod, parameters: ETRenderParameters?, co
     if (collector == null || parameters == null) return false
 
     var rendered = false
-    for (dec in decoratorsOfType(ETRenderMethod.OVERRIDE))
+    for (dec in decoratorsOfType(method))
         rendered = dec.render(parameters, collector) || rendered
     return rendered
 }

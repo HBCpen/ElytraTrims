@@ -9,11 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 @ApiStatus.NonExtendable
 public interface ETRenderingAPI {
-    static @NotNull List<@NotNull ETDecorator> registeredDecorators() {
+    static @NotNull List<ETDecorator> registeredDecorators() {
         return SequencesKt.toList(ETRenderingActionsKt.allDecorators());
     }
 
@@ -64,7 +63,7 @@ public interface ETRenderingAPI {
         boolean render(
             @NotNull ETRenderParameters parameters,
             @NotNull SubmitNodeCollector collector,
-            @NotNull BiFunction<@NotNull ETRenderParameters, @NotNull SubmitNodeCollector, @NotNull Boolean> operation
+            @NotNull BiFunction<ETRenderParameters, SubmitNodeCollector, Boolean> operation
         );
     }
 }
