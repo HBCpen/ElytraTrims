@@ -23,7 +23,11 @@ stonecutter {
     create(rootProject) {
         mapBuilds { _, node -> "build.${node.project.substringAfterLast('-')}.gradle.kts" }
 
-        if (matrix == null) load(file("versions.json"))
-        else version(matrix, System.getenv("MATRIX_VERSION"))
+        if (matrix != null)
+            version(matrix, System.getenv("MATRIX_VERSION"))
+        else {
+            load(file("versions.json"))
+            vcsVersion = "26.3-fabric"
+        }
     }
 }

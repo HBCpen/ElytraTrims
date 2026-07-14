@@ -57,11 +57,13 @@ public class ElytraRendererMixin {
         EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId, Model<?> model, Object state,
         ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords,
         @Nullable Identifier playerTextureOverride, int outlineColor, int order, CallbackInfo ci,
+        //? if >=26.3
         @Local(name = "equipmentInfo") EquipmentClientInfo equipmentInfo,
         @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
         @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
         @Share("elytratrims$order") LocalIntRef orderRef
     ) {
+        //~ if >=26.3 null -> equipmentInfo
         ETParameters params = buildParameters(layerType, layers, equipmentInfo, model, state, itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor);
         paramsRef.set(params);
         orderRef.set(order);
@@ -72,8 +74,9 @@ public class ElytraRendererMixin {
         Iterator<Object> original,
         @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
         @Share("elytratrims$order") LocalIntRef orderRef,
-        @Local(argsOnly = true) SubmitNodeCollector collector,
-        @Local(name = "hasTrim") LocalBooleanRef hasTrimRef
+        //~ if >=26.3 '@Share("elytratrims$hasTrim")' -> '@Local(name = "hasTrim")'
+        @Share("elytratrims$has_trim") LocalBooleanRef hasTrimRef,
+        @Local(argsOnly = true) SubmitNodeCollector collector
     ) {
         ETParameters params = paramsRef.get();
         if (params == null) return original;
@@ -86,6 +89,13 @@ public class ElytraRendererMixin {
 
         return overwriteOriginal ? Collections.emptyIterator() : original;
     }
+
+    //? if >=26.3 {
+    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
+    private Object cancelTrimRender(Object original, @Share("elytratrims$has_trim") LocalBooleanRef hasTrimRef) {
+        return hasTrimRef.get() ? original : null;
+    }
+    //?}
 
     @Inject(method = RENDER_METHOD, at = @At("RETURN"))
     private void renderElytraTrimsDecorationsPost(
