@@ -37,7 +37,8 @@ object ETAtlasGenerator : ETResourceProvider {
                 this += SingleFile(elytratrims("feature/bad_apple"))
                 this += "entity/wings/banner".let { DirectoryLister(it, "$it/") }
                 this += "entity/wings/shield".let { DirectoryLister(it, "$it/") }
-                this += sources
+                //? if <26.3
+                //this += sources
             }
         }
 

@@ -57,6 +57,17 @@ object ETTextureGenerator : ETResourceProvider {
                 applyShieldPattern(base ?: return@ImageSupplier it, it)
             }
         }
+
+        //? if >=26.3 {
+        val trimSelector = lookup.listResources("textures/trims/entity/wings") { it.path.endsWith(".png") }
+        val paletteSupplier = StringSupplier("""{"palette":{"base_palette":"trim_base"}}""")
+        for (id in trimSelector.keys) {
+            val metadata = id.withPath { "$it.mcmeta" }
+            if (lookup.getResource(metadata).isPresent) continue
+
+            to[PackIdentifier.of(PackType.CLIENT_RESOURCES, metadata.namespace, metadata.path)] = paletteSupplier
+        }
+        //?}
     }
 
     private fun applyBannerPattern(elytra: EditableImage, pattern: EditableImage): EditableImage = pattern.use {
