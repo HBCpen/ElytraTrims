@@ -24,7 +24,7 @@ jobs:
           PROJECTS=$(jq -c '.versions | map(split(":") | { project: .[0], version: .[1] })' versions.json)
           echo "projects=$PROJECTS" >> "$FORGEJO_OUTPUT"
   build:
-    name: Build
+    name: Build and Test
     needs: setup
     runs-on: kiku-server
     container: eclipse-temurin:25-jdk-alpine
@@ -49,9 +49,16 @@ jobs:
           MATRIX_INSTANCE: ${{ matrix.project }}
           MATRIX_VERSION: ${{ matrix.version }}
         run: |
-          ./gradlew build --stacktrace --no-daemon
+          ./gradlew :${{ matrix.project }}:build --stacktrace --no-daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-libs-${{ matrix.project }}
           path: versions/${{ matrix.project }}/build/libs/*
+      - name: Test client
+        if: contains(matrix.project, 'fabric')
+        env:
+          MATRIX_INSTANCE: ${{ matrix.project }}
+          MATRIX_VERSION: ${{ matrix.version }}
+        run: |
+          ./gradlew :${{ matrix.project }}:runClientGameTest --stacktrace --no-daemon
