@@ -35,9 +35,10 @@ import java.util.function.Function;
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
-    @Shadow
-    @Final
-    private Function<EquipmentLayerRenderer.LayerTextureKey, Identifier> layerTextureLookup;
+    @Shadow @Final private Function<EquipmentLayerRenderer.LayerTextureKey, Identifier> layerTextureLookup;
+
+    //? if >=26.3
+    @Shadow @Final private Function<EquipmentLayerRenderer.TrimTextureKey, net.minecraft.client.resources.palette.PalettedTextureManager.Handle> trimTextureLookup;
 
     @Unique
     private static final String RENDER_METHOD =
@@ -56,11 +57,12 @@ public class ElytraRendererMixin {
         EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId, Model<?> model, Object state,
         ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords,
         @Nullable Identifier playerTextureOverride, int outlineColor, int order, CallbackInfo ci,
+        @Local(name = "equipmentInfo") EquipmentClientInfo equipmentInfo,
         @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
         @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
         @Share("elytratrims$order") LocalIntRef orderRef
     ) {
-        ETParameters params = buildParameters(layerType, layers, model, state, itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor);
+        ETParameters params = buildParameters(layerType, layers, equipmentInfo, model, state, itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor);
         paramsRef.set(params);
         orderRef.set(order);
     }
@@ -100,7 +102,11 @@ public class ElytraRendererMixin {
     }
 
     @Unique
-    private ETParameters buildParameters(EquipmentClientInfo.LayerType type, List<EquipmentClientInfo.Layer> layers, Model<?> model, Object state, ItemStack itemStack, PoseStack poseStack, Identifier playerTextureOverride, int lightCoords, int outlineColor) {
+    private ETParameters buildParameters(
+        EquipmentClientInfo.LayerType type, List<EquipmentClientInfo.Layer> layers, EquipmentClientInfo info,
+        Model<?> model, Object state, ItemStack itemStack, PoseStack poseStack, Identifier playerTextureOverride,
+        int lightCoords, int outlineColor
+    ) {
         if (type != EquipmentClientInfo.LayerType.WINGS || layers.isEmpty()) return null;
 
         ETParameters params = new ETParameters();
@@ -113,6 +119,13 @@ public class ElytraRendererMixin {
         params.texture = !layers.getFirst().usePlayerTexture() || playerTextureOverride == null
             ? layerTextureLookup.apply(new EquipmentLayerRenderer.LayerTextureKey(type, layers.getFirst()))
             : playerTextureOverride;
+
+        //? if >=26.3 {
+        var trim = itemStack.get(net.minecraft.core.component.DataComponents.TRIM);
+        if (trim != null) params.trimTextureHandle = trimTextureLookup
+            .apply(new EquipmentLayerRenderer.TrimTextureKey(trim, type, info));
+        //?}
+
         return params;
     }
 

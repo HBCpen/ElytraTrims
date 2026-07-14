@@ -23,7 +23,7 @@ object ETBadAppleRenderer : ETDecorator {
 
     override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
         if (stack hasNot ETItemFlag.BAD_APPLE || sprite.isMissing && stack hasNot ETItemFlag.DEBUG) return false
-        collector.submitModel(i, renderType = ElytraTrimsAtlas.elytraTrimsSheet(), lightCoords = effectiveLightCoords, sprite = sprite)
+        collector.submitModel(i, renderType = ElytraTrimsAtlas.elytraDecorations(), lightCoords = effectiveLightCoords, sprite = sprite)
         return true
     }
 

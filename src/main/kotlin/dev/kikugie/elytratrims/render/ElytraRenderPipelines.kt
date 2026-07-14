@@ -60,10 +60,10 @@ object ElytraRenderPipelines {
 
     @JvmField val ELYTRA_TRANSLUCENT: RenderPipeline = RenderPipeline.builder(ENTITY_SNIPPET)
         .withLocation(elytratrims("pipeline/elytra_translucent"))
-        .withShaderDefine("ALPHA_CUTOUT", 0.1F)
-        .withShaderDefine("NO_OVERLAY")
-        .withShaderDefine("PER_FACE_LIGHTING")
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
+        .withShaderDefine("ALPHA_CUTOUT", 0.1F)
+        .withShaderDefine("PER_FACE_LIGHTING")
+        .withShaderDefine("NO_OVERLAY")
         .withCull(false)
         .register()
 

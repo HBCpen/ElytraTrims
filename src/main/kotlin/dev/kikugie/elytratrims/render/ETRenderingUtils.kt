@@ -51,5 +51,4 @@ inline fun SubmitNodeCollector.submitModel(
     color.packed,
     sprite,
     outlineColour,
-    /*? if <26.3*///params.crumblingOverlay,
 )

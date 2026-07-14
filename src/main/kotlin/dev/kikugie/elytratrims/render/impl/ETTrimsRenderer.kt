@@ -4,6 +4,7 @@ import dev.kikugie.elytratrims.*
 import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.item.TrimAccess.Companion.trim
 import dev.kikugie.elytratrims.item.has
+import dev.kikugie.elytratrims.render.ElytraRenderTypes
 import dev.kikugie.elytratrims.render.api.ETDecorator
 import dev.kikugie.elytratrims.render.api.ETParameters
 import dev.kikugie.elytratrims.render.effectiveLightCoords
@@ -24,16 +25,27 @@ import java.util.concurrent.atomic.AtomicInteger
 object ETTrimsRenderer : ETDecorator {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val reported: MutableSet<Identifier> = mutableSetOf()
-    private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite> = memoize {
-        ElytraTrimsAtlas.ATLAS_ID.getSprite(elytratrims("id"), ::report)
-//        ElytraTrimsAtlas.ATLAS_ID.getSprite(it.layerAssetId(WINGS.trimAssetPrefix(), EquipmentAssets.ELYTRA), ::report)
+
+    //? if <26.3 {
+    /*private val lookup: Memoizer<ArmorTrim, TextureAtlasSprite> = memoize {
+        ElytraTrimsAtlas.ATLAS_ID.getSprite(it.layerAssetId(WINGS.trimAssetPrefix(), EquipmentAssets.ELYTRA), ::report)
     }
+    *///?}
 
     override fun ETParameters.render(collector: SubmitNodeCollector, i: AtomicInteger): Boolean {
-        val sprite = lookup(stack.trim.get() ?: return false)
+        //? if >=26.3 {
+        val sprite = trimTextureHandle ?: return false
+        if (sprite.textureLocation().isMissing) return stack has ETItemFlag.DEBUG
+
+        val renderType = ElytraRenderTypes.elytraTranslucent(sprite.textureLocation())
+        //?} else {
+        /*val sprite = lookup(stack.trim.get() ?: return false)
         if (sprite.isMissing) return stack has ETItemFlag.DEBUG
 
-        collector.submitModel(i, renderType = ElytraTrimsAtlas.elytraTrimsSheet(), lightCoords = effectiveLightCoords, sprite = sprite)
+        val renderType = ElytraTrimsAtlas.elytraDecorations()
+        *///?}
+
+        collector.submitModel(i, renderType = renderType, sprite = sprite, lightCoords = effectiveLightCoords)
         return true
     }
 

@@ -18,6 +18,6 @@ object ElytraTrimsAtlas {
         AtlasConfig(ATLAS_SHEET, ATLAS_ID, false)
     //?}
 
-    @JvmStatic fun elytraTrimsSheet(): RenderType =
+    @JvmStatic fun elytraDecorations(): RenderType =
         ElytraRenderTypes.elytraTranslucent(ATLAS_SHEET)
 }
