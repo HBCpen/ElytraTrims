@@ -90,12 +90,12 @@ public class ElytraRendererMixin {
         return overwriteOriginal ? Collections.emptyIterator() : original;
     }
 
-    //? if >=26.3 {
-    @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
+    //? if <26.3 {
+    /*@ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
     private Object cancelTrimRender(Object original, @Share("elytratrims$has_trim") LocalBooleanRef hasTrimRef) {
         return hasTrimRef.get() ? original : null;
     }
-    //?}
+    *///?}
 
     @Inject(method = RENDER_METHOD, at = @At("RETURN"))
     private void renderElytraTrimsDecorationsPost(
