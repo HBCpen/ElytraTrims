@@ -4,11 +4,11 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.kikugie.elytratrims.api.render.ETRenderMethod;
+import dev.kikugie.elytratrims.api.render.ETRenderParameters;
 import dev.kikugie.elytratrims.render.ETRenderingActionsKt;
-import dev.kikugie.elytratrims.render.api.ETParameters;
 import dev.kikugie.elytratrims.render.impl.*;
 import dev.kikugie.fletching_table.annotation.MixinEnvironment;
 import net.minecraft.client.model.Model;
@@ -29,14 +29,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 @Debug(export = true)
 @MixinEnvironment(type = MixinEnvironment.Env.CLIENT)
 @Mixin(EquipmentLayerRenderer.class)
 public class ElytraRendererMixin {
-
     @Unique
     private static final String RENDER_METHOD =
         "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
@@ -44,47 +41,41 @@ public class ElytraRendererMixin {
             "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V";
 
     @ModifyArg(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;order(I)Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;"), index = 0)
-    private int storeGlobalRenderOrder(int order, @Share("elytratrims$order") LocalIntRef orderRef) {
-        orderRef.set(order + 1);
+    private int storeGlobalRenderOrder(int order, @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef) {
+        paramsRef.get().order.getAndIncrement();
         return order;
     }
 
     @Inject(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
     private void configureElytraTrimsParameters(
-        EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId, Model<?> model, Object state,
+        EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId, Model<Object> model, Object state,
         ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords,
         @Nullable Identifier playerTextureOverride, int outlineColor, int order, CallbackInfo ci,
         //? if >=26.3
         @Local(name = "equipmentInfo") EquipmentClientInfo equipmentInfo,
         @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
-        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
-        @Share("elytratrims$order") LocalIntRef orderRef
+        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef
     ) {
-        ETParameters params = ETRenderingActionsKt.buildParameters(
+        ETRenderParameters params = ETRenderingActionsKt.buildParameters(
             //~ if >=26.3 null -> equipmentInfo
             (EquipmentLayerRenderer) (Object) this, layerType, layers, equipmentInfo, model, state,
-            itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor
+            itemStack, poseStack, playerTextureOverride, lightCoords, outlineColor, order
         );
         paramsRef.set(params);
-        orderRef.set(order);
     }
 
     @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private Iterator<Object> renderElytraTrimsDecorationsPre(
         Iterator<Object> original,
-        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
-        @Share("elytratrims$order") LocalIntRef orderRef,
+        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef,
         //? if >=26.3
         @Local(name = "hasTrim") LocalBooleanRef hasTrimRef,
         @Local(argsOnly = true) SubmitNodeCollector collector
     ) {
-        ETParameters params = paramsRef.get();
+        ETRenderParameters params = paramsRef.get();
         if (params == null) return original;
 
-        AtomicInteger order = new AtomicInteger(orderRef.get());
-        boolean overwriteOriginal = ETRenderingActionsKt.renderReplDecorations(collector, params, order);
-
-        orderRef.set(order.get());
+        boolean overwriteOriginal = ETRenderingActionsKt.renderDecorators(ETRenderMethod.OVERRIDE, params, collector);
         //? if >=26.3
         hasTrimRef.set(false);
 
@@ -93,7 +84,7 @@ public class ElytraRendererMixin {
 
     //? if <26.3 {
     /*@ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
-    private Object cancelTrimRender(Object original, @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef) {
+    private Object cancelTrimRender(Object original, @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef) {
         return paramsRef.get() == null ? original : null;
     }
     *///?}
@@ -101,14 +92,12 @@ public class ElytraRendererMixin {
     @Inject(method = RENDER_METHOD, at = @At("RETURN"))
     private void renderElytraTrimsDecorationsPost(
         CallbackInfo ci,
-        @Share("elytratrims$parameters") LocalRef<ETParameters> paramsRef,
-        @Share("elytratrims$order") LocalIntRef orderRef,
+        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef,
         @Local(argsOnly = true) SubmitNodeCollector collector
     ) {
-        ETParameters params = paramsRef.get();
+        ETRenderParameters params = paramsRef.get();
         if (params == null) return;
 
-        AtomicInteger order = new AtomicInteger(orderRef.get());
-        ETRenderingActionsKt.renderPostDecorations(collector, params, order);
+        ETRenderingActionsKt.renderDecorators(ETRenderMethod.POST, params, collector);
     }
 }
