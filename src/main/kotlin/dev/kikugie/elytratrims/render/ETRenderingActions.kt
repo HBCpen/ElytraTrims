@@ -68,7 +68,7 @@ fun ETRenderParameters.prepare(id: ETRendererID): ETRenderParameters = apply {
     PARAMETER_WRAPPERS[id]?.accept(this)
 }
 
-fun ETRenderParameters.render(id: ETRendererID, collector: SubmitNodeCollector) =
+fun ETRenderParameters.render(id: ETRendererID, collector: SubmitNodeCollector): Boolean =
     RENDERING_WRAPPERS[id]?.render(this, collector, ETRenderParameters::submitToCollector)
         ?: this.submitToCollector(collector)
 
@@ -115,10 +115,6 @@ fun EquipmentLayerRenderer.buildParameters(
 }
 
 fun renderDecorators(method: ETRenderMethod, parameters: ETRenderParameters?, collector: SubmitNodeCollector?): Boolean {
-    if (collector == null || parameters == null) return false
-
-    var rendered = false
-    for (dec in decoratorsOfType(method))
-        rendered = dec.render(parameters, collector) || rendered
-    return rendered
+    return if (collector == null || parameters == null) false
+    else decoratorsOfType(method).fold(false) { acc, dec -> dec.render(parameters, collector) || acc }
 }

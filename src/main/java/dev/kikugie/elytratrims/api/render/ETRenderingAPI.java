@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 @ApiStatus.NonExtendable
 public interface ETRenderingAPI {
@@ -44,9 +45,20 @@ public interface ETRenderingAPI {
         ETRenderingActionsKt.wrapParametersCallback(type, action);
     }
 
+    @Deprecated // The new API modifies provided parameters in-place
+    static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<ETRenderParameters> action) {
+        ETRenderingActionsKt.wrapParametersCallback(type, it -> it.copyFrom(action.apply(it)));
+    }
+
     static void wrapRenderParameters(@NotNull Consumer<ETRenderParameters> action) {
         var iterator = ETRenderingActionsKt.allDecorators().iterator();
-        while (iterator.hasNext()) wrapRenderParameters(iterator.next().getType(), action);
+        while (iterator.hasNext()) ETRenderingActionsKt.wrapParametersCallback(iterator.next().getType(), action);
+    }
+
+    @Deprecated // The new API modifies provided parameters in-place
+    static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters> action) {
+        var iterator = ETRenderingActionsKt.allDecorators().iterator();
+        while (iterator.hasNext()) ETRenderingActionsKt.wrapParametersCallback(iterator.next().getType(), it -> it.copyFrom(action.apply(it)));
     }
 
     static void wrapRenderCall(@NotNull ETRendererID type, @NotNull Callback callback) {

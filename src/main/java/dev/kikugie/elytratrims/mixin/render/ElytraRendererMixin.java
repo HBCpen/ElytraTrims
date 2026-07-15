@@ -75,6 +75,7 @@ public class ElytraRendererMixin {
         ETRenderParameters params = paramsRef.get();
         if (params == null) return original;
 
+        ETRenderingActionsKt.renderDecorators(ETRenderMethod.PRE, params, collector);
         boolean overwriteOriginal = ETRenderingActionsKt.renderDecorators(ETRenderMethod.OVERRIDE, params, collector);
         //? if >=26.3
         hasTrimRef.set(false);
