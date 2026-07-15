@@ -15,10 +15,10 @@ data class ETItemFlag(val key: Identifier) {
     }
 
     companion object {
-        val GLOW: ETItemFlag = ETItemFlag(elytratrims("glow"))
-        val BANNER: ETItemFlag = ETItemFlag(elytratrims("banner"))
-        val GATEWAY: ETItemFlag = ETItemFlag(elytratrims("gateway"))
-        val BAD_APPLE: ETItemFlag = ETItemFlag(elytratrims("animation"))
+        @JvmField val GLOW: ETItemFlag = ETItemFlag(elytratrims("glow"))
+        @JvmField val BANNER: ETItemFlag = ETItemFlag(elytratrims("banner"))
+        @JvmField val GATEWAY: ETItemFlag = ETItemFlag(elytratrims("gateway"))
+        @JvmField val BAD_APPLE: ETItemFlag = ETItemFlag(elytratrims("animation"))
 
         /**
          * Enables debug rendering in the smithing table menu.
