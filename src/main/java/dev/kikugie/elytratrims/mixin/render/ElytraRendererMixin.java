@@ -42,7 +42,8 @@ public class ElytraRendererMixin {
 
     @ModifyArg(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;order(I)Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;"), index = 0)
     private int storeGlobalRenderOrder(int order, @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef) {
-        paramsRef.get().order.getAndIncrement();
+        ETRenderParameters params = paramsRef.get();
+        if (params != null) params.order.getAndIncrement();
         return order;
     }
 
