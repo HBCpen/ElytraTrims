@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
@@ -35,14 +36,15 @@ public class ETRenderParameters implements Cloneable {
 
     @Deprecated // The new API modifies provided parameters in-place
     public ETRenderParameters(
-        Model<Object> model, Object state, ItemStack stack, PoseStack matrices, RenderType renderType, Identifier baseTexture,
-        int lightCoords, int tintedColor, int overlayCoords, int outlineColor, AtomicInteger order
+        Model<Object> model, Object state, ItemStack stack, PoseStack matrices, RenderType renderType, TextureAtlasSprite sprite,
+        Identifier baseTexture, int lightCoords, int tintedColor, int overlayCoords, int outlineColor, AtomicInteger order
     ) {
         this.model = model;
         this.state = state;
         this.stack = stack;
         this.matrices = matrices;
         this.renderType = renderType;
+        this.sprite = sprite;
         this.baseTexture = baseTexture;
         this.lightCoords = lightCoords;
         this.tintedColor = tintedColor;
@@ -79,7 +81,7 @@ public class ETRenderParameters implements Cloneable {
     }
 
     @Deprecated // The new API modifies provided parameters in-place
-    public Model<Object> model() {
+    public Model<Object> elytra() {
         return model;
     }
 
@@ -106,6 +108,12 @@ public class ETRenderParameters implements Cloneable {
     @Deprecated // The new API modifies provided parameters in-place
     public Identifier texture() {
         return baseTexture;
+    }
+
+    @Deprecated // The new API modifies provided parameters in-place
+    //~ if >=26.3 TextureAtlasSprite -> UvMapping
+    public net.minecraft.client.renderer.texture.UvMapping sprite() {
+        return sprite;
     }
 
     @Deprecated // The new API modifies provided parameters in-place

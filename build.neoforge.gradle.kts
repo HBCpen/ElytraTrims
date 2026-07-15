@@ -73,9 +73,11 @@ tasks {
 
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(jar.map { it.archiveFile })
+        description = "Builds mod jars and copies results to `build/libs/{mod version}/`"
+
+        inputs.property("version", project.property("mod.version"))
+        from(jar.flatMap { it.archiveFile }, named<Jar>("sourcesJar").flatMap { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
-        dependsOn("build")
     }
 }
 
