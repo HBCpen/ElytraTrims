@@ -1,6 +1,7 @@
 import me.modmuss50.mpp.ReleaseType
 
 plugins {
+    `maven-publish`
     kotlin("jvm")
     alias(libs.plugins.ksp)
     alias(libs.plugins.mpp)
@@ -92,33 +93,66 @@ fletchingTable {
 }
 
 publishMods {
-    val mr = findProperty("publish.modrinth.key") as? String
-    val cf = findProperty("publish.curseforge.key") as? String
-    dryRun = mr == null || cf == null || sc.properties.getOrNull<Boolean>("publish.dry_run") == true
+    val mrToken = providers.environmentVariable("MODRINTH_TOKEN")
+    val cfToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+
+    val publishMr = sc.properties.getOrNull<Boolean>("publish.modrinth") ?: true
+    val publishCf = sc.properties.getOrNull<Boolean>("publish.curseforge") ?: true
+    val publishDry = sc.properties.getOrNull<Boolean>("publish.dry_run") ?: false
+
+    dryRun = publishDry
+        || (!mrToken.isPresent && publishMr)
+        || (!cfToken.isPresent && publishCf)
 
     type = ReleaseType.of(sc.properties["publish.status"])
     file = tasks.jar.map { it.archiveFile.get() }
     additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
-    displayName = "Elytra Trims Neoforge ${property("mod.version")} for ${stonecutter.current.version}"
-    version = property("mod.version") as String
+    displayName = "Elytra Trims Neoforge ${property("mod.version")} for ${sc.current.version}"
+    version = sc.properties.get<String>("mod.version")
     changelog = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
     modLoaders.add("neoforge")
     
     val versions = sc.properties.raw("mod:releases").to<List<String>>()
 
-    modrinth {
-        projectId = property("publish.modrinth") as String
-        accessToken = mr
+    if (publishMr)  modrinth {
+        projectId = property("publish.modrinth_id") as String
+        accessToken = mrToken
         minecraftVersions.addAll(versions)
         optional("kotlin-for-forge", "kotlin-lang-forge")
     }
 
-    curseforge {
-        projectId = property("publish.curseforge") as String
-        accessToken = cf
+    if (publishCf) curseforge {
+        projectId = property("publish.curseforge_id") as String
+        accessToken = cfToken
         minecraftVersions.addAll(versions)
         client = true
         optional("kotlin-for-forge", "kotlinlangforge")
+    }
+}
+
+publishing {
+    repositories {
+        val mavenUser = providers.environmentVariable("KIKUGIE_MAVEN_USER")
+        val mavenPass = providers.environmentVariable("KIKUGIE_MAVEN_PASS")
+        if (!mavenUser.isPresent || !mavenPass.isPresent) return@repositories
+
+        maven("https://maven.kikugie.dev/releases") {
+            name = "KikuGie"
+            credentials {
+                username = mavenUser.orNull
+                password = mavenPass.orNull
+            }
+        }
+    }
+
+    publications {
+        register<MavenPublication>("maven") {
+            groupId = "dev.kikugie"
+            artifactId = "${property("mod.id")}-neoforge"
+            version = "${property("mod.version")}+${property("deps.minecraft")}"
+
+            from(components["java"])
+        }
     }
 }

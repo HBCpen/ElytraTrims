@@ -36,11 +36,3 @@ stonecutter tasks {
     order("publishModrinth", ordering)
     order("publishCurseforge", ordering)
 }
-
-tasks {
-    for (version in stonecutter.versions.map { it.version }.distinct()) register("publish$version") {
-        group = "publishing"
-        description = "Publishes all releases for $version"
-        dependsOn(stonecutter.tasks.named("publishMods") { metadata.version == version })
-    }
-}

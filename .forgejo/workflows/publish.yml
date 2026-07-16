@@ -1,0 +1,55 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      maven:
+        description: Publish to Maven
+        type: boolean
+        default: true
+      modrinth:
+        description: Publish to Modrinth
+        type: boolean
+        default: true
+      curseforge:
+        description: Publish to Curseforge
+        type: boolean
+        default: true
+
+jobs:
+  publish:
+    name: Publish mods
+    runs-on: kiku-server
+    container: eclipse-temurin:25-jdk-alpine
+    env:
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      CURSEFORGE_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      KIKUGIE_MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      KIKUGIE_MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+    steps:
+      - name: Setup deps
+        run: |
+          apk add --no-cache git jq nodejs
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.CB_TOKEN }}
+      - name: Setup Gradle
+        run: |
+          chmod +x ./gradlew
+      - name: Build mods
+        run: |
+          ./gradlew build --stacktrace --daemon
+      - name: Publish to Maven
+        if: ${{ inputs.maven }}
+        run: |
+          ./gradlew publish --stacktrace --daemon
+      - name: Publish to Modrinth
+        if: ${{ inputs.modrinth }}
+        run: |
+          ./gradlew publishModrinth --stacktrace --daemon
+      - name: Publish to Curseforge
+        if: ${{ inputs.curseforge }}
+        run: |
+          ./gradlew publishCurseforge --stacktrace --daemon

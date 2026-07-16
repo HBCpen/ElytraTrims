@@ -11,8 +11,8 @@ deps.kotlin-coroutines="1.11.0"
 loomx.loom_version="1.17-SNAPSHOT"
 
 publish.status="beta"
-publish.modrinth="XpzGz7KD"
-publish.curseforge="876199"
+publish.modrinth_id="XpzGz7KD"
+publish.curseforge_id="876199"
 
 ["1.21.11"]
 mod.compat.fabric=">1.21.10 <=1.21.11"
@@ -44,6 +44,7 @@ deps.neo-loader="26.2.0.1-beta"
 
 ["26.3"]
 publish.status="alpha"
+publish.curseforge=false
 
 mod.compat.fabric=">=26.3-alpha.3 <26.3"
 mod.releases=["26.3-snapshot-3"]
