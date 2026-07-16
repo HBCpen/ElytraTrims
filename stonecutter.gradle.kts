@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin) apply false
 }
 
-val ci: String? = System.getenv("MATRIX_INSTANCE")
+val ci: String? = System.getenv("CI")
 if (ci != null) sc active null else stonecutter active "26.3-fabric"
 
 stonecutter parameters {
