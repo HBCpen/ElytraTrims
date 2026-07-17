@@ -23,7 +23,7 @@ jobs:
     container: eclipse-temurin:25-jdk-alpine
     env:
       MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-      CURSEFORGE_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       KIKUGIE_MAVEN_USER: ${{ secrets.MAVEN_USER }}
       KIKUGIE_MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
