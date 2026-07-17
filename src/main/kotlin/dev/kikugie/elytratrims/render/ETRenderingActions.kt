@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import dev.kikugie.elytratrims.api.render.*
-import dev.kikugie.elytratrims.render.impl.*
+import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas
 import net.minecraft.client.model.Model
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer
@@ -86,7 +86,6 @@ private fun matchDecoratorList(method: ETRenderMethod): MutableList<ETDecorator>
     ETRenderMethod.POST -> POST_RENDERERS
 }
 
-// Public API!
 fun EquipmentLayerRenderer.buildParameters(
     type: EquipmentClientInfo.LayerType, layers: MutableList<EquipmentClientInfo.Layer>, info: EquipmentClientInfo?,
     model: Model<Any>, state: Any, itemStack: ItemStack, poseStack: PoseStack, playerTextureOverride: Identifier?,
@@ -94,11 +93,7 @@ fun EquipmentLayerRenderer.buildParameters(
 ): ETRenderParameters? {
     if (type != EquipmentClientInfo.LayerType.WINGS || layers.isEmpty()) return null
 
-    val params = ETRenderParameters(order)
-    params.model = model
-    params.state = state
-    params.stack = itemStack
-    params.matrices = poseStack
+    val params = ETRenderParameters(order, model, state, itemStack, poseStack, ElytraTrimsAtlas.elytraDecorations())
     params.lightCoords = lightCoords
     params.tintedColor = -1
     params.outlineColor = outlineColor
@@ -115,6 +110,6 @@ fun EquipmentLayerRenderer.buildParameters(
 }
 
 fun renderDecorators(method: ETRenderMethod, parameters: ETRenderParameters?, collector: SubmitNodeCollector?): Boolean {
-    return if (collector == null || parameters == null) false
-    else decoratorsOfType(method).fold(false) { acc, dec -> dec.render(parameters, collector) || acc }
+    return collector != null && parameters != null
+        && decoratorsOfType(method).fold(false) { acc, dec -> dec.render(parameters, collector) || acc }
 }

@@ -41,7 +41,7 @@ public class ElytraRendererMixin {
             "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V";
 
     @ModifyArg(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;order(I)Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;"), index = 0)
-    private int storeGlobalRenderOrder(int order, @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef) {
+    private int storeGlobalRenderOrder(int order, @Share("elytratrims$parameters") LocalRef<@Nullable ETRenderParameters> paramsRef) {
         ETRenderParameters params = paramsRef.get();
         if (params != null) params.order.getAndIncrement();
         return order;
@@ -55,7 +55,7 @@ public class ElytraRendererMixin {
         //? if >=26.3
         @Local(name = "equipmentInfo") EquipmentClientInfo equipmentInfo,
         @Local(name = "layers") List<EquipmentClientInfo.Layer> layers,
-        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef
+        @Share("elytratrims$parameters") LocalRef<@Nullable ETRenderParameters> paramsRef
     ) {
         ETRenderParameters params = ETRenderingActionsKt.buildParameters(
             //~ if >=26.3 null -> equipmentInfo
@@ -68,7 +68,7 @@ public class ElytraRendererMixin {
     @ModifyExpressionValue(method = RENDER_METHOD, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private Iterator<Object> renderElytraTrimsDecorationsPre(
         Iterator<Object> original,
-        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef,
+        @Share("elytratrims$parameters") LocalRef<@Nullable ETRenderParameters> paramsRef,
         //? if >=26.3
         @Local(name = "hasTrim") LocalBooleanRef hasTrimRef,
         @Local(argsOnly = true) SubmitNodeCollector collector
@@ -94,7 +94,7 @@ public class ElytraRendererMixin {
     @Inject(method = RENDER_METHOD, at = @At("RETURN"))
     private void renderElytraTrimsDecorationsPost(
         CallbackInfo ci,
-        @Share("elytratrims$parameters") LocalRef<ETRenderParameters> paramsRef,
+        @Share("elytratrims$parameters") LocalRef<@Nullable ETRenderParameters> paramsRef,
         @Local(argsOnly = true) SubmitNodeCollector collector
     ) {
         ETRenderParameters params = paramsRef.get();

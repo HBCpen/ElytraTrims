@@ -6,7 +6,7 @@ import dev.kikugie.elytratrims.api.render.ETRenderParameters
 import dev.kikugie.elytratrims.api.render.ETRendererID
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.ETItemFlag
-import dev.kikugie.elytratrims.item.hasNot
+import dev.kikugie.elytratrims.item.has
 import dev.kikugie.elytratrims.render.ElytraRenderTypes
 import dev.kikugie.elytratrims.render.prepare
 import dev.kikugie.elytratrims.render.submitToCollector
@@ -19,9 +19,8 @@ object ETGatewayRenderer : ETDecorator {
 
     override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean {
         val prm = parameters.clone()
-            .apply { if (baseTexture != null) renderType = ElytraRenderTypes.cosmic(baseTexture) }
+            .apply { baseTexture?.let { renderType = ElytraRenderTypes.cosmic(it) } }
             .prepare(ID)
-        return if (prm.stack hasNot ETItemFlag.GATEWAY) false
-        else prm.submitToCollector(collector)
+        return prm.stack has ETItemFlag.GATEWAY && prm.submitToCollector(collector)
     }
 }

@@ -3,8 +3,8 @@ package dev.kikugie.elytratrims.api.render;
 import dev.kikugie.elytratrims.render.ETRenderingActionsKt;
 import kotlin.sequences.SequencesKt;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -13,16 +13,16 @@ import java.util.function.UnaryOperator;
 
 @ApiStatus.NonExtendable
 public interface ETRenderingAPI {
-    static @NotNull List<ETDecorator> registeredDecorators() {
+    static List<ETDecorator> registeredDecorators() {
         return SequencesKt.toList(ETRenderingActionsKt.allDecorators());
     }
 
-    static @NotNull ETRendererID registerDecorator(@NotNull ETDecorator instance) {
+    static ETRendererID registerDecorator(ETDecorator instance) {
         ETRenderingActionsKt.registerDecorator(instance, List::addLast);
         return instance.getType();
     }
 
-    static @NotNull ETRendererID registerDecoratorBefore(@NotNull ETDecorator instance, @NotNull net.minecraft.resources.Identifier before) {
+    static ETRendererID registerDecoratorBefore(ETDecorator instance, Identifier before) {
         ETRenderingActionsKt.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingActionsKt.indexOfId(list, before);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(before));
@@ -31,7 +31,7 @@ public interface ETRenderingAPI {
         return instance.getType();
     }
 
-    static @NotNull ETRendererID registerDecoratorAfter(@NotNull ETDecorator instance, @NotNull net.minecraft.resources.Identifier after) {
+    static ETRendererID registerDecoratorAfter(ETDecorator instance, Identifier after) {
         ETRenderingActionsKt.registerDecorator(instance, (list, it) -> {
             int index = ETRenderingActionsKt.indexOfId(list, after);
             if (index < 0) throw new IllegalStateException("Decorator %s is not registered yet".formatted(after));
@@ -41,31 +41,31 @@ public interface ETRenderingAPI {
         return instance.getType();
     }
 
-    static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull Consumer<ETRenderParameters> action) {
+    static void wrapRenderParameters(ETRendererID type, Consumer<ETRenderParameters> action) {
         ETRenderingActionsKt.wrapParametersCallback(type, action);
     }
 
     @Deprecated // The new API modifies provided parameters in-place
-    static void wrapRenderParameters(@NotNull ETRendererID type, @NotNull UnaryOperator<ETRenderParameters> action) {
+    static void wrapRenderParameters(ETRendererID type, UnaryOperator<ETRenderParameters> action) {
         ETRenderingActionsKt.wrapParametersCallback(type, it -> it.copyFrom(action.apply(it)));
     }
 
-    static void wrapRenderParameters(@NotNull Consumer<ETRenderParameters> action) {
+    static void wrapRenderParameters(Consumer<ETRenderParameters> action) {
         var iterator = ETRenderingActionsKt.allDecorators().iterator();
         while (iterator.hasNext()) ETRenderingActionsKt.wrapParametersCallback(iterator.next().getType(), action);
     }
 
     @Deprecated // The new API modifies provided parameters in-place
-    static void wrapRenderParameters(@NotNull UnaryOperator<ETRenderParameters> action) {
+    static void wrapRenderParameters(UnaryOperator<ETRenderParameters> action) {
         var iterator = ETRenderingActionsKt.allDecorators().iterator();
         while (iterator.hasNext()) ETRenderingActionsKt.wrapParametersCallback(iterator.next().getType(), it -> it.copyFrom(action.apply(it)));
     }
 
-    static void wrapRenderCall(@NotNull ETRendererID type, @NotNull Callback callback) {
+    static void wrapRenderCall(ETRendererID type, Callback callback) {
         ETRenderingActionsKt.wrapRenderCallback(type, callback);
     }
 
-    static void wrapRenderCall(@NotNull Callback callback) {
+    static void wrapRenderCall(Callback callback) {
         var iterator = ETRenderingActionsKt.allDecorators().iterator();
         while (iterator.hasNext()) wrapRenderCall(iterator.next().getType(), callback);
     }
@@ -73,9 +73,9 @@ public interface ETRenderingAPI {
     @FunctionalInterface
     interface Callback {
         boolean render(
-            @NotNull ETRenderParameters parameters,
-            @NotNull SubmitNodeCollector collector,
-            @NotNull BiFunction<ETRenderParameters, SubmitNodeCollector, Boolean> operation
+            ETRenderParameters parameters,
+            SubmitNodeCollector collector,
+            BiFunction<ETRenderParameters, SubmitNodeCollector, Boolean> operation
         );
     }
 }

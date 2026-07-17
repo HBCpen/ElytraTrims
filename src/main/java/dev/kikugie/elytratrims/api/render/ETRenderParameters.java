@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +19,7 @@ public class ETRenderParameters implements Cloneable {
     public ItemStack stack;
     public PoseStack matrices;
     public RenderType renderType;
-    public Identifier baseTexture;
+    public @Nullable Identifier baseTexture;
     public int lightCoords;
     public int overlayCoords = OverlayTexture.NO_OVERLAY;
     public int tintedColor = -1;
@@ -26,18 +27,27 @@ public class ETRenderParameters implements Cloneable {
 
     // =#= Unstable territory =#=
     //~ if >=26.3 TextureAtlasSprite -> UvMapping
-    public net.minecraft.client.renderer.texture.UvMapping sprite;
+    public net.minecraft.client.renderer.texture.@Nullable UvMapping sprite;
     //? if >=26.3
-    public net.minecraft.client.resources.palette.PalettedTextureManager.Handle trimTextureHandle;
+    public net.minecraft.client.resources.palette.PalettedTextureManager.@Nullable Handle trimTextureHandle;
 
-    public ETRenderParameters(int order) {
+    public ETRenderParameters(
+        int order, Model<Object> model, Object state, ItemStack stack,
+        PoseStack matrices, RenderType renderType
+    ) {
         this.order = new AtomicInteger(order);
+        this.model = model;
+        this.state = state;
+        this.stack = stack;
+        this.matrices = matrices;
+        this.renderType = renderType;
     }
 
     @Deprecated // The new API modifies provided parameters in-place
     public ETRenderParameters(
-        Model<Object> model, Object state, ItemStack stack, PoseStack matrices, RenderType renderType, TextureAtlasSprite sprite,
-        Identifier baseTexture, int lightCoords, int tintedColor, int overlayCoords, int outlineColor, AtomicInteger order
+        Model<Object> model, Object state, ItemStack stack, PoseStack matrices, RenderType renderType,
+        TextureAtlasSprite sprite, @Nullable Identifier baseTexture, int lightCoords, int tintedColor, int overlayCoords, int outlineColor,
+        AtomicInteger order
     ) {
         this.model = model;
         this.state = state;
@@ -106,13 +116,13 @@ public class ETRenderParameters implements Cloneable {
     }
 
     @Deprecated // The new API modifies provided parameters in-place
-    public Identifier texture() {
+    public @Nullable Identifier texture() {
         return baseTexture;
     }
 
     @Deprecated // The new API modifies provided parameters in-place
     //~ if >=26.3 TextureAtlasSprite -> UvMapping
-    public net.minecraft.client.renderer.texture.UvMapping sprite() {
+    public net.minecraft.client.renderer.texture.@Nullable UvMapping sprite() {
         return sprite;
     }
 

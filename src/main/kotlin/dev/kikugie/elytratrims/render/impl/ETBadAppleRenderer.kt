@@ -30,7 +30,7 @@ object ETBadAppleRenderer : ETDecorator {
 
     override fun render(parameters: ETRenderParameters, collector: SubmitNodeCollector): Boolean {
         val prm = parameters.clone()
-            .apply { lightCoords = glowingLightCoords; sprite = animation }
+            .apply { lightCoords = glowingLightCoords; sprite = animation; renderType = ElytraTrimsAtlas.elytraDecorations() }
             .prepare(ID)
         return if (prm.stack hasNot ETItemFlag.BAD_APPLE
             || prm.sprite.let { it is TextureAtlasSprite && it.isMissing }

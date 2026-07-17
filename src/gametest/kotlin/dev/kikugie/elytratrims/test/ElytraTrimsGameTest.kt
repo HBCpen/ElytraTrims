@@ -14,6 +14,7 @@ object ElytraTrimsGameTest : FabricClientGameTest {
     override fun runTest(context: ClientGameTestContext): Unit = context.runInWorld {
         clientLevel.waitForChunksRender()
 
+        runModelTest(context, "elytra_model")
         runModelTest(context, "elytra_model_trim")
         runModelTest(context, "elytra_model_shield")
         runModelTest(context, "elytra_model_banner")

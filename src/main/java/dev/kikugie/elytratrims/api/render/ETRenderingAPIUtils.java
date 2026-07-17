@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.NonExtendable
 public interface ETRenderingAPIUtils {
-    static void submitToCollector(@NotNull ETRenderParameters parameters, @NotNull SubmitNodeCollector collector) {
+    static void submitToCollector(ETRenderParameters parameters, SubmitNodeCollector collector) {
         ETRenderingActionsKt.submitToCollector(parameters, collector);
     }
 
-    static void prepareParameters(@NotNull ETRendererID id, @NotNull ETRenderParameters parameters) {
+    static void prepareParameters(ETRendererID id, ETRenderParameters parameters) {
         ETRenderingActionsKt.prepare(parameters, id);
     }
 
-    static boolean renderDecorator(@NotNull ETRendererID id, @NotNull ETRenderParameters parameters, @NotNull SubmitNodeCollector collector) {
+    static boolean renderDecorator(ETRendererID id, ETRenderParameters parameters, SubmitNodeCollector collector) {
         return ETRenderingActionsKt.render(parameters, id, collector);
     }
 }
