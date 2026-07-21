@@ -1,6 +1,5 @@
-## Changes
-- Updated to `26.3-snapshot-4`.
-- Null-marked the public API.
+## Minor Features
+- Added Spanish-Argentina translation (@Texaliuz)
 
 ## Fixes
-- Fixed a crash when rendering the cosmic effect.
+- Fixed a crash with NeoForge **because this mod loader still can't figure out how to use mixins**.
