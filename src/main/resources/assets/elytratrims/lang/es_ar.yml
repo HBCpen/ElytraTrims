@@ -1,0 +1,75 @@
+tag.item.elytratrims.decoratable: Decoratable Elytras
+flag.item.elytratrims:
+  glow: §bBrillante
+  gateway: §dCósmico
+  banner: Estandarte HD
+  animation: §cUna manzana al día mantiene alejado al doctor
+trim_pattern:
+  alexscaves:
+    polarity: Adorno de Polaridad (Alex's Caves)
+  ancient_aether:
+    ancient: Adorno Antiguo (Ancient Aether)
+    ascended: Adorno Ascendido (Ancient Aether)
+    mechanical: Adorno Mecánico (Ancient Aether)
+    mosaic: Adorno de Mosaico (Ancient Aether)
+    mysterious: Adorno Misterioso (Ancient Aether)
+    royal: Adorno Real (Ancient Aether)
+    solar: Adorno Solar (Ancient Aether)
+    whale: Adorno de Ballena (Ancient Aether)
+    wynd: Adorno de Wynd (Ancient Aether)
+  atmospheric:
+    apostle: Adorno de Apóstol (Atmospheric)
+    druid: Adorno de Druida (Atmospheric)
+    petrified: Adorno Petrificado (Atmospheric)
+  caverns_and_chasms:
+    exile: Adorno de Exilio (Caverns & Chasms)
+  elytratrims:
+    construction: Adorno de Construcción (Elytra Trims)
+    fly: Adorno de Vuelo (Elytra Trims)
+    gems: Adorno de Gemas (Elytra Trims)
+    grate: Adorno de Rejilla (Elytra Trims)
+    grid: Adorno de Cuadrícula (Elytra Trims)
+    stars: Adorno de Estrellas (Elytra Trims)
+    web: Adorno de Telaraña (Elytra Trims)
+    whirl: Adorno de Remolino (Elytra Trims)
+  eternal_starlight:
+    forge: Adorno de Forja (Eternal Starlight)
+    blooming: Adorno Floreciente (Eternal Starlight)
+    keeper: Adorno de Guardián (Eternal Starlight)
+    twining: Adorno Entrelazado (Eternal Starlight)
+  frostiful:
+    frosty: Adorno Escarchado (Frostiful)
+    glacial: Adorno Glacial (Frostiful)
+    snow_man: Adorno de Muñeco de Nieve (Frostiful)
+  geode_plus:
+    celeste: Adorno Celeste (Geode+)
+    heart: Adorno de Corazón (Geode+)
+    wrap: Adorno de Envoltura (Geode+)
+  lost_aether_content:
+    noble: Adorno Noble (Aether Lost Content)
+  more_armor_trims:
+    beast: Adorno de Bestia (More Armor Trims)
+    fever: Adorno de Fiebre (More Armor Trims)
+    greed: Adorno de Codicia (More Armor Trims)
+    horizon: Adorno de Horizonte (More Armor Trims)
+    myth: Adorno de Mito (More Armor Trims)
+    nihility: Adorno del Vacío (More Armor Trims)
+    origin: Adorno de Origen (More Armor Trims)
+    parasite: Adorno de Parásito (More Armor Trims)
+    ram: Adorno de Carnero (More Armor Trims)
+    storm: Adorno de Tormenta (More Armor Trims)
+    twilight: Adorno de Crepúsculo (More Armor Trims)
+    witness: Adorno de Testigo (More Armor Trims)
+    wraith: Adorno de Espectro (More Armor Trims)
+  moresnifferflowers:
+    aroma: Adorno de Aroma (More Sniffer Flowers)
+  neapolitan:
+    primal: Adorno Primigenio (Neapolitan)
+  netherexp:
+    rift: Adorno de Grieta (Nether Expansion)
+    spirit: Adorno de Espíritu (Nether Expansion)
+    valor: Adorno de Valor (Nether Expansion)
+  unusualend:
+    ancient: Adorno Antiguo (Unusual End)
+  yungscavebiomes:
+    ancient: Adorno Antiguo (Yung's Cave Biomes)
