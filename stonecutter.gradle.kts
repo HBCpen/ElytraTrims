@@ -14,6 +14,18 @@ stonecutter parameters {
         match(loader, "fabric", "neoforge")
     }
 
+    swaps {
+        this["shader_in"] = when {
+            current.parsed >= "26.3" -> "layout(location = $1) in "
+            else -> "in "
+        }
+
+        this["shader_out"] = when {
+            current.parsed >= "26.3" -> "layout(location = $1) out "
+            else -> "out "
+        }
+    }
+
     replacements {
         string(current.parsed > "26") {
             replace("accessWidener v2 named", "accessWidener v2 official")
@@ -25,6 +37,8 @@ stonecutter parameters {
             replace("com.mojang.blaze3d.pipeline", "com.mojang.renderpearl.api.pipeline")
             replace("com/mojang/blaze3d/pipeline", "com/mojang/renderpearl/api/pipeline")
             replace("com.mojang.blaze3d.PrimitiveTopology", "com.mojang.renderpearl.api.pipeline.PrimitiveTopology")
+
+            replace("#moj_import", "#include")
         }
     }
 }

@@ -1,17 +1,23 @@
 #version 330
+//? if >=26.3
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <minecraft:fog.glsl>
-#moj_import <minecraft:matrix.glsl>
-#moj_import <minecraft:globals.glsl>
+#include <minecraft:fog.glsl>
+#include <minecraft:matrix.glsl>
+#include <minecraft:globals.glsl>
 
 uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
 uniform sampler2D Sampler2;
 
-in vec4 texProj0;
-in vec2 texCoord0;
-in float sphericalVertexDistance;
-in float cylindricalVertexDistance;
+//$ shader_in '0' >> vec
+layout(location = 0) in vec4 texProj0;
+//$ shader_in '1' >> vec
+layout(location = 1) in vec2 texCoord0;
+//$ shader_in '2' >> float
+layout(location = 2) in float sphericalVertexDistance;
+//$ shader_in '3' >> float
+layout(location = 3) in float cylindricalVertexDistance;
 
 const vec3[] COLORS = vec3[](
     vec3(0.022087, 0.098399, 0.110818),
@@ -54,7 +60,8 @@ mat4 end_portal_layer(float layer) {
     return mat4(scale * rotate) * translate * SCALE_TRANSLATE;
 }
 
-out vec4 fragColor;
+//$ shader_out '0' >> vec
+layout(location = 0) out vec4 fragColor;
 
 void main() {
     vec4 mask = texture(Sampler2, texCoord0);

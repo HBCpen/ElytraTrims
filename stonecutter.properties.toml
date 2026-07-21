@@ -46,8 +46,8 @@ deps.neo-loader="26.2.0.1-beta"
 publish.status="alpha"
 publish.curseforge=false
 
-mod.compat.fabric=">=26.3-alpha.3 <26.3"
-mod.releases=["26.3-snapshot-3", "26.3-snapshot-4"]
+mod.compat.fabric=">=26.3-alpha.5 <26.3"
+mod.releases=["26.3-snapshot-5"]
 
-deps.minecraft="26.3-snapshot-4"
-deps.fabric-api="0.155.1+26.3"
+deps.minecraft="26.3-snapshot-5"
+deps.fabric-api="0.155.3+26.3"

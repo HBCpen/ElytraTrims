@@ -63,7 +63,6 @@ dependencies {
 
     fapi(*mainFapiModules)
     fapi(*testFapiModiles) { "modGametestImplementation"(it) }
-    fapi(*mainFapiModules, *testFapiModiles) { "productionRuntimeMods"(it) }
 }
 
 stonecutter {
@@ -95,10 +94,6 @@ tasks {
     register<Sync>("copyGametestFmj") {
         from(rootProject.file("src/gametest/resources"))
         into(layout.buildDirectory.dir("resources/gametest"))
-    }
-
-    register<ClientProductionRunTask>("runProductionClientGameTest") {
-        jvmArgs.add("-Dfabric.client.gametest")
     }
 
     register<Copy>("buildAndCollect") {
