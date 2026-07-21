@@ -22,12 +22,10 @@ public abstract class ItemStackMixin {
     @Shadow
     public abstract DataComponentMap getComponents();
 
-    @Inject(
-        method = "addDetailsToTooltip",
-        at = @At(
-            value = "INVOKE",
-            ordinal = 19,
-            target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"))
+    //? if fabric {
+    @Inject(method = "addDetailsToTooltip", at = @At(value = "INVOKE", ordinal = 19, target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"))
+    //?} else
+    //@Inject(method = "addDetailsToTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;appendHoverText(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"))
     private void injectETTooltips(Item.TooltipContext context, TooltipDisplay display, @Nullable Player player, TooltipFlag flag, Consumer<Component> adder, CallbackInfo ci) {
         ItemFlagTooltipProvider.GLOW.addToTooltip(context, adder, flag, getComponents());
         ItemFlagTooltipProvider.COSMIC.addToTooltip(context, adder, flag, getComponents());
