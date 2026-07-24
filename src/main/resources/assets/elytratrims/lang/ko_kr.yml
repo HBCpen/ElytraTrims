@@ -1,0 +1,75 @@
+tag.item.elytratrims.decoratable: 장식 가능한 겉날개
+flag.item.elytratrims:
+  glow: §b발광
+  gateway: §d우주
+  banner: HD 현수막
+  animation: §c하루 사과 한개면 의사가 필요 없다
+trim_pattern:
+  alexscaves:
+    polarity: 양극성 갑옷 장식 (Alex's Caves)
+  ancient_aether:
+    ancient: 고대 갑옷 장식 (Ancient Aether)
+    ascended: 승천 갑옷 장식 (Ancient Aether)
+    mechanical: 기계 갑옷 장식 (Ancient Aether)
+    mosaic: 모자이크 갑옷 장식 (Ancient Aether)
+    mysterious: 신비 갑옷 장식 (Ancient Aether)
+    royal: 왕실 갑옷 장식 (Ancient Aether)
+    solar: 태양 갑옷 장식 (Ancient Aether)
+    whale: 고래 갑옷 장식 (Ancient Aether)
+    wynd: 와인드 갑옷 장식 (Ancient Aether)
+  atmospheric:
+    apostle: 사도 갑옷 장식 (Atmospheric)
+    druid: 드루이드 갑옷 장식 (Atmospheric)
+    petrified: 규화 갑옷 장식 (Atmospheric)
+  caverns_and_chasms:
+    exile: 망명 갑옷 장식 (Caverns & Chasms)
+  elytratrims:
+    construction: 건설 갑옷 장식 (Elytra Trims)
+    fly: 비행 갑옷 장식 (Elytra Trims)
+    gems: 보석 갑옷 장식 (Elytra Trims)
+    grate: 격자 갑옷 장식 (Elytra Trims)
+    grid: 망 갑옷 장식 (Elytra Trims)
+    stars: 뭇별 갑옷 장식 (Elytra Trims)
+    web: 그물 갑옷 장식 (Elytra Trims)
+    whirl: 소용돌이 갑옷 장식 (Elytra Trims)
+  eternal_starlight:
+    forge: 대장간 갑옷 장식 (Eternal Starlight)
+    blooming: 개화 갑옷 장식 (Eternal Starlight)
+    keeper: 수호 갑옷 장식 (Eternal Starlight)
+    twining: 얽힘 갑옷 장식 (Eternal Starlight)
+  frostiful:
+    frosty: 한기 갑옷 장식 (Frostiful)
+    glacial: 빙하 갑옷 장식 (Frostiful)
+    snow_man: 눈사람 갑옷 장식 (Frostiful)
+  geode_plus:
+    celeste: 천상 갑옷 장식 (Geode+)
+    heart: 심장 갑옷 장식 (Geode+)
+    wrap: 덮개 갑옷 장식 (Geode+)
+  lost_aether_content:
+    noble: 귀족 갑옷 장식 (Aether Lost Content)
+  more_armor_trims:
+    beast: 야수 갑옷 장식 (More Armor Trims)
+    fever: 열풍 갑옷 장식 (More Armor Trims)
+    greed: 탐욕 갑옷 장식 (More Armor Trims)
+    horizon: 수평선 갑옷 장식 (More Armor Trims)
+    myth: 통념 갑옷 장식 (More Armor Trims)
+    nihility: 허무 갑옷 장식 (More Armor Trims)
+    origin: 기원 갑옷 장식 (More Armor Trims)
+    parasite: 기생물 갑옷 장식 (More Armor Trims)
+    ram: 돌진 갑옷 장식 (More Armor Trims)
+    storm: 폭풍 갑옷 장식 (More Armor Trims)
+    twilight: 황혼 갑옷 장식 (More Armor Trims)
+    witness: 목격자 갑옷 장식 (More Armor Trims)
+    wraith: 망령 갑옷 장식 (More Armor Trims)
+  moresnifferflowers:
+    aroma: 향기 갑옷 장식 (More Sniffer Flowers)
+  neapolitan:
+    primal: 원시 갑옷 장식 (Neapolitan)
+  netherexp:
+    rift: 원시 갑옷 장식 (Nether Expansion)
+    spirit: 영혼 갑옷 장식 (Nether Expansion)
+    valor: 용기 갑옷 장식 (Nether Expansion)
+  unusualend:
+    ancient: 고대 갑옷 장식 (Unusual End)
+  yungscavebiomes:
+    ancient: 고대 갑옷 장식 (Yung's Cave Biomes)
