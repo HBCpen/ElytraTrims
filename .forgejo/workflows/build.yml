@@ -1,5 +1,7 @@
 name: Build
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
   setup:
@@ -32,6 +34,9 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJson(needs.setup.outputs.projects) }}
+    env:
+      MATRIX_INSTANCE: ${{ matrix.project }}
+      MATRIX_VERSION: ${{ matrix.version }}
     steps:
       - name: Setup deps
         run: |
@@ -45,13 +50,13 @@ jobs:
         run: |
           chmod +x ./gradlew
       - name: Build version
-        env:
-          MATRIX_INSTANCE: ${{ matrix.project }}
-          MATRIX_VERSION: ${{ matrix.version }}
         run: |
-          ./gradlew :${{ matrix.project }}:build -Dorg.gradle.configuration-cache.read-only=true --stacktrace --no-daemon
+          ./gradlew :${{ matrix.project }}:build --stacktrace --daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-libs-${{ matrix.project }}
           path: versions/${{ matrix.project }}/build/libs/*
+      - name: Run checks
+        run: |
+          ./gradlew :${{ matrix.project }}:check --stacktrace --daemon

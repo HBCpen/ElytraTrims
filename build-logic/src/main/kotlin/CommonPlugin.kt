@@ -39,7 +39,7 @@ private fun Project.configure() {
         options.compilerArgs.add("-Xdoclint:none")
     }
 
-    tasks.named<ProcessResources>("processResources") {
+    val processResources = tasks.named<ProcessResources>("processResources") {
         fun prop(name: String) = project.property(name).toString().also {
             inputs.property(name, it)
         }
@@ -52,6 +52,16 @@ private fun Project.configure() {
         filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
             expand(props)
         }
+    }
+
+    val checkLanguageFiles = tasks.register<LangCheckTask>("checkLanguageFiles") {
+        group = "verification"
+        allLanguageFiles.from(processResources.map { project.files(it.destinationDir).asFileTree.matching { include("assets/*/lang/*.json") } })
+        baseLanguageFiles.from(processResources.map { project.files(it.destinationDir).asFileTree.matching { include("assets/*/lang/en_us.json") } })
+    }
+
+    tasks.named("check") {
+        dependsOn(checkLanguageFiles)
     }
 
     val mutex = gradle.sharedServices.registerIfAbsent("createMinecraftArtifactsMutex", NeoForgeMutex::class.java) {
