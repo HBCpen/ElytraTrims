@@ -12,7 +12,8 @@ import net.minecraft.world.entity.player.ChatVisiblity
 
 object ElytraTrimsGameTest : FabricClientGameTest {
     override fun runTest(context: ClientGameTestContext): Unit = context.runInWorld {
-        clientLevel.waitForChunksRender()
+        //~ if >=26.3 clientLevel -> connection
+        connection.waitForChunksRender()
 
         runModelTest(context, "elytra_model")
         runModelTest(context, "elytra_model_trim")
