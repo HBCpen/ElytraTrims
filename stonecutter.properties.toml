@@ -1,7 +1,7 @@
 mod.id="elytratrims"
 mod.name="Elytra Trims"
 mod.group="dev.kikugie"
-mod.version="4.9.0-beta.4"
+mod.version="4.9.0-beta.5"
 
 deps.fabric-loader="0.19.3"
 deps.fabric-kotlin="1.13.12+kotlin.2.4.0"
@@ -31,7 +31,7 @@ mod.releases.neoforge=["26.1.2"]
 
 deps.minecraft="26.1.2"
 deps.fabric-api="0.146.1+26.1.2"
-deps.neo-loader="26.1.2.84"
+deps.neo-loader="26.1.2.94"
 
 ["26.2"]
 mod.compat.fabric=">=26.2 <26.3"
@@ -40,7 +40,7 @@ mod.releases=["26.2"]
 
 deps.minecraft="26.2"
 deps.fabric-api="0.152.1+26.2"
-deps.neo-loader="26.2.0.28-beta"
+deps.neo-loader="26.2.0.53-beta"
 
 ["26.3"]
 publish.status="alpha"
