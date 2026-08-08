@@ -1,6 +1,10 @@
 ## Minor Features
-- Added Spanish-Argentina translation (@Texaliuz)
-- Added Korean translation (@jack9322)
+- Added NeoForge update checker URL.
+- Added mod icon and banner image for NeoForge.
 
 ## Fixes
-- Fixed a crash with NeoForge **because this mod loader still can't figure out how to use mixins**.
+- Fixed NeoForge spamming "duplicate sprite" warnings.
+  > I *could* go on a rant about me having to fix issues with a mod loader, 
+  > and what it says about the quality of the mod loader.
+  > However, I already had today's dose of ragebait, so it doesn't have the same effect.  
+  > Maybe next time there will be a hatred-filled poem.
