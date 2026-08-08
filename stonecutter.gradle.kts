@@ -43,6 +43,10 @@ stonecutter parameters {
     }
 }
 
+stonecutter handlers {
+    inherit("aw", "toml")
+}
+
 stonecutter tasks {
     val ordering = versionComparator
         .thenComparingInt { if (it.metadata.project.endsWith("fabric")) 1 else 0 }
