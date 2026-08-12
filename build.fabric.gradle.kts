@@ -29,7 +29,7 @@ fabricApi {
 
 loom {
     accessWidenerPath = sc.process(
-        rootProject.file("src/main/resources/elytratrims.classtweaker"),
+        file("../../src/main/resources/elytratrims.classtweaker"),
         "build/processed/elytratrims.classtweaker"
     )
 
@@ -37,7 +37,7 @@ loom {
         preferGradleTask = true
         generateRunConfig = true
         ideConfigFolder = "Fabric"
-        runDirectory = rootProject.file("run")
+        runDirectory = file("../../run")
         jvmArguments.add("-Dmixin.debug.export=true")
     }
 }
@@ -92,7 +92,7 @@ tasks {
     }
 
     register<Sync>("copyGametestFmj") {
-        from(rootProject.file("src/gametest/resources"))
+        from(file("../../src/gametest/resources"))
         into(layout.buildDirectory.dir("resources/gametest"))
     }
 
@@ -102,7 +102,7 @@ tasks {
 
         inputs.property("version", project.property("mod.version"))
         from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
-        into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
+        into(file("../../build/libs/${project.property("mod.version")}"))
     }
 
 }
@@ -140,7 +140,7 @@ publishMods {
 
     displayName = "Elytra Trims Fabric ${property("mod.version")} for ${sc.current.version}"
     version = sc.properties.get<String>("mod.version")
-    changelog = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
+    changelog = providers.fileContents { file("../../CHANGELOG.md") }.asText
     modLoaders.add("fabric")
     
     val versions = sc.properties.raw("mod:releases").to<List<String>>()

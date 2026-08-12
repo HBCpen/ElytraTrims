@@ -22,7 +22,7 @@ neoForge {
     version = property("deps.neo-loader") as String
     validateAccessTransformers = true
     accessTransformers.from(sc.process(
-        rootProject.file("src/main/resources/META-INF/accesstransformer.cfg"),
+        file("../../src/main/resources/META-INF/accesstransformer.cfg"),
         "build/processed/elytratrims.accesstransformer.cfg"
     ))
 
@@ -78,7 +78,7 @@ tasks {
 
         inputs.property("version", project.property("mod.version"))
         from(jar.flatMap { it.archiveFile }, named<Jar>("sourcesJar").flatMap { it.archiveFile })
-        into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
+        into(file("../../build/libs/${project.property("mod.version")}"))
     }
 }
 
@@ -110,7 +110,7 @@ publishMods {
 
     displayName = "Elytra Trims Neoforge ${property("mod.version")} for ${sc.current.version}"
     version = sc.properties.get<String>("mod.version")
-    changelog = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
+    changelog = providers.fileContents { file("../../CHANGELOG.md") }.asText
     modLoaders.add("neoforge")
     
     val versions = sc.properties.raw("mod:releases").to<List<String>>()
