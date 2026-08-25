@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Élytres décorables
+view.elytratrims.type.decorating: Décoration d'élytres
+flag.item.elytratrims:
+  glow: §bLuminescent
+  gateway: §dCosmique
+  banner: Bannière HD
+  animation: §cUne pomme par jour éloigne le médecin
+recipe.elytratrims:
+  apply_glow_effect: §7Fait briller les décorations des élytres dans le noir
+  apply_gateway_effect: §7Donne aux élytres l'apparence d'un portail de l'End
+  apply_animation_effect: §7Applique une certaine animation aux élytres
+  apply_shield_pattern: §7Applique des motifs de bouclier aux élytres ; n'inclut pas la couleur de base de la bannière
+  apply_banner_pattern: §7Applique des motifs de bannière aux élytres ; n'inclut pas la couleur de base de la bannière
+  apply_random_trim: §7Applique un ornement aléatoire, tiré à nouveau lorsque quelqu'un le fabrique
+  apply_random_trim_reroll: §7Applique un ornement aléatoire, tiré à nouveau à chaque changement d'objets
+trim_pattern:
+  alexscaves:
+    polarity: Ornement d'armure de polarité (Alex's Caves)
+  ancient_aether:
+    ancient: Ornement d'armure antique (Ancient Aether)
+    ascended: Ornement d'armure de l'ascension (Ancient Aether)
+    mechanical: Ornement d'armure mécanique (Ancient Aether)
+    mosaic: Ornement d'armure en mosaïque (Ancient Aether)
+    mysterious: Ornement d'armure mystérieux (Ancient Aether)
+    royal: Ornement d'armure royal (Ancient Aether)
+    solar: Ornement d'armure solaire (Ancient Aether)
+    whale: Ornement d'armure de baleine (Ancient Aether)
+    wynd: Ornement d'armure de Wynd (Ancient Aether)
+  atmospheric:
+    apostle: Ornement d'armure d'apôtre (Atmospheric)
+    druid: Ornement d'armure de druide (Atmospheric)
+    petrified: Ornement d'armure pétrifié (Atmospheric)
+  caverns_and_chasms:
+    exile: Ornement d'armure d'exil (Caverns & Chasms)
+  elytratrims:
+    construction: Ornement d'armure de construction (Elytra Trims)
+    fly: Ornement d'armure de vol (Elytra Trims)
+    gems: Ornement d'armure de gemmes (Elytra Trims)
+    grate: Ornement d'armure de grille (Elytra Trims)
+    grid: Ornement d'armure de quadrillage (Elytra Trims)
+    stars: Ornement d'armure d'étoiles (Elytra Trims)
+    web: Ornement d'armure de toile (Elytra Trims)
+    whirl: Ornement d'armure de tourbillon (Elytra Trims)
+  eternal_starlight:
+    forge: Ornement d'armure de forge (Eternal Starlight)
+    blooming: Ornement d'armure florissant (Eternal Starlight)
+    keeper: Ornement d'armure de gardien (Eternal Starlight)
+    twining: Ornement d'armure entrelacé (Eternal Starlight)
+  frostiful:
+    frosty: Ornement d'armure givré (Frostiful)
+    glacial: Ornement d'armure glaciaire (Frostiful)
+    snow_man: Ornement d'armure de bonhomme de neige (Frostiful)
+  geode_plus:
+    celeste: Ornement d'armure de Celeste (Geode+)
+    heart: Ornement d'armure de cœur (Geode+)
+    wrap: Ornement d'armure d'enveloppe (Geode+)
+  lost_aether_content:
+    noble: Ornement d'armure noble (Aether Lost Content)
+  more_armor_trims:
+    beast: Ornement d'armure de bête (More Armor Trims)
+    fever: Ornement d'armure de fièvre (More Armor Trims)
+    greed: Ornement d'armure d'avidité (More Armor Trims)
+    horizon: Ornement d'armure d'horizon (More Armor Trims)
+    myth: Ornement d'armure de mythe (More Armor Trims)
+    nihility: Ornement d'armure du néant (More Armor Trims)
+    origin: Ornement d'armure d'origine (More Armor Trims)
+    parasite: Ornement d'armure de parasite (More Armor Trims)
+    ram: Ornement d'armure de bélier (More Armor Trims)
+    storm: Ornement d'armure de tempête (More Armor Trims)
+    twilight: Ornement d'armure de crépuscule (More Armor Trims)
+    witness: Ornement d'armure de témoin (More Armor Trims)
+    wraith: Ornement d'armure de spectre (More Armor Trims)
+  moresnifferflowers:
+    aroma: Ornement d'armure d'arôme (More Sniffer Flowers)
+  neapolitan:
+    primal: Ornement d'armure primitif (Neapolitan)
+  netherexp:
+    rift: Ornement d'armure de faille (Nether Expansion)
+    spirit: Ornement d'armure d'esprit (Nether Expansion)
+    valor: Ornement d'armure de bravoure (Nether Expansion)
+  unusualend:
+    ancient: Ornement d'armure antique (Unusual End)
+  yungscavebiomes:
+    ancient: Ornement d'armure antique (Yung's Cave Biomes)

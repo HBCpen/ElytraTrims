@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Dekorierbare Elytren
+view.elytratrims.type.decorating: Elytren-Dekoration
+flag.item.elytratrims:
+  glow: §bLeuchtend
+  gateway: §dKosmisch
+  banner: HD-Banner
+  animation: §cEin Apfel am Tag hält den Doktor fern
+recipe.elytratrims:
+  apply_glow_effect: §7Lässt die Dekorationen der Elytren im Dunkeln leuchten
+  apply_gateway_effect: §7Verleiht den Elytren das Aussehen eines Endportals
+  apply_animation_effect: §7Wendet eine gewisse Animation auf die Elytren an
+  apply_shield_pattern: §7Wendet Schildmuster auf die Elytren an; die Grundfarbe des Banners wird nicht übernommen
+  apply_banner_pattern: §7Wendet Bannermuster auf die Elytren an; die Grundfarbe des Banners wird nicht übernommen
+  apply_random_trim: §7Wendet eine zufällige Verzierung an, die neu ausgewürfelt wird, sobald jemand sie herstellt
+  apply_random_trim_reroll: §7Wendet eine zufällige Verzierung an, die bei jeder Änderung der Gegenstände neu ausgewürfelt wird
+trim_pattern:
+  alexscaves:
+    polarity: Polaritäts-Rüstungsverzierung (Alex's Caves)
+  ancient_aether:
+    ancient: Uralt-Rüstungsverzierung (Ancient Aether)
+    ascended: Aufstiegs-Rüstungsverzierung (Ancient Aether)
+    mechanical: Mechanik-Rüstungsverzierung (Ancient Aether)
+    mosaic: Mosaik-Rüstungsverzierung (Ancient Aether)
+    mysterious: Mysterien-Rüstungsverzierung (Ancient Aether)
+    royal: Königs-Rüstungsverzierung (Ancient Aether)
+    solar: Sonnen-Rüstungsverzierung (Ancient Aether)
+    whale: Wal-Rüstungsverzierung (Ancient Aether)
+    wynd: Wynd-Rüstungsverzierung (Ancient Aether)
+  atmospheric:
+    apostle: Apostel-Rüstungsverzierung (Atmospheric)
+    druid: Druiden-Rüstungsverzierung (Atmospheric)
+    petrified: Versteinerungs-Rüstungsverzierung (Atmospheric)
+  caverns_and_chasms:
+    exile: Exil-Rüstungsverzierung (Caverns & Chasms)
+  elytratrims:
+    construction: Bau-Rüstungsverzierung (Elytra Trims)
+    fly: Flug-Rüstungsverzierung (Elytra Trims)
+    gems: Edelstein-Rüstungsverzierung (Elytra Trims)
+    grate: Gitterrost-Rüstungsverzierung (Elytra Trims)
+    grid: Raster-Rüstungsverzierung (Elytra Trims)
+    stars: Sternen-Rüstungsverzierung (Elytra Trims)
+    web: Spinnennetz-Rüstungsverzierung (Elytra Trims)
+    whirl: Wirbel-Rüstungsverzierung (Elytra Trims)
+  eternal_starlight:
+    forge: Schmiede-Rüstungsverzierung (Eternal Starlight)
+    blooming: Blüten-Rüstungsverzierung (Eternal Starlight)
+    keeper: Wächter-Rüstungsverzierung (Eternal Starlight)
+    twining: Geflecht-Rüstungsverzierung (Eternal Starlight)
+  frostiful:
+    frosty: Frost-Rüstungsverzierung (Frostiful)
+    glacial: Gletscher-Rüstungsverzierung (Frostiful)
+    snow_man: Schneemann-Rüstungsverzierung (Frostiful)
+  geode_plus:
+    celeste: Celeste-Rüstungsverzierung (Geode+)
+    heart: Herz-Rüstungsverzierung (Geode+)
+    wrap: Umhüllungs-Rüstungsverzierung (Geode+)
+  lost_aether_content:
+    noble: Adels-Rüstungsverzierung (Aether Lost Content)
+  more_armor_trims:
+    beast: Biest-Rüstungsbesatz (More Armor Trims)
+    fever: Fieber-Rüstungsbesatz (More Armor Trims)
+    greed: Gier-Rüstungsbesatz (More Armor Trims)
+    horizon: Horizont-Rüstungsbesatz (More Armor Trims)
+    myth: Mythos-Rüstungsbesatz (More Armor Trims)
+    nihility: Nichtigkeit-Rüstungsbesatz (More Armor Trims)
+    origin: Herkunft-Rüstungsbesatz (More Armor Trims)
+    parasite: Parasiten-Rüstungsverzierung (More Armor Trims)
+    ram: Rammbock-Rüstungsbesatz (More Armor Trims)
+    storm: Sturm-Rüstungsbesatz (More Armor Trims)
+    twilight: Dämmerungs-Rüstungsverzierung (More Armor Trims)
+    witness: Zeugen-Rüstungsverzierung (More Armor Trims)
+    wraith: Gespenst-Rüstungsbesatz (More Armor Trims)
+  moresnifferflowers:
+    aroma: Aroma-Rüstungsverzierung (More Sniffer Flowers)
+  neapolitan:
+    primal: Urzeit-Rüstungsverzierung (Neapolitan)
+  netherexp:
+    rift: Riss-Rüstungsverzierung (Nether Expansion)
+    spirit: Geist-Rüstungsverzierung (Nether Expansion)
+    valor: Tapferkeits-Rüstungsverzierung (Nether Expansion)
+  unusualend:
+    ancient: Uralt-Rüstungsverzierung (Unusual End)
+  yungscavebiomes:
+    ancient: Uralt-Rüstungsverzierung (Yung's Cave Biomes)

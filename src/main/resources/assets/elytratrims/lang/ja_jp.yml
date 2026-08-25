@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: 装飾可能なエリトラ
+view.elytratrims.type.decorating: エリトラの装飾
+flag.item.elytratrims:
+  glow: §b発光
+  gateway: §dコズミック
+  banner: HD旗
+  animation: §c1日1個のリンゴで医者いらず
+recipe.elytratrims:
+  apply_glow_effect: §7エリトラの装飾が暗闇で光るようになります
+  apply_gateway_effect: §7エリトラをエンドポータルのような見た目にします
+  apply_animation_effect: §7エリトラに特定のアニメーションを適用します
+  apply_shield_pattern: §7エリトラに盾の模様を適用します。旗のベース色は含まれません
+  apply_banner_pattern: §7エリトラに旗の模様を適用します。旗のベース色は含まれません
+  apply_random_trim: §7ランダムな装飾を適用します。誰かがクラフトすると引き直されます
+  apply_random_trim_reroll: §7ランダムな装飾を適用します。アイテムが変わるたびに引き直されます
+trim_pattern:
+  alexscaves:
+    polarity: 極性の鎧の飾り (Alex's Caves)
+  ancient_aether:
+    ancient: 古代の鎧の飾り (Ancient Aether)
+    ascended: 昇天の鎧の飾り (Ancient Aether)
+    mechanical: 機械の鎧の飾り (Ancient Aether)
+    mosaic: モザイクの鎧の飾り (Ancient Aether)
+    mysterious: 神秘の鎧の飾り (Ancient Aether)
+    royal: 王家の鎧の飾り (Ancient Aether)
+    solar: 太陽の鎧の飾り (Ancient Aether)
+    whale: クジラの鎧の飾り (Ancient Aether)
+    wynd: ウィンドの鎧の飾り (Ancient Aether)
+  atmospheric:
+    apostle: 使徒の鎧の飾り (Atmospheric)
+    druid: ドルイドの鎧の飾り (Atmospheric)
+    petrified: 石化の鎧の飾り (Atmospheric)
+  caverns_and_chasms:
+    exile: 追放の鎧の飾り (Caverns & Chasms)
+  elytratrims:
+    construction: 建築の鎧の飾り (Elytra Trims)
+    fly: 飛行の鎧の飾り (Elytra Trims)
+    gems: 宝石の鎧の飾り (Elytra Trims)
+    grate: 格子の鎧の飾り (Elytra Trims)
+    grid: 方眼の鎧の飾り (Elytra Trims)
+    stars: 星々の鎧の飾り (Elytra Trims)
+    web: 蜘蛛の巣の鎧の飾り (Elytra Trims)
+    whirl: 渦巻きの鎧の飾り (Elytra Trims)
+  eternal_starlight:
+    forge: 鍛冶の鎧の飾り (Eternal Starlight)
+    blooming: 開花の鎧の飾り (Eternal Starlight)
+    keeper: 守護者の鎧の飾り (Eternal Starlight)
+    twining: 絡み合いの鎧の飾り (Eternal Starlight)
+  frostiful:
+    frosty: 霜の鎧の飾り (Frostiful)
+    glacial: 氷河の鎧の飾り (Frostiful)
+    snow_man: 雪だるまの鎧の飾り (Frostiful)
+  geode_plus:
+    celeste: セレステの鎧の飾り (Geode+)
+    heart: ハートの鎧の飾り (Geode+)
+    wrap: 包みの鎧の飾り (Geode+)
+  lost_aether_content:
+    noble: 高貴の鎧の飾り (Aether Lost Content)
+  more_armor_trims:
+    beast: 獣の鎧の飾り (More Armor Trims)
+    fever: 熱狂の鎧の飾り (More Armor Trims)
+    greed: 強欲の鎧の飾り (More Armor Trims)
+    horizon: 地平線の鎧の飾り (More Armor Trims)
+    myth: 神話の鎧の飾り (More Armor Trims)
+    nihility: 虚無の鎧の飾り (More Armor Trims)
+    origin: 起源の鎧の飾り (More Armor Trims)
+    parasite: 寄生の鎧の飾り (More Armor Trims)
+    ram: 破城槌の鎧の飾り (More Armor Trims)
+    storm: 嵐の鎧の飾り (More Armor Trims)
+    twilight: 黄昏の鎧の飾り (More Armor Trims)
+    witness: 目撃者の鎧の飾り (More Armor Trims)
+    wraith: 亡霊の鎧の飾り (More Armor Trims)
+  moresnifferflowers:
+    aroma: 芳香の鎧の飾り (More Sniffer Flowers)
+  neapolitan:
+    primal: 原初の鎧の飾り (Neapolitan)
+  netherexp:
+    rift: 裂け目の鎧の飾り (Nether Expansion)
+    spirit: 精霊の鎧の飾り (Nether Expansion)
+    valor: 勇猛の鎧の飾り (Nether Expansion)
+  unusualend:
+    ancient: 古代の鎧の飾り (Unusual End)
+  yungscavebiomes:
+    ancient: 古代の鎧の飾り (Yung's Cave Biomes)

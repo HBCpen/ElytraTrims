@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: 可装饰的鞘翅
+view.elytratrims.type.decorating: 鞘翅装饰
+flag.item.elytratrims:
+  glow: §b发光
+  gateway: §d宇宙
+  banner: 高清旗帜
+  animation: §c一天一苹果，医生远离我
+recipe.elytratrims:
+  apply_glow_effect: §7让鞘翅上的装饰在黑暗中发光
+  apply_gateway_effect: §7让鞘翅呈现末地传送门的外观
+  apply_animation_effect: §7为鞘翅应用某种动画
+  apply_shield_pattern: §7将盾牌图案应用到鞘翅上，不包括旗帜的底色
+  apply_banner_pattern: §7将旗帜图案应用到鞘翅上，不包括旗帜的底色
+  apply_random_trim: §7应用随机纹饰，有人合成后会重新抽取
+  apply_random_trim_reroll: §7应用随机纹饰，每次物品变动都会重新抽取
+trim_pattern:
+  alexscaves:
+    polarity: 极性纹饰 (Alex's Caves)
+  ancient_aether:
+    ancient: 远古纹饰 (Ancient Aether)
+    ascended: 飞升纹饰 (Ancient Aether)
+    mechanical: 机械纹饰 (Ancient Aether)
+    mosaic: 马赛克纹饰 (Ancient Aether)
+    mysterious: 神秘纹饰 (Ancient Aether)
+    royal: 皇家纹饰 (Ancient Aether)
+    solar: 太阳纹饰 (Ancient Aether)
+    whale: 鲸鱼纹饰 (Ancient Aether)
+    wynd: 温德纹饰 (Ancient Aether)
+  atmospheric:
+    apostle: 使徒纹饰 (Atmospheric)
+    druid: 德鲁伊纹饰 (Atmospheric)
+    petrified: 石化纹饰 (Atmospheric)
+  caverns_and_chasms:
+    exile: 放逐纹饰 (Caverns & Chasms)
+  elytratrims:
+    construction: 建筑纹饰 (Elytra Trims)
+    fly: 飞行纹饰 (Elytra Trims)
+    gems: 宝石纹饰 (Elytra Trims)
+    grate: 格栅纹饰 (Elytra Trims)
+    grid: 网格纹饰 (Elytra Trims)
+    stars: 繁星纹饰 (Elytra Trims)
+    web: 蛛网纹饰 (Elytra Trims)
+    whirl: 漩涡纹饰 (Elytra Trims)
+  eternal_starlight:
+    forge: 熔炉纹饰 (Eternal Starlight)
+    blooming: 绽放纹饰 (Eternal Starlight)
+    keeper: 守护者纹饰 (Eternal Starlight)
+    twining: 缠绕纹饰 (Eternal Starlight)
+  frostiful:
+    frosty: 霜冻纹饰 (Frostiful)
+    glacial: 冰川纹饰 (Frostiful)
+    snow_man: 雪人纹饰 (Frostiful)
+  geode_plus:
+    celeste: 塞莱斯特纹饰 (Geode+)
+    heart: 心形纹饰 (Geode+)
+    wrap: 包裹纹饰 (Geode+)
+  lost_aether_content:
+    noble: 高贵纹饰 (Aether Lost Content)
+  more_armor_trims:
+    beast: 野兽纹饰 (More Armor Trims)
+    fever: 狂热纹饰 (More Armor Trims)
+    greed: 贪婪纹饰 (More Armor Trims)
+    horizon: 地平线纹饰 (More Armor Trims)
+    myth: 神话纹饰 (More Armor Trims)
+    nihility: 虚无纹饰 (More Armor Trims)
+    origin: 起源纹饰 (More Armor Trims)
+    parasite: 寄生纹饰 (More Armor Trims)
+    ram: 攻城槌纹饰 (More Armor Trims)
+    storm: 风暴纹饰 (More Armor Trims)
+    twilight: 黄昏纹饰 (More Armor Trims)
+    witness: 见证者纹饰 (More Armor Trims)
+    wraith: 幽魂纹饰 (More Armor Trims)
+  moresnifferflowers:
+    aroma: 芳香纹饰 (More Sniffer Flowers)
+  neapolitan:
+    primal: 原始纹饰 (Neapolitan)
+  netherexp:
+    rift: 裂隙纹饰 (Nether Expansion)
+    spirit: 灵魂纹饰 (Nether Expansion)
+    valor: 英勇纹饰 (Nether Expansion)
+  unusualend:
+    ancient: 远古纹饰 (Unusual End)
+  yungscavebiomes:
+    ancient: 远古纹饰 (Yung's Cave Biomes)

@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Elitre decorabili
+view.elytratrims.type.decorating: Decorazione delle elitre
+flag.item.elytratrims:
+  glow: §bLuminescente
+  gateway: §dCosmico
+  banner: Stendardo HD
+  animation: §cUna mela al giorno leva il medico di torno
+recipe.elytratrims:
+  apply_glow_effect: §7Fa brillare al buio le decorazioni delle elitre
+  apply_gateway_effect: §7Dona alle elitre l'aspetto di un portale dell'End
+  apply_animation_effect: §7Applica una certa animazione alle elitre
+  apply_shield_pattern: §7Applica alle elitre i motivi dello scudo; non include il colore di base dello stendardo
+  apply_banner_pattern: §7Applica alle elitre i motivi dello stendardo; non include il colore di base dello stendardo
+  apply_random_trim: §7Applica un fregio casuale, riestratto quando qualcuno lo fabbrica
+  apply_random_trim_reroll: §7Applica un fregio casuale, riestratto ogni volta che gli oggetti cambiano
+trim_pattern:
+  alexscaves:
+    polarity: Fregio della polarità (Alex's Caves)
+  ancient_aether:
+    ancient: Fregio antico (Ancient Aether)
+    ascended: Fregio dell'ascensione (Ancient Aether)
+    mechanical: Fregio meccanico (Ancient Aether)
+    mosaic: Fregio a mosaico (Ancient Aether)
+    mysterious: Fregio misterioso (Ancient Aether)
+    royal: Fregio regale (Ancient Aether)
+    solar: Fregio solare (Ancient Aether)
+    whale: Fregio della balena (Ancient Aether)
+    wynd: Fregio di Wynd (Ancient Aether)
+  atmospheric:
+    apostle: Fregio dell'apostolo (Atmospheric)
+    druid: Fregio del druido (Atmospheric)
+    petrified: Fregio pietrificato (Atmospheric)
+  caverns_and_chasms:
+    exile: Fregio dell'esilio (Caverns & Chasms)
+  elytratrims:
+    construction: Fregio della costruzione (Elytra Trims)
+    fly: Fregio del volo (Elytra Trims)
+    gems: Fregio delle gemme (Elytra Trims)
+    grate: Fregio della grata (Elytra Trims)
+    grid: Fregio della griglia (Elytra Trims)
+    stars: Fregio delle stelle (Elytra Trims)
+    web: Fregio della ragnatela (Elytra Trims)
+    whirl: Fregio del vortice (Elytra Trims)
+  eternal_starlight:
+    forge: Fregio della forgia (Eternal Starlight)
+    blooming: Fregio fiorente (Eternal Starlight)
+    keeper: Fregio del custode (Eternal Starlight)
+    twining: Fregio intrecciato (Eternal Starlight)
+  frostiful:
+    frosty: Fregio brinato (Frostiful)
+    glacial: Fregio glaciale (Frostiful)
+    snow_man: Fregio del pupazzo di neve (Frostiful)
+  geode_plus:
+    celeste: Fregio di Celeste (Geode+)
+    heart: Fregio del cuore (Geode+)
+    wrap: Fregio dell'involucro (Geode+)
+  lost_aether_content:
+    noble: Fregio nobile (Aether Lost Content)
+  more_armor_trims:
+    beast: Fregio della bestia (More Armor Trims)
+    fever: Fregio della febbre (More Armor Trims)
+    greed: Fregio dell'avidità (More Armor Trims)
+    horizon: Fregio dell'orizzonte (More Armor Trims)
+    myth: Fregio del mito (More Armor Trims)
+    nihility: Fregio del nulla (More Armor Trims)
+    origin: Fregio dell'origine (More Armor Trims)
+    parasite: Fregio del parassita (More Armor Trims)
+    ram: Fregio dell'ariete (More Armor Trims)
+    storm: Fregio della tempesta (More Armor Trims)
+    twilight: Fregio del crepuscolo (More Armor Trims)
+    witness: Fregio del testimone (More Armor Trims)
+    wraith: Fregio dello spettro (More Armor Trims)
+  moresnifferflowers:
+    aroma: Fregio dell'aroma (More Sniffer Flowers)
+  neapolitan:
+    primal: Fregio primordiale (Neapolitan)
+  netherexp:
+    rift: Fregio della frattura (Nether Expansion)
+    spirit: Fregio dello spirito (Nether Expansion)
+    valor: Fregio del valore (Nether Expansion)
+  unusualend:
+    ancient: Fregio antico (Unusual End)
+  yungscavebiomes:
+    ancient: Fregio antico (Yung's Cave Biomes)

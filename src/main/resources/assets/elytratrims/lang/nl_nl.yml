@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Versierbare elytra's
+view.elytratrims.type.decorating: Elytraversiering
+flag.item.elytratrims:
+  glow: §bGloeiend
+  gateway: §dKosmisch
+  banner: HD-vlag
+  animation: §cEen appel per dag houdt de dokter weg
+recipe.elytratrims:
+  apply_glow_effect: §7Laat de versieringen van de elytra in het donker gloeien
+  apply_gateway_effect: §7Geeft de elytra het uiterlijk van een Endportaal
+  apply_animation_effect: §7Past een bepaalde animatie toe op de elytra
+  apply_shield_pattern: §7Past schildpatronen toe op de elytra; de basiskleur van de vlag wordt niet overgenomen
+  apply_banner_pattern: §7Past vlagpatronen toe op de elytra; de basiskleur van de vlag wordt niet overgenomen
+  apply_random_trim: §7Past een willekeurige versiering toe, die opnieuw wordt geloot wanneer iemand hem maakt
+  apply_random_trim_reroll: §7Past een willekeurige versiering toe, die opnieuw wordt geloot bij elke wijziging van voorwerpen
+trim_pattern:
+  alexscaves:
+    polarity: Polariteitsharnasversiering (Alex's Caves)
+  ancient_aether:
+    ancient: Oeroude harnasversiering (Ancient Aether)
+    ascended: Opgestegen harnasversiering (Ancient Aether)
+    mechanical: Mechanische harnasversiering (Ancient Aether)
+    mosaic: Mozaïekharnasversiering (Ancient Aether)
+    mysterious: Mysterieuze harnasversiering (Ancient Aether)
+    royal: Koninklijke harnasversiering (Ancient Aether)
+    solar: Zonneharnasversiering (Ancient Aether)
+    whale: Walvisharnasversiering (Ancient Aether)
+    wynd: Wynd-harnasversiering (Ancient Aether)
+  atmospheric:
+    apostle: Apostelharnasversiering (Atmospheric)
+    druid: Druïdenharnasversiering (Atmospheric)
+    petrified: Versteende harnasversiering (Atmospheric)
+  caverns_and_chasms:
+    exile: Ballingschapsharnasversiering (Caverns & Chasms)
+  elytratrims:
+    construction: Bouwharnasversiering (Elytra Trims)
+    fly: Vluchtharnasversiering (Elytra Trims)
+    gems: Edelsteenharnasversiering (Elytra Trims)
+    grate: Roosterharnasversiering (Elytra Trims)
+    grid: Rasterharnasversiering (Elytra Trims)
+    stars: Sterrenharnasversiering (Elytra Trims)
+    web: Spinnenwebharnasversiering (Elytra Trims)
+    whirl: Wervelharnasversiering (Elytra Trims)
+  eternal_starlight:
+    forge: Smidseharnasversiering (Eternal Starlight)
+    blooming: Bloeiende harnasversiering (Eternal Starlight)
+    keeper: Bewakersharnasversiering (Eternal Starlight)
+    twining: Verweven harnasversiering (Eternal Starlight)
+  frostiful:
+    frosty: Vorstharnasversiering (Frostiful)
+    glacial: Gletsjerharnasversiering (Frostiful)
+    snow_man: Sneeuwpopharnasversiering (Frostiful)
+  geode_plus:
+    celeste: Celeste-harnasversiering (Geode+)
+    heart: Hartharnasversiering (Geode+)
+    wrap: Wikkelharnasversiering (Geode+)
+  lost_aether_content:
+    noble: Adellijke harnasversiering (Aether Lost Content)
+  more_armor_trims:
+    beast: Beestharnasversiering (More Armor Trims)
+    fever: Koortsharnasversiering (More Armor Trims)
+    greed: Hebzuchtharnasversiering (More Armor Trims)
+    horizon: Horizonharnasversiering (More Armor Trims)
+    myth: Mytheharnasversiering (More Armor Trims)
+    nihility: Leegteharnasversiering (More Armor Trims)
+    origin: Oorsprongharnasversiering (More Armor Trims)
+    parasite: Parasietharnasversiering (More Armor Trims)
+    ram: Stormramharnasversiering (More Armor Trims)
+    storm: Stormharnasversiering (More Armor Trims)
+    twilight: Schemerharnasversiering (More Armor Trims)
+    witness: Getuigeharnasversiering (More Armor Trims)
+    wraith: Schimharnasversiering (More Armor Trims)
+  moresnifferflowers:
+    aroma: Aromaharnasversiering (More Sniffer Flowers)
+  neapolitan:
+    primal: Oerharnasversiering (Neapolitan)
+  netherexp:
+    rift: Scheurharnasversiering (Nether Expansion)
+    spirit: Geestharnasversiering (Nether Expansion)
+    valor: Moedharnasversiering (Nether Expansion)
+  unusualend:
+    ancient: Oeroude harnasversiering (Unusual End)
+  yungscavebiomes:
+    ancient: Oeroude harnasversiering (Yung's Cave Biomes)

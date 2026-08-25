@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Елітри, які можна прикрашати
+view.elytratrims.type.decorating: Оздоблення елітр
+flag.item.elytratrims:
+  glow: §bСяйво
+  gateway: §dКосмос
+  banner: HD-прапор
+  animation: §cОдне яблуко на день - і лікар не потрібен
+recipe.elytratrims:
+  apply_glow_effect: §7Змушує оздоблення елітр світитися в темряві
+  apply_gateway_effect: §7Надає елітрам вигляду порталу Енду
+  apply_animation_effect: §7Застосовує до елітр певну анімацію
+  apply_shield_pattern: §7Наносить на елітри візерунки щита; основний колір прапора не переноситься
+  apply_banner_pattern: §7Наносить на елітри візерунки прапора; основний колір прапора не переноситься
+  apply_random_trim: §7Наносить випадкове оздоблення, яке обирається наново, коли хтось його виготовить
+  apply_random_trim_reroll: §7Наносить випадкове оздоблення, яке обирається наново щоразу, коли змінюються предмети
+trim_pattern:
+  alexscaves:
+    polarity: Оздоблення обладунків «Полярність» (Alex's Caves)
+  ancient_aether:
+    ancient: Оздоблення обладунків «Прадавність» (Ancient Aether)
+    ascended: Оздоблення обладунків «Піднесення» (Ancient Aether)
+    mechanical: Оздоблення обладунків «Механіка» (Ancient Aether)
+    mosaic: Оздоблення обладунків «Мозаїка» (Ancient Aether)
+    mysterious: Оздоблення обладунків «Таємничість» (Ancient Aether)
+    royal: Оздоблення обладунків «Королівське» (Ancient Aether)
+    solar: Оздоблення обладунків «Сонце» (Ancient Aether)
+    whale: Оздоблення обладунків «Кит» (Ancient Aether)
+    wynd: Оздоблення обладунків «Вінд» (Ancient Aether)
+  atmospheric:
+    apostle: Оздоблення обладунків «Апостол» (Atmospheric)
+    druid: Оздоблення обладунків «Друїд» (Atmospheric)
+    petrified: Оздоблення обладунків «Скам'янілість» (Atmospheric)
+  caverns_and_chasms:
+    exile: Оздоблення обладунків «Вигнання» (Caverns & Chasms)
+  elytratrims:
+    construction: Оздоблення обладунків «Будівництво» (Elytra Trims)
+    fly: Оздоблення обладунків «Політ» (Elytra Trims)
+    gems: Оздоблення обладунків «Самоцвіти» (Elytra Trims)
+    grate: Оздоблення обладунків «Ґрати» (Elytra Trims)
+    grid: Оздоблення обладунків «Сітка» (Elytra Trims)
+    stars: Оздоблення обладунків «Зорі» (Elytra Trims)
+    web: Оздоблення обладунків «Павутина» (Elytra Trims)
+    whirl: Оздоблення обладунків «Вихор» (Elytra Trims)
+  eternal_starlight:
+    forge: Оздоблення обладунків «Кузня» (Eternal Starlight)
+    blooming: Оздоблення обладунків «Цвітіння» (Eternal Starlight)
+    keeper: Оздоблення обладунків «Хранитель» (Eternal Starlight)
+    twining: Оздоблення обладунків «Плетиво» (Eternal Starlight)
+  frostiful:
+    frosty: Оздоблення обладунків «Паморозь» (Frostiful)
+    glacial: Оздоблення обладунків «Льодовик» (Frostiful)
+    snow_man: Оздоблення обладунків «Сніговик» (Frostiful)
+  geode_plus:
+    celeste: Оздоблення обладунків «Селесте» (Geode+)
+    heart: Оздоблення обладунків «Серце» (Geode+)
+    wrap: Оздоблення обладунків «Обгортка» (Geode+)
+  lost_aether_content:
+    noble: Оздоблення обладунків «Шляхетність» (Aether Lost Content)
+  more_armor_trims:
+    beast: Орнамент обладунків «Звір» (More Armor Trims)
+    fever: Орнамент обладунків «Лихоманка» (More Armor Trims)
+    greed: Орнамент обладунків «Жадність» (More Armor Trims)
+    horizon: Орнамент обладунків «Горизонт» (More Armor Trims)
+    myth: Орнамент обладунків «Міт» (More Armor Trims)
+    nihility: Орнамент обладунків «Небуття» (More Armor Trims)
+    origin: Орнамент обладунків «Походження» (More Armor Trims)
+    parasite: Орнамент обладунків «Паразит» (More Armor Trims)
+    ram: Орнамент обладунків «Таран» (More Armor Trims)
+    storm: Орнамент обладунків «Шторм» (More Armor Trims)
+    twilight: Орнамент обладунків «Сутінки» (More Armor Trims)
+    witness: Орнамент обладунків «Свідок» (More Armor Trims)
+    wraith: Орнамент обладунків «Примара» (More Armor Trims)
+  moresnifferflowers:
+    aroma: Оздоблення обладунків «Аромат» (More Sniffer Flowers)
+  neapolitan:
+    primal: Оздоблення обладунків «Первинність» (Neapolitan)
+  netherexp:
+    rift: Оздоблення обладунків «Розлам» (Nether Expansion)
+    spirit: Оздоблення обладунків «Дух» (Nether Expansion)
+    valor: Оздоблення обладунків «Доблесть» (Nether Expansion)
+  unusualend:
+    ancient: Оздоблення обладунків «Прадавність» (Unusual End)
+  yungscavebiomes:
+    ancient: Оздоблення обладунків «Прадавність» (Yung's Cave Biomes)

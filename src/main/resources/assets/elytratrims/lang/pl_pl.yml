@@ -1,0 +1,84 @@
+tag.item.elytratrims.decoratable: Elytry, które można zdobić
+view.elytratrims.type.decorating: Zdobienie elytr
+flag.item.elytratrims:
+  glow: §bŚwiecące
+  gateway: §dKosmiczne
+  banner: Sztandar HD
+  animation: §cJedno jabłko dziennie i lekarz niepotrzebny
+recipe.elytratrims:
+  apply_glow_effect: §7Sprawia, że zdobienia elytr świecą w ciemności
+  apply_gateway_effect: §7Nadaje elytrom wygląd portalu Kresu
+  apply_animation_effect: §7Nakłada na elytry pewną animację
+  apply_shield_pattern: §7Nakłada na elytry wzory tarczy; nie obejmuje koloru bazowego sztandaru
+  apply_banner_pattern: §7Nakłada na elytry wzory sztandaru; nie obejmuje koloru bazowego sztandaru
+  apply_random_trim: §7Nakłada losowe zdobienie, losowane ponownie, gdy ktoś je wytworzy
+  apply_random_trim_reroll: §7Nakłada losowe zdobienie, losowane ponownie przy każdej zmianie przedmiotów
+trim_pattern:
+  alexscaves:
+    polarity: Zdobienie zbroi «Polaryzacja» (Alex's Caves)
+  ancient_aether:
+    ancient: Zdobienie zbroi «Pradawność» (Ancient Aether)
+    ascended: Zdobienie zbroi «Wzniesienie» (Ancient Aether)
+    mechanical: Zdobienie zbroi «Mechanika» (Ancient Aether)
+    mosaic: Zdobienie zbroi «Mozaika» (Ancient Aether)
+    mysterious: Zdobienie zbroi «Tajemnica» (Ancient Aether)
+    royal: Zdobienie zbroi «Królewskie» (Ancient Aether)
+    solar: Zdobienie zbroi «Słońce» (Ancient Aether)
+    whale: Zdobienie zbroi «Wieloryb» (Ancient Aether)
+    wynd: Zdobienie zbroi «Wynd» (Ancient Aether)
+  atmospheric:
+    apostle: Zdobienie zbroi «Apostoł» (Atmospheric)
+    druid: Zdobienie zbroi «Druid» (Atmospheric)
+    petrified: Zdobienie zbroi «Skamielina» (Atmospheric)
+  caverns_and_chasms:
+    exile: Zdobienie zbroi «Wygnanie» (Caverns & Chasms)
+  elytratrims:
+    construction: Zdobienie zbroi «Budowa» (Elytra Trims)
+    fly: Zdobienie zbroi «Lot» (Elytra Trims)
+    gems: Zdobienie zbroi «Klejnoty» (Elytra Trims)
+    grate: Zdobienie zbroi «Krata» (Elytra Trims)
+    grid: Zdobienie zbroi «Siatka» (Elytra Trims)
+    stars: Zdobienie zbroi «Gwiazdy» (Elytra Trims)
+    web: Zdobienie zbroi «Pajęczyna» (Elytra Trims)
+    whirl: Zdobienie zbroi «Wir» (Elytra Trims)
+  eternal_starlight:
+    forge: Zdobienie zbroi «Kuźnia» (Eternal Starlight)
+    blooming: Zdobienie zbroi «Rozkwit» (Eternal Starlight)
+    keeper: Zdobienie zbroi «Strażnik» (Eternal Starlight)
+    twining: Zdobienie zbroi «Splot» (Eternal Starlight)
+  frostiful:
+    frosty: Zdobienie zbroi «Szron» (Frostiful)
+    glacial: Zdobienie zbroi «Lodowiec» (Frostiful)
+    snow_man: Zdobienie zbroi «Bałwan» (Frostiful)
+  geode_plus:
+    celeste: Zdobienie zbroi «Celeste» (Geode+)
+    heart: Zdobienie zbroi «Serce» (Geode+)
+    wrap: Zdobienie zbroi «Owinięcie» (Geode+)
+  lost_aether_content:
+    noble: Zdobienie zbroi «Szlachetność» (Aether Lost Content)
+  more_armor_trims:
+    beast: Zdobienie zbroi «Bestia» (More Armor Trims)
+    fever: Zdobienie zbroi «Gorączka» (More Armor Trims)
+    greed: Zdobienie zbroi «Chciwość» (More Armor Trims)
+    horizon: Zdobienie zbroi «Horyzont» (More Armor Trims)
+    myth: Zdobienie zbroi «Mit» (More Armor Trims)
+    nihility: Zdobienie zbroi «Nicość» (More Armor Trims)
+    origin: Zdobienie zbroi «Pochodzenie» (More Armor Trims)
+    parasite: Zdobienie zbroi «Pasożyt» (More Armor Trims)
+    ram: Zdobienie zbroi «Taran» (More Armor Trims)
+    storm: Zdobienie zbroi «Burza» (More Armor Trims)
+    twilight: Zdobienie zbroi «Zmierzch» (More Armor Trims)
+    witness: Zdobienie zbroi «Świadek» (More Armor Trims)
+    wraith: Zdobienie zbroi «Zjawa» (More Armor Trims)
+  moresnifferflowers:
+    aroma: Zdobienie zbroi «Aromat» (More Sniffer Flowers)
+  neapolitan:
+    primal: Zdobienie zbroi «Pierwotność» (Neapolitan)
+  netherexp:
+    rift: Zdobienie zbroi «Szczelina» (Nether Expansion)
+    spirit: Zdobienie zbroi «Duch» (Nether Expansion)
+    valor: Zdobienie zbroi «Męstwo» (Nether Expansion)
+  unusualend:
+    ancient: Zdobienie zbroi «Pradawność» (Unusual End)
+  yungscavebiomes:
+    ancient: Zdobienie zbroi «Pradawność» (Yung's Cave Biomes)
