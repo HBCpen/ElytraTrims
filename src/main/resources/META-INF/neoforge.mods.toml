@@ -14,6 +14,9 @@ displayURL = "https://modrinth.com/mod/elytra-trims"
 issueTrackerUrl = "https://codeberg.org/KikuGie/elytra-trims/issues"
 updateJSONURL = "https://api.modrinth.com/updates/elytra-trims/forge_updates.json?neoforge=only"
 
+[[mixins]]
+config = "elytratrims.mixins.json"
+
 [[dependencies.elytratrims]]
 modId = "neoforge"
 type = "required"

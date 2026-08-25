@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.mixin.resource;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.resource.reload.ElytraTrimsAtlas;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.resources.model.sprite.SpriteId;

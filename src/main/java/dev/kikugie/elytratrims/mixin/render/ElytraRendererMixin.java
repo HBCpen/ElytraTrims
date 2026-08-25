@@ -10,7 +10,7 @@ import dev.kikugie.elytratrims.api.render.ETRenderMethod;
 import dev.kikugie.elytratrims.api.render.ETRenderParameters;
 import dev.kikugie.elytratrims.render.ETRenderingActionsKt;
 import dev.kikugie.elytratrims.render.impl.*;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;

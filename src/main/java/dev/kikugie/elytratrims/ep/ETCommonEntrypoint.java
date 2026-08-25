@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.ep;
 
 import dev.kikugie.elytratrims.ETEntrypointImplKt;
 import dev.kikugie.elytratrims.api.ETCommonInitializer;
-import dev.kikugie.fletching_table.annotation.fabric.Entrypoint;
+import dev.kikugie.fletching_table.fabric.Entrypoint;
 
 /*? if fabric*/@Entrypoint
 public class ETCommonEntrypoint implements ETCommonInitializer {

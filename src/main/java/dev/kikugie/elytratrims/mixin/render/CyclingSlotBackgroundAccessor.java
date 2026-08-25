@@ -1,6 +1,6 @@
 package dev.kikugie.elytratrims.mixin.render;
 
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

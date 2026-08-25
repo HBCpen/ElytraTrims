@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims;
 
 //? if fabric {
 import dev.kikugie.elytratrims.api.ETCommonInitializer;
-import dev.kikugie.fletching_table.annotation.fabric.Entrypoint;
+import dev.kikugie.fletching_table.fabric.Entrypoint;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;

@@ -3,10 +3,9 @@ import me.modmuss50.mpp.ReleaseType
 plugins {
     `maven-publish`
     kotlin("jvm")
-    alias(libs.plugins.ksp)
     alias(libs.plugins.mpp)
     alias(libs.plugins.neoforge)
-    alias(libs.plugins.ft.neoforge)
+    alias(ft.plugins.default)
     id("elytratrims-common")
 }
 
@@ -49,6 +48,8 @@ neoForge {
 dependencies {
     jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:${property("deps.kotlin-stdlib")}")!!)
     jarJar(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("deps.kotlin-coroutines")}")!!)
+
+    compileOnly(ft.fabric.entrypoint)
 }
 
 stonecutter {
@@ -83,12 +84,11 @@ tasks {
 }
 
 fletchingTable {
-    mixins.register("main") {
-        mixin("default", "elytratrims.mixins.json")
+    mixins.configure(sourceSets.main) {
+        mixin("elytratrims.mixins.json")
     }
 
-    lang.register("main") {
-        patterns.add("assets/elytratrims/lang/*.yml")
+    lang.configure(sourceSets.main) {
     }
 }
 

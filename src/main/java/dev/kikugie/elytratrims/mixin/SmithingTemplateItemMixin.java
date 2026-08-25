@@ -2,7 +2,7 @@ package dev.kikugie.elytratrims.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.kikugie.elytratrims.CommonsKt;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import kotlin.collections.CollectionsKt;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.SmithingTemplateItem;

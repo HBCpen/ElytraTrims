@@ -9,6 +9,17 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        maven("https://maven.kikugie.dev/snapshots")
+    }
+
+    versionCatalogs {
+        create("ft") { from("dev.kikugie.fletching-table:fletching-table.catalog:0.2.0-alpha.7") }
+    }
+}
+
 plugins {
     // For some reason, this plugin is crucial - do not remove
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"

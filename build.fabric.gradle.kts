@@ -6,10 +6,10 @@ import net.fabricmc.loom.task.prod.ClientProductionRunTask
 plugins {
     `maven-publish`
     kotlin("jvm")
-    alias(libs.plugins.ksp)
     alias(libs.plugins.mpp)
     alias(libs.plugins.loomx)
-    alias(libs.plugins.ft.fabric)
+    alias(ft.plugins.default)
+    alias(ft.plugins.fabric)
     id("elytratrims-common")
 }
 
@@ -55,14 +55,11 @@ dependencies {
     minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
     loomx.applyMojangMappings()
 
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
 
-    val mainFapiModules = arrayOf("command-api-v2", "resource-loader-v1", "data-generation-api-v1", "transitive-access-wideners-v1", "registry-sync-v0")
-    val testFapiModiles = arrayOf("client-gametest-api-v1")
-
-    fapi(*mainFapiModules)
-    fapi(*testFapiModiles) { "modGametestImplementation"(it) }
+    fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
 }
 
 stonecutter {
@@ -108,17 +105,17 @@ tasks {
 }
 
 fletchingTable {
-    mixins.register("main") {
-        mixin("default", "elytratrims.mixins.json")
+    mixins.configure(sourceSets.main) {
+        mixin("elytratrims.mixins.json")
+        mixin("elytratrims-compat.mixins.json", "compat")
     }
 
-    lang.register("main") {
-        patterns.add("assets/elytratrims/lang/*.yml")
+    lang.configure(sourceSets.main) {
     }
 
-    fabric {
-        entrypointMappings.put("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
-        entrypointMappings.put("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
+    fabric.configure(sourceSets.main) {
+        entrypoint("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
+        entrypoint("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
     }
 }
 

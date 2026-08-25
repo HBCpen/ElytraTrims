@@ -26,6 +26,9 @@
     "fabric-language-kotlin": ">=0.13",
     "minecraft": "${minecraft}"
   },
+  "mixins": [
+    "elytratrims.mixins.json"
+  ],
   "custom": {
     "modmenu": {
       "links": {

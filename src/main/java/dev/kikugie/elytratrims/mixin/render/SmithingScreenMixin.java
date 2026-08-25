@@ -5,7 +5,7 @@ import dev.kikugie.elytratrims.item.ETItemFlag;
 import dev.kikugie.elytratrims.render.gui.PreviewElytraAnimationState;
 import dev.kikugie.elytratrims.render.gui.SlotDoohickeyManager;
 import dev.kikugie.elytratrims.resource.ETTags;
-import dev.kikugie.fletching_table.annotation.MixinEnvironment;
+import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
