@@ -20,26 +20,27 @@ jobs:
   publish:
     name: Publish mods
     runs-on: kiku-server
-    container: eclipse-temurin:25-jdk-alpine
+    container: node:24-bookworm
     env:
       MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       KIKUGIE_MAVEN_USER: ${{ secrets.MAVEN_USER }}
       KIKUGIE_MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
-      - name: Setup deps
-        run: |
-          apk add --no-cache git jq nodejs
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
           token: ${{ secrets.CB_TOKEN }}
-      - name: Setup Gradle
-        run: |
-          chmod +x ./gradlew
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
       - name: Build mods
         run: |
+          chmod +x ./gradlew
           ./gradlew build --stacktrace --daemon
       - name: Publish to Maven
         if: ${{ inputs.maven }}

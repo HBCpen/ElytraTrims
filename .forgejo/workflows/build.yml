@@ -7,13 +7,13 @@ jobs:
   setup:
     name: Setup
     runs-on: kiku-server
-    container: alpine
+    container: node:24-bookworm
     outputs:
       projects: ${{ steps.set-versions.outputs.projects }}
     steps:
-      - name: Setup deps
+      - name: Install dependencies
         run: |
-          apk add --no-cache git jq nodejs
+          apt-get update && apt-get install -y --no-install-recommends jq
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
@@ -29,7 +29,7 @@ jobs:
     name: Build and Test
     needs: setup
     runs-on: kiku-server
-    container: eclipse-temurin:25-jdk-alpine
+    container: node:24-bookworm
     strategy:
       fail-fast: false
       matrix:
@@ -38,19 +38,20 @@ jobs:
       MATRIX_INSTANCE: ${{ matrix.project }}
       MATRIX_VERSION: ${{ matrix.version }}
     steps:
-      - name: Setup deps
-        run: |
-          apk add --no-cache git jq nodejs xvfb
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
           token: ${{ secrets.CB_TOKEN }}
-      - name: Setup Gradle
-        run: |
-          chmod +x ./gradlew
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
       - name: Build version
         run: |
+          chmod +x ./gradlew
           ./gradlew :${{ matrix.project }}:build --stacktrace --daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
