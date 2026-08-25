@@ -45,6 +45,7 @@ loom {
 repositories {
     mavenLocal()
     maven("https://maven.bawnorton.com/releases")
+    maven("https://maven.cassian.cc")
 }
 
 dependencies {
@@ -58,6 +59,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
+    modImplementation("cc.cassian.rrv:reliable-recipe-viewer-fabric:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
 
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
 }
@@ -65,6 +67,7 @@ dependencies {
 stonecutter {
     constants["trimica"] = false
     constants["iris"] = false
+    constants["rvv"] = true
 }
 
 kotlin {
@@ -107,7 +110,6 @@ tasks {
 fletchingTable {
     mixins.configure(sourceSets.main) {
         mixin("elytratrims.mixins.json")
-        mixin("elytratrims-compat.mixins.json", "compat")
     }
 
     lang.configure(sourceSets.main) {
@@ -116,6 +118,7 @@ fletchingTable {
     fabric.configure(sourceSets.main) {
         entrypoint("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
         entrypoint("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
+        entrypoint("rrv_client", "cc.cassian.rrv.api.ReliableRecipeViewerClientPlugin")
     }
 }
 

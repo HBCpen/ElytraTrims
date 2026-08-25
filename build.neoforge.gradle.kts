@@ -15,6 +15,7 @@ base.archivesName = "${property("mod.id")}-neoforge"
 repositories {
     mavenLocal()
     maven("https://maven.bawnorton.com/releases")
+    maven("https://maven.cassian.cc")
 }
 
 neoForge {
@@ -50,11 +51,13 @@ dependencies {
     jarJar(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("deps.kotlin-coroutines")}")!!)
 
     compileOnly(ft.fabric.entrypoint)
+    compileOnly("cc.cassian.rrv:reliable-recipe-viewer-neoforge:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
 }
 
 stonecutter {
     constants["trimica"] = false
     constants["iris"] = false
+    constants["rvv"] = true
 }
 
 kotlin {

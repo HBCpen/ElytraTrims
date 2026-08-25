@@ -13,6 +13,7 @@ bannerFile = "assets/elytratrims/banner.png"
 displayURL = "https://modrinth.com/mod/elytra-trims"
 issueTrackerUrl = "https://codeberg.org/KikuGie/elytra-trims/issues"
 updateJSONURL = "https://api.modrinth.com/updates/elytra-trims/forge_updates.json?neoforge=only"
+rrv_client = "dev.kikugie.elytratrims.ep.ETRecipeViewerEntrypoint"
 
 [[mixins]]
 config = "elytratrims.mixins.json"

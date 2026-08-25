@@ -7,6 +7,7 @@ deps.fabric-loader="0.19.3"
 deps.fabric-kotlin="1.13.12+kotlin.2.4.0"
 deps.kotlin-stdlib="2.4.0"
 deps.kotlin-coroutines="1.11.0"
+deps.rvv_base="8.8.0"
 
 loomx.loom_version="1.17-SNAPSHOT"
 
@@ -30,7 +31,7 @@ mod.releases.fabric=["26.1", "26.1.1", "26.1.2"]
 mod.releases.neoforge=["26.1.2"]
 
 deps.minecraft="26.1.2"
-deps.fabric-api="0.146.1+26.1.2"
+deps.fabric-api="0.155.2+26.1.2"
 deps.neo-loader="26.1.2.94"
 
 ["26.2"]
@@ -39,7 +40,7 @@ mod.compat.neoforge="[26.2, 26.3)"
 mod.releases=["26.2"]
 
 deps.minecraft="26.2"
-deps.fabric-api="0.152.1+26.2"
+deps.fabric-api="0.158.0+26.2"
 deps.neo-loader="26.2.0.53-beta"
 
 ["26.3"]
@@ -47,7 +48,11 @@ publish.status="alpha"
 publish.curseforge=false
 
 mod.compat.fabric=">=26.3-alpha.5 <26.3"
-mod.releases=["26.3-snapshot-5", "26.3-snapshot-6", "26.3-snapshot-7", "26.3-snapshot-8"]
+mod.releases=[
+    "26.3-snapshot-5", "26.3-snapshot-6", "26.3-snapshot-7",
+    "26.3-snapshot-8", "26.3-snapshot-9", "26.3-snapshot-10"
+]
 
-deps.minecraft="26.3-snapshot-8"
-deps.fabric-api="0.156.3+26.3"
+deps.minecraft="26.3-snapshot-10"
+deps.fabric-api="0.158.2+26.3"
+deps.rvv_mc="26.3-snapshot-7"

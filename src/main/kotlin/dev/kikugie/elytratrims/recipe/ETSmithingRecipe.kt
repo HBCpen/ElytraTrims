@@ -7,6 +7,7 @@ import dev.kikugie.elytratrims.mixin.recipe.SmithingTransformRecipeAccessor
 import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.item.equipment.trim.ArmorTrim
@@ -24,6 +25,20 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
 ) {
     companion object {
         @JvmField val RANDOM_TRIM = elytratrims("apply_random_trim")
+        @JvmField val RANDOM_TRIM_REROLL = elytratrims("apply_random_trim_reroll")
+        @JvmField val SHIELD_PATTERN = elytratrims("apply_shield_pattern")
+        @JvmField val BANNER_PATTERN = elytratrims("apply_banner_pattern")
+        @JvmField val ANIMATION_EFFECT = elytratrims("apply_animation_effect")
+        @JvmField val GATEWAY_EFFECT = elytratrims("apply_gateway_effect")
+        @JvmField val GLOW_EFFECT = elytratrims("apply_glow_effect")
+
+        /** Every recipe [modify] rewrites, in the order they should be displayed to the player. */
+        @JvmField val DECORATION_RECIPES: List<Identifier> = listOf(
+            GLOW_EFFECT, GATEWAY_EFFECT, ANIMATION_EFFECT,
+            SHIELD_PATTERN, BANNER_PATTERN,
+            RANDOM_TRIM, RANDOM_TRIM_REROLL,
+        )
+
         //? if >26
         @JvmField val BULLSHIT_I_HAVE_TO_DEAL_WITH: ThreadLocal<HolderLookup<TrimPattern>> = ThreadLocal()
 
@@ -32,14 +47,14 @@ abstract class ETSmithingRecipe(delegate: SmithingRecipe) : SmithingTransformRec
 
         @JvmStatic
         fun modify(entry: RecipeHolder<Recipe<*>>): RecipeHolder<Recipe<*>> = when (val recipe = entry.value) {
-            is SmithingRecipe -> when (entry.id.identifier().toString()) {
-                "elytratrims:apply_random_trim" -> entry replace RandomTrimRecipe(recipe, true)
-                "elytratrims:apply_random_trim_reroll" -> entry replace RandomTrimRecipe(recipe, false)
-                "elytratrims:apply_shield_pattern" -> entry replace PatternsRecipe(recipe, false)
-                "elytratrims:apply_banner_pattern" -> entry replace PatternsRecipe(recipe, true)
-                "elytratrims:apply_animation_effect" -> entry replace FlagRecipe(recipe, true, ETItemFlag.BAD_APPLE)
-                "elytratrims:apply_gateway_effect" -> entry replace FlagRecipe(recipe, true, ETItemFlag.GATEWAY)
-                "elytratrims:apply_glow_effect" -> entry replace FlagRecipe(recipe, true, ETItemFlag.GLOW)
+            is SmithingRecipe -> when (entry.id.identifier()) {
+                RANDOM_TRIM -> entry replace RandomTrimRecipe(recipe, true)
+                RANDOM_TRIM_REROLL -> entry replace RandomTrimRecipe(recipe, false)
+                SHIELD_PATTERN -> entry replace PatternsRecipe(recipe, false)
+                BANNER_PATTERN -> entry replace PatternsRecipe(recipe, true)
+                ANIMATION_EFFECT -> entry replace FlagRecipe(recipe, true, ETItemFlag.BAD_APPLE)
+                GATEWAY_EFFECT -> entry replace FlagRecipe(recipe, true, ETItemFlag.GATEWAY)
+                GLOW_EFFECT -> entry replace FlagRecipe(recipe, true, ETItemFlag.GLOW)
                 else -> entry
             }
 
