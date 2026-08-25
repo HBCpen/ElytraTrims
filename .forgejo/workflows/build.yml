@@ -48,10 +48,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-          cache: gradle
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
       - name: Build version
         run: |
-          chmod +x ./gradlew
           ./gradlew :${{ matrix.project }}:build --stacktrace --daemon
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

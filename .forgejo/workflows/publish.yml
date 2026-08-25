@@ -37,10 +37,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-          cache: gradle
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
       - name: Build mods
         run: |
-          chmod +x ./gradlew
           ./gradlew build --stacktrace --daemon
       - name: Publish to Maven
         if: ${{ inputs.maven }}
