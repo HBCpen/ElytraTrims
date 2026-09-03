@@ -59,7 +59,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
-    modImplementation("cc.cassian.rrv:reliable-recipe-viewer-fabric:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
+    modCompileOnly("cc.cassian.rrv:reliable-recipe-viewer-fabric:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
 
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
 }

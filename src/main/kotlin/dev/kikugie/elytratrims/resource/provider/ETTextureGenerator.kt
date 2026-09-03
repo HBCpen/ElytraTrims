@@ -20,6 +20,9 @@ import net.minecraft.server.packs.resources.ResourceManager
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.channels.Channels
+import kotlin.io.path.createTempFile
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.readBytes
 import kotlin.jvm.optionals.getOrNull
 
 object ETTextureGenerator : ETResourceProvider {
@@ -114,20 +117,26 @@ object ETTextureGenerator : ETResourceProvider {
         private val identifier: Identifier,
         private val transform: (EditableImage) -> EditableImage
     ) : InputSupplier {
-        val value by lazy { load(lookup, identifier)?.let(transform).bytes() }
+        val value: ByteArray by lazy { load(lookup, identifier)?.let(transform).bytes() }
 
         override fun get(): InputStream = value.inputStream()
 
         private fun EditableImage?.bytes(): ByteArray {
             if (this == null) return byteArrayOf()
 
-            val output = ByteArrayOutputStream()
+            //? if <26.3 {
+            /*val output = ByteArrayOutputStream()
             val channel = Channels.newChannel(output)
             native.writeToChannel(channel)
             return output.toByteArray()
+            *///?} else {
+            // TODO: Consider using an in-memory file system
+            val file = createTempFile("elytra-trims-texture-")
+            native.writeToFile(file)
+            return file.readBytes().also { file.deleteIfExists() }
+            //?}
         }
     }
-
 }
 
 private fun EditableImage.copyScaled(
