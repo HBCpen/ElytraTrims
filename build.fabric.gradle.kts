@@ -46,6 +46,7 @@ repositories {
     mavenLocal()
     maven("https://maven.bawnorton.com/releases")
     maven("https://maven.cassian.cc")
+    maven("https://api.modrinth.com/maven")
 }
 
 dependencies {
@@ -62,11 +63,15 @@ dependencies {
     modCompileOnly("cc.cassian.rrv:reliable-recipe-viewer-fabric:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
 
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
+    fletchingTable.modrinth("iris")?.let {
+        modImplementation(it)
+        sc.constants["iris"] = true
+
+        modRuntimeOnly(fletchingTable.modrinth("sodium")!!)
+    }
 }
 
 stonecutter {
-    constants["trimica"] = false
-    constants["iris"] = false
     constants["rvv"] = true
 }
 

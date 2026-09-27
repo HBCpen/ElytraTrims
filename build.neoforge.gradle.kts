@@ -52,11 +52,15 @@ dependencies {
 
     compileOnly(ft.fabric.entrypoint)
     compileOnly("cc.cassian.rrv:reliable-recipe-viewer-neoforge:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
+    fletchingTable.modrinth("iris")?.let {
+        implementation(it)
+        sc.constants["iris"] = true
+
+        runtimeOnly(fletchingTable.modrinth("sodium")!!)
+    }
 }
 
 stonecutter {
-    constants["trimica"] = false
-    constants["iris"] = false
     constants["rvv"] = true
 }
 

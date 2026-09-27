@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.stonecutter)
     alias(libs.plugins.kotlin) apply false
+    alias(ft.plugins.default) apply false
+    alias(ft.plugins.fabric) apply false
 }
 
 val ci: String? = System.getenv("CI")
@@ -12,6 +14,9 @@ stonecutter parameters {
     
     constants {
         match(loader, "fabric", "neoforge")
+        this["trimica"] = false
+        this["iris"] = false
+        this["rvv"] = false
     }
 
     swaps {

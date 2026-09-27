@@ -57,8 +57,10 @@ private fun registerTrimicaCompat() {
 //        *///?}
 }
 
-private fun registerIrisCompat() {
-//        //? if iris {
-//        /*IrisApi.getInstance().assignPipeline(ElytraRenderLayers.GATEWAY_MASKED, IrisProgram.ENTITIES_TRANSLUCENT)
-//        *///?}
+
+private fun registerIrisCompat(): Unit = /*? if iris {*/ with(net.irisshaders.iris.api.v0.IrisApi.getInstance()) {
+    assignPipeline(ElytraRenderPipelines.ELYTRA_TRANSLUCENT, net.irisshaders.iris.api.v0.IrisProgram.ENTITIES_TRANSLUCENT)
+    assignPipelineShadow(ElytraRenderPipelines.ELYTRA_TRANSLUCENT, net.irisshaders.iris.api.v0.IrisShadowProgram.SHADOW_ENTITIES)
 }
+//?} else
+//Unit

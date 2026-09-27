@@ -22,8 +22,7 @@ object ElytraRenderTypes {
     }
 
     private val ELYTRA_TRANSLUCENT: Memoizer<Identifier, RenderType> = memoize {
-        //? if <26.3 {
-        /*val builder = RenderSetup.builder(ElytraRenderPipelines.ELYTRA_TRANSLUCENT)
+        val builder = RenderSetup.builder(ElytraRenderPipelines.ELYTRA_TRANSLUCENT)
             .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
             .setOutline(RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
             .withTexture("Sampler0", it)
@@ -33,8 +32,6 @@ object ElytraRenderTypes {
             .useOverlay()
             .createRenderSetup()
         RenderType.create("elytra_translucent", builder)
-        *///?} else
-        RenderTypes.wolfArmorCracks(it)
     }
 
     @JvmStatic fun cosmic(texture: Identifier): RenderType =
