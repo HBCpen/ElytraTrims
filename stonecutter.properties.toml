@@ -1,7 +1,7 @@
 mod.id="elytratrims"
 mod.name="Elytra Trims"
 mod.group="dev.kikugie"
-mod.version="4.9.0"
+mod.version="4.9.1"
 
 deps.fabric-loader="0.19.5"
 deps.fabric-kotlin="1.14.1+kotlin.2.4.20"

@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.20"
 neoforged-moddev = "2.0.+"
-mod-publish-plugin = "2.0.+"
+mod-publish-plugin = "2.2.+"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

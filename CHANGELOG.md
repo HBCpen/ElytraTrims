@@ -1,2 +1,3 @@
-## Minor Features
-- Added Turkish translation @1unarea
+## Fixes
+- Fixed compatibility with Iris shaders.
+- Fixed compatibility with OIT setting on 26.3.
