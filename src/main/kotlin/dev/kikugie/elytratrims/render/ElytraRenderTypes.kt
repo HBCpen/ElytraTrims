@@ -14,6 +14,8 @@ object ElytraRenderTypes {
             .withTexture("Sampler0", TheEndPortalRenderer.END_SKY_LOCATION)
             .withTexture("Sampler1", TheEndPortalRenderer.END_PORTAL_LOCATION)
             .withTexture("Sampler2", it)
+            //? if >=26.3
+            .setOitPipelines(ElytraRenderPipelines.OIT_COSMIC)
             .createRenderSetup()
         RenderType.create("elytra_gateway", builder)
     }

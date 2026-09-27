@@ -9,6 +9,9 @@ import dev.kikugie.elytratrims.elytratrims
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.RenderPipelines.*
 
+//? if >=26.3
+import net.minecraft.client.renderer.oit.OitPipelineSet
+
 private typealias Topology =
     /*? if >=26.2 {*/com.mojang.renderpearl.api.pipeline.PrimitiveTopology
     /*?} else*///com.mojang.blaze3d.vertex.VertexFormat.Mode
@@ -52,6 +55,15 @@ object ElytraRenderPipelines {
         .withCull(false)
         .buildSnippet()
         *///?}
+
+    //? if >=26.3 {
+    @JvmField val OIT_COSMIC: OitPipelineSet = OitPipelineSet.builder(
+        "elytratrims_gateway",
+        RenderPipeline.builder(COSMIC_SNIPPET).withShaderDefine("PORTAL_LAYERS", 16)
+    )
+    .build()
+    .let(::register)
+    //?}
 
     @JvmField val COSMIC: RenderPipeline = RenderPipeline.builder(COSMIC_SNIPPET)
         .withLocation(elytratrims("pipeline/elytratrims_gateway"))
