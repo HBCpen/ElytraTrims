@@ -8,15 +8,20 @@ import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic.PatternLayer
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.CycleButton
 import net.minecraft.client.gui.components.EditBox
+import net.minecraft.client.gui.components.Renderable
 import net.minecraft.client.gui.components.Tooltip
+import net.minecraft.client.gui.components.events.GuiEventListener
+import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.renderer.entity.state.AvatarRenderState
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.component.DataComponents
+import net.minecraft.locale.Language
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.resources.Identifier
 import net.minecraft.world.InteractionHand
@@ -38,7 +43,10 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private companion object {
         const val ROWS = 9
         const val WIDGET_HEIGHT = 20
-        const val LABEL_WIDTH = 74
+        const val MAX_LABEL_WIDTH = 74
+        const val MARGIN = 6
+        /** Space below the rows: footer buttons plus a small gap. */
+        const val FOOTER_SPACE = 30
         const val STATUS_TICKS = 60
         const val TEXT_COLOR = -1
         const val HINT_COLOR = 0xFFA0A0A0.toInt()
@@ -49,6 +57,8 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
         /** `null` stands for "undyed". */
         val COLOR_PRESETS: List<Int?> = listOf(null) + DyeColor.entries.map { it.textureDiffuseColor and 0xFFFFFF }
+
+        val LABEL_KEYS = listOf("enabled", "trim_pattern", "trim_material", "color", "effects", "patterns", "layer")
     }
 
     private val registries: RegistryAccess? get() = minecraft.level?.registryAccess()
@@ -80,31 +90,38 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private var swatchY = 0
     private var layerCounterX = 0
     private var layerCounterY = 0
+    private var labelWidth = 0
+
+    /** Stable identities of the widgets, used to restore focus after rebuilding them. */
+    private val widgetKeys = HashMap<GuiEventListener, String>()
 
     private lateinit var colorPreset: Button
     private lateinit var colorBox: EditBox
 
     override fun init() {
         labels.clear()
-        previewRight = (width * 0.38F).toInt().coerceIn(110, 260)
-        labelX = previewRight + 8
-        controlsX = labelX + LABEL_WIDTH
-        controlsWidth = (width - controlsX - 10).coerceAtMost(230)
-        top = 26
-        rowStep = ((height - 34 - top) / ROWS).coerceIn(WIDGET_HEIGHT + 1, WIDGET_HEIGHT + 4)
+        widgetKeys.clear()
+        // Must also fit the smallest GUI size Minecraft allows (320x240).
+        previewRight = (width * 0.3F).toInt().coerceIn(80, 260)
+        labelX = previewRight + MARGIN
+        labelWidth = (LABEL_KEYS.maxOf { font.width(tr(it)) } + 4).coerceAtMost(MAX_LABEL_WIDTH)
+        controlsX = labelX + labelWidth
+        controlsWidth = (width - controlsX - MARGIN).coerceAtMost(230)
+        top = 22
+        rowStep = ((height - FOOTER_SPACE - top) / ROWS).coerceIn(WIDGET_HEIGHT + 1, WIDGET_HEIGHT + 4)
         val half = (controlsWidth - 4) / 2
         val secondColumn = controlsX + controlsWidth - half
 
         // Row 0: master switch
         label(0, "enabled")
-        addRenderableWidget(CycleButton.onOffBuilder(enabled).displayOnlyValue()
+        add("enabled", CycleButton.onOffBuilder(enabled).displayOnlyValue()
             .create(controlsX, rowY(0), controlsWidth, WIDGET_HEIGHT, tr("enabled")) { _, value -> enabled = value })
 
         // Row 1-2: trim
         label(1, "trim_pattern")
         val noTrim = Optional.empty<Identifier>()
         val patternValues = listOf(noTrim) + (trimPatterns + listOfNotNull(draft.trim?.pattern)).distinct().map { Optional.of(it) }
-        addRenderableWidget(CycleButton.builder<Optional<Identifier>>({ id ->
+        add("trim_pattern", CycleButton.builder<Optional<Identifier>>({ id ->
             id.map { CosmeticCatalog.trimPatternName(it, registries) }.orElse(tr("none"))
         }, Optional.ofNullable(draft.trim?.pattern))
             .withValues(patternValues)
@@ -115,7 +132,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
             })
 
         label(2, "trim_material")
-        addRenderableWidget(CycleButton.builder<Identifier>({ CosmeticCatalog.trimMaterialName(it, registries) }, material)
+        add("trim_material", CycleButton.builder<Identifier>({ CosmeticCatalog.trimMaterialName(it, registries) }, material)
             .withValues((trimMaterials + material).distinct())
             .displayOnlyValue()
             .create(controlsX, rowY(2), controlsWidth, WIDGET_HEIGHT, tr("trim_material")) { _, value ->
@@ -125,7 +142,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
         // Row 3: dye color
         label(3, "color")
-        colorPreset = addRenderableWidget(Button.builder(colorName()) { cycleColorPreset() }
+        colorPreset = add("color_preset", Button.builder(colorName()) { cycleColorPreset() }
             .bounds(controlsX, rowY(3), half, WIDGET_HEIGHT)
             .tooltip(Tooltip.create(tr("color.tooltip")))
             .build())
@@ -135,7 +152,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
             setValue(draft.color?.let(::hex).orEmpty())
             setResponder(::onColorTyped)
         }
-        addRenderableWidget(colorBox)
+        add("color_box", colorBox)
         swatchX = controlsX + controlsWidth - WIDGET_HEIGHT
         swatchY = rowY(3)
 
@@ -148,23 +165,24 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
         // Row 6-8: banner patterns
         label(6, "patterns")
-        addRenderableWidget(CycleButton.booleanBuilder(tr("pattern_style.banner"), tr("pattern_style.shield"), draft.bannerStyle)
+        add("pattern_style", CycleButton.booleanBuilder(tr("pattern_style.banner"), tr("pattern_style.shield"), draft.bannerStyle)
             .create(controlsX, rowY(6), half, WIDGET_HEIGHT, tr("pattern_style")) { _, value -> draft = draft.copy(bannerStyle = value) })
-        addRenderableWidget(Button.builder(tr("import")) { importFromHand() }
+        add("import", Button.builder(tr("import")) { importFromHand() }
             .bounds(secondColumn, rowY(6), half, WIDGET_HEIGHT)
             .tooltip(Tooltip.create(tr("import.tooltip")))
             .build())
 
         initLayerWidgets(half, secondColumn)
 
-        // Footer
-        val footerWidth = 74
-        val footerX = labelX + (width - labelX - (footerWidth * 3 + 8)) / 2
-        val footerY = height - 26
-        addRenderableWidget(Button.builder(tr("reset")) { reset() }.bounds(footerX, footerY, footerWidth, WIDGET_HEIGHT).build())
-        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL) { minecraft.gui.setScreen(parent) }
+        // Footer, below the controls column so it never overlaps the preview
+        val footerSpace = width - MARGIN - labelX
+        val footerWidth = ((footerSpace - 8) / 3).coerceAtMost(74)
+        val footerX = labelX + (footerSpace - (footerWidth * 3 + 8)) / 2
+        val footerY = height - FOOTER_SPACE + 4
+        add("reset", Button.builder(tr("reset")) { reset() }.bounds(footerX, footerY, footerWidth, WIDGET_HEIGHT).build())
+        add("cancel", Button.builder(CommonComponents.GUI_CANCEL) { minecraft.gui.setScreen(parent) }
             .bounds(footerX + footerWidth + 4, footerY, footerWidth, WIDGET_HEIGHT).build())
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE) { onClose() }
+        add("done", Button.builder(CommonComponents.GUI_DONE) { onClose() }
             .bounds(footerX + (footerWidth + 4) * 2, footerY, footerWidth, WIDGET_HEIGHT).build())
     }
 
@@ -173,26 +191,26 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         selectedLayer = selectedLayer.coerceIn(0, (layers.size - 1).coerceAtLeast(0))
 
         label(7, "layer")
-        addRenderableWidget(Button.builder(Text.literal("<")) { selectLayer(-1) }
+        add("previous_layer", Button.builder(Text.literal("<")) { selectLayer(-1) }
             .bounds(controlsX, rowY(7), WIDGET_HEIGHT, WIDGET_HEIGHT).build()).active = selectedLayer > 0
-        addRenderableWidget(Button.builder(Text.literal(">")) { selectLayer(1) }
+        add("next_layer", Button.builder(Text.literal(">")) { selectLayer(1) }
             .bounds(controlsX + half - WIDGET_HEIGHT, rowY(7), WIDGET_HEIGHT, WIDGET_HEIGHT).build()).active = selectedLayer < layers.size - 1
         layerCounterX = controlsX + half / 2
         layerCounterY = rowY(7) + (WIDGET_HEIGHT - font.lineHeight) / 2 + 1
 
         val quarter = (half - 4) / 2
-        addRenderableWidget(Button.builder(tr("add_layer")) { addLayer() }
+        add("add_layer", Button.builder(tr("add_layer")) { addLayer() }
             .bounds(secondColumn, rowY(7), quarter, WIDGET_HEIGHT).build()).active =
             bannerPatterns.isNotEmpty() && layers.size < ElytraCosmetic.MAX_PATTERN_LAYERS
-        addRenderableWidget(Button.builder(tr("remove_layer")) { removeLayer() }
+        add("remove_layer", Button.builder(tr("remove_layer")) { removeLayer() }
             .bounds(secondColumn + half - quarter, rowY(7), quarter, WIDGET_HEIGHT).build()).active = layers.isNotEmpty()
 
         val layer = layers.getOrNull(selectedLayer) ?: return
-        addRenderableWidget(CycleButton.builder<Identifier>({ CosmeticCatalog.bannerPatternName(it, layer.color, registries) }, layer.pattern)
+        add("layer_pattern", CycleButton.builder<Identifier>({ CosmeticCatalog.bannerPatternName(it, layer.color, registries) }, layer.pattern)
             .withValues((bannerPatterns + layer.pattern).distinct())
             .displayOnlyValue()
             .create(controlsX, rowY(8), half, WIDGET_HEIGHT, tr("layer")) { _, value -> updateLayer { it.copy(pattern = value) } })
-        addRenderableWidget(CycleButton.builder<DyeColor>(CosmeticCatalog::dyeName, layer.color)
+        add("layer_color", CycleButton.builder<DyeColor>(CosmeticCatalog::dyeName, layer.color)
             .withValues(DyeColor.entries)
             .displayOnlyValue()
             .create(secondColumn, rowY(8), half, WIDGET_HEIGHT, tr("color")) { _, value ->
@@ -205,7 +223,11 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (statusTicks > 0 && --statusTicks == 0) status = null
         if (needsRebuild) {
             needsRebuild = false
+            // Rebuilding resets focus to the first widget, which would redirect keyboard input; keep it in place instead.
+            val focusedKey = focused?.let(widgetKeys::get)
             rebuildWidgets()
+            val replacement = widgetKeys.entries.firstOrNull { it.value == focusedKey }?.key
+            if (replacement != null && (replacement as? AbstractWidget)?.active != false) setFocused(replacement)
         }
     }
 
@@ -218,8 +240,12 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
     override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick)
-        graphics.centeredText(font, title, width / 2, 9, TEXT_COLOR)
-        for ((text, y) in labels) graphics.text(font, text, labelX, y + (WIDGET_HEIGHT - font.lineHeight) / 2 + 1, TEXT_COLOR)
+        // Status messages temporarily replace the title, so they need no space of their own.
+        graphics.centeredText(font, status ?: title, width / 2, 8, TEXT_COLOR)
+        for ((text, y) in labels) {
+            val clipped = Language.getInstance().getVisualOrder(font.substrByWidth(text, labelWidth - 4))
+            graphics.text(font, clipped, labelX, y + (WIDGET_HEIGHT - font.lineHeight) / 2 + 1, TEXT_COLOR)
+        }
 
         val counter = if (draft.patterns.isEmpty()) tr("no_layers") else Text.literal("${selectedLayer + 1}/${draft.patterns.size}")
         graphics.centeredText(font, counter, layerCounterX, layerCounterY, TEXT_COLOR)
@@ -229,9 +255,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (color != null) graphics.fill(swatchX + 1, swatchY + 1, swatchX + WIDGET_HEIGHT - 1, swatchY + WIDGET_HEIGHT - 1, color or (0xFF shl 24))
         else graphics.centeredText(font, "-", swatchX + WIDGET_HEIGHT / 2, swatchY + 6, HINT_COLOR)
 
-        status?.let { graphics.centeredText(font, it, labelX + (width - labelX) / 2, rowY(ROWS) + 2, TEXT_COLOR) }
-
-        graphics.centeredText(font, tr("preview_hint"), previewRight / 2, height - 20, HINT_COLOR)
+        graphics.centeredText(font, tr("preview_hint"), previewRight / 2, height - FOOTER_SPACE + 10, HINT_COLOR)
         extractPreview(graphics, partialTick)
     }
 
@@ -253,17 +277,17 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (!state.chestEquipment.has(DataComponents.GLIDER)) state.chestEquipment = ItemStack(Items.ELYTRA)
         state.setData(ElytraCosmetics.RENDER_KEY, draft.takeIf { enabled && !it.isEmpty })
 
-        val x0 = 6
+        val x0 = MARGIN
         val y0 = top
-        val x1 = previewRight - 6
-        val y1 = height - 28
+        val x1 = previewRight - MARGIN
+        val y1 = previewBottom()
         val size = ((y1 - y0) / 2.4F).coerceAtMost((x1 - x0) / 1.2F)
         val translation = Vector3f(0F, state.boundingBoxHeight / 2F + 0.0625F, 0F)
         graphics.entity(state, size, translation, Quaternionf().rotateZ(PI.toFloat()), null, x0, y0, x1, y1)
     }
 
     override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
-        if (event.x() < previewRight && event.y() > top) {
+        if (event.x() >= MARGIN && event.x() < previewRight - MARGIN && event.y() >= top && event.y() < previewBottom()) {
             draggingPreview = true
             return true
         }
@@ -368,12 +392,19 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
     private fun rowY(row: Int): Int = top + row * rowStep
 
+    private fun previewBottom(): Int = height - FOOTER_SPACE + 2
+
+    private fun <T> add(key: String, widget: T): T where T : GuiEventListener, T : Renderable, T : NarratableEntry {
+        widgetKeys[widget] = key
+        return addRenderableWidget(widget)
+    }
+
     private fun label(row: Int, key: String) {
         labels += tr(key) to rowY(row)
     }
 
     private fun toggle(x: Int, y: Int, width: Int, key: String, initial: Boolean, onChange: (Boolean) -> Unit) {
-        addRenderableWidget(CycleButton.onOffBuilder(initial).create(x, y, width, WIDGET_HEIGHT, tr(key)) { _, value -> onChange(value) })
+        add(key, CycleButton.onOffBuilder(initial).create(x, y, width, WIDGET_HEIGHT, tr(key)) { _, value -> onChange(value) })
     }
 
     private fun hex(color: Int): String = "#%06X".format(color and 0xFFFFFF)
