@@ -14,8 +14,11 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext
 import net.minecraft.client.CameraType
+import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.CycleButton
+import net.minecraft.client.gui.components.EditBox
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
@@ -77,17 +80,48 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             check((focused as? CycleButton<*>)?.value is Optional<*>) { "Focus moved away from the trim button: $focused" }
         }
 
-        // Smallest GUI size supported by Minecraft (320x240 at GUI scale 2).
+        // Removing the last layer makes "Remove" inactive; focus must move to a nearby control, not the master switch.
+        context.runOnClient<Throwable> { client ->
+            val screen = client.gui.screen()!!
+            screen.focused = screen.children().first { it is Button && it.message == translated("remove_layer") }
+        }
+        context.input.pressKey(InputConstants.KEY_SPACE)
+        context.waitTicks(2)
+        context.runOnClient<Throwable> { client ->
+            val focused = client.gui.screen()?.focused
+            check(focused is Button && focused.message == translated("add_layer")) { "Focus did not move to the add button: $focused" }
+        }
+
+        // An incomplete hex color must survive a rebuild, here triggered by resizing.
+        context.runOnClient<Throwable> { client ->
+            val screen = client.gui.screen()!!
+            val box = screen.children().first { it is EditBox } as EditBox
+            screen.focused = box
+            box.setValue("")
+        }
+        context.input.typeChars("#12")
+
         val (width, height) = context.computeOnClient<Pair<Int, Int>, Throwable> { it.window.width to it.window.height }
         val guiScale = context.computeOnClient<Int, Throwable> { it.options.guiScale().get() }
-        context.input.resizeWindow(640, 480)
-        context.runOnClient<Throwable> { it.options.guiScale().set(2); it.resizeGui() }
-        context.waitTicks(5)
-        context.takeScreenshot("cosmetic_editor_small")
-        context.setScreen { null }
-        context.input.resizeWindow(width, height)
-        context.runOnClient<Throwable> { it.options.guiScale().set(guiScale); it.resizeGui() }
+        try {
+            // Smallest GUI size supported by Minecraft (320x240 at GUI scale 2).
+            context.input.resizeWindow(640, 480)
+            context.runOnClient<Throwable> { it.options.guiScale().set(2); it.resizeGui() }
+            context.waitTicks(5)
+            context.runOnClient<Throwable> { client ->
+                val box = client.gui.screen()!!.children().first { it is EditBox } as EditBox
+                check(box.value == "#12") { "Unfinished color input was lost: '${box.value}'" }
+                check(client.gui.screen()!!.focused === box) { "Focus left the color box" }
+            }
+            context.takeScreenshot("cosmetic_editor_small")
+        } finally {
+            context.setScreen { null }
+            context.input.resizeWindow(width, height)
+            context.runOnClient<Throwable> { it.options.guiScale().set(guiScale); it.resizeGui() }
+        }
 
         context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data()) }
     }
 }
+
+private fun translated(key: String): Component = Component.translatable("screen.elytratrims.cosmetic.$key")
