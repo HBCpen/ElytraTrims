@@ -35,7 +35,7 @@ object ETColorRenderer : ETDecorator {
     private fun ItemStack.determineColor(): Int = when {
         displayName.string.trim('[', ']') == "jeb_" -> {
             val time = Minecraft.getInstance().level?.gameTime ?: 0
-            Mth.hsvToRgb(time % 360L / 360F, 1F, 1F)
+            Mth.hsvToArgb(time % 360L / 360F, 1F, 1F, 0xFF)
         }
 
         else -> color.get().let { if (it.isVisible) it.packed else 0 }
