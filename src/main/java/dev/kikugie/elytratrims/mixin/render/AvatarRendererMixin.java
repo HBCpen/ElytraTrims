@@ -18,6 +18,6 @@ public class AvatarRendererMixin {
         at = @At("TAIL")
     )
     private void attachElytraCosmetic(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
-        state.setData(ElytraCosmetics.RENDER_KEY, ElytraCosmetics.forEntity(entity));
+        ElytraCosmetics.attach(entity, state);
     }
 }

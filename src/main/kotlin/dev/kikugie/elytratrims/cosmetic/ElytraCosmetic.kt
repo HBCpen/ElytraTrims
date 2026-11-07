@@ -3,6 +3,7 @@ package dev.kikugie.elytratrims.cosmetic
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.resources.Identifier
+import net.minecraft.util.StringRepresentable
 import net.minecraft.world.item.DyeColor
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -25,7 +26,31 @@ data class ElytraCosmetic(
     val glow: Boolean = false,
     val gateway: Boolean = false,
     val animation: Boolean = false,
+    val visibility: Visibility = Visibility.WORN,
 ) {
+    /** When the elytra is drawn. Purely visual: gliding still needs a real elytra. */
+    enum class Visibility(private val serializedName: String) : StringRepresentable {
+        /** Only while an elytra is worn. */
+        WORN("worn"),
+        /** Also on top of whatever else is worn in the chest slot, such as a chestplate. */
+        OVER_ARMOR("over_armor"),
+        /** Also with an empty chest slot. */
+        ALWAYS("always");
+
+        override fun getSerializedName(): String = serializedName
+
+        /** Whether an elytra is drawn although none is worn in the chest slot. */
+        fun showsWithout(chestEmpty: Boolean): Boolean = when (this) {
+            WORN -> false
+            OVER_ARMOR -> !chestEmpty
+            ALWAYS -> true
+        }
+
+        companion object {
+            @JvmField val CODEC: Codec<Visibility> = StringRepresentable.fromEnum(Visibility::values)
+        }
+    }
+
     data class Trim(val pattern: Identifier, val material: Identifier) {
         companion object {
             @JvmField val CODEC: Codec<Trim> = RecordCodecBuilder.create { it.group(
@@ -61,8 +86,9 @@ data class ElytraCosmetic(
             Codec.BOOL.optionalFieldOf("glow", false).forGetter(ElytraCosmetic::glow),
             Codec.BOOL.optionalFieldOf("gateway", false).forGetter(ElytraCosmetic::gateway),
             Codec.BOOL.optionalFieldOf("animation", false).forGetter(ElytraCosmetic::animation),
-        ).apply(it) { trim, color, rainbow, patterns, bannerStyle, glow, gateway, animation ->
-            ElytraCosmetic(trim.getOrNull(), color.getOrNull(), rainbow, patterns, bannerStyle, glow, gateway, animation)
+            Visibility.CODEC.optionalFieldOf("visibility", Visibility.WORN).forGetter(ElytraCosmetic::visibility),
+        ).apply(it) { trim, color, rainbow, patterns, bannerStyle, glow, gateway, animation, visibility ->
+            ElytraCosmetic(trim.getOrNull(), color.getOrNull(), rainbow, patterns, bannerStyle, glow, gateway, animation, visibility)
         } }
     }
 }

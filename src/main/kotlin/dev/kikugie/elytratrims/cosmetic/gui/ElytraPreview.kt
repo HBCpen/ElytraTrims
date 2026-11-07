@@ -10,8 +10,6 @@ import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.renderer.entity.state.AvatarRenderState
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.Pose
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.PI
@@ -77,15 +75,17 @@ class ElytraPreview {
         state.boundingBoxHeight /= state.scale
         state.scale = 1F
         applyPose(state)
-        // Show the cosmetic even when the player isn't wearing an elytra right now.
-        if (!state.chestEquipment.has(DataComponents.GLIDER)) state.chestEquipment = ItemStack(Items.ELYTRA)
         state.setData(ElytraCosmetics.RENDER_KEY, cosmetic?.takeUnless { it.isEmpty })
+        // Show the elytra even when the player isn't wearing one right now, keeping a worn chestplate visible.
+        state.setData(ElytraCosmetics.VIRTUAL_WINGS_KEY, !state.chestEquipment.has(DataComponents.GLIDER))
 
         val width = (x1 - x0).toFloat()
         val height = (y1 - y0).toFloat()
         // Rough extents of the model in blocks, including spread wings.
         val (extentX, extentY) = when (pose) {
             PreviewPose.GLIDING -> 3.4F to 2.8F
+            // Sneaking spreads the wings sideways.
+            PreviewPose.SNEAKING -> 2.8F to 2.3F
             else -> 1.6F to 2.3F
         }
         val size = minOf(width / extentX, height / extentY)
