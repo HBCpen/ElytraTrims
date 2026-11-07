@@ -32,7 +32,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private companion object {
-        const val ROWS = 7
+        const val ROWS = 9
         const val TEXT_COLOR = -1
         const val ERROR_COLOR = 0xFFFF5555.toInt()
         const val HINT_COLOR = 0xFFA0A0A0.toInt()
@@ -43,7 +43,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         /** `null` stands for "undyed". */
         val COLOR_PRESETS: List<Int?> = listOf(null) + DyeColor.entries.map { it.textureDiffuseColor and 0xFFFFFF }
 
-        val LABEL_KEYS = listOf("enabled", "trim_pattern", "trim_material", "color", "effects", "patterns")
+        val LABEL_KEYS = listOf("enabled", "visibility", "trim_pattern", "trim_material", "color", "effects", "patterns", "designs")
 
         /** Where keyboard focus goes when the focused widget is gone or inactive after a rebuild. */
         val FOCUS_FALLBACKS: Map<String, List<String>> = mapOf(
@@ -91,8 +91,16 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         add("enabled", CycleButton.onOffBuilder(enabled).displayOnlyValue()
             .create(l.controlsX, l.rowY(0), l.controlsWidth, h, tr("enabled")) { _, value -> enabled = value })
 
-        // Row 1-2: trim
-        label(1, "trim_pattern")
+        // Row 1: when to draw the elytra
+        label(1, "visibility")
+        add("visibility", CycleButton.builder<ElytraCosmetic.Visibility>({ tr("visibility.${it.serializedName}") }, draft.visibility)
+            .withValues(ElytraCosmetic.Visibility.entries)
+            .withTooltip { Tooltip.create(tr("visibility.tooltip")) }
+            .displayOnlyValue()
+            .create(l.controlsX, l.rowY(1), l.controlsWidth, h, tr("visibility")) { _, value -> draft = draft.copy(visibility = value) })
+
+        // Row 2-3: trim
+        label(2, "trim_pattern")
         val patternValues = listOf(Optional.empty<Identifier>()) +
             (trimPatterns + listOfNotNull(draft.trim?.pattern)).distinct().map { Optional.of(it) }
         add("trim_pattern", CycleButton.builder<Optional<Identifier>>({ id ->
@@ -100,27 +108,27 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         }, Optional.ofNullable(draft.trim?.pattern))
             .withValues(patternValues)
             .displayOnlyValue()
-            .create(l.controlsX, l.rowY(1), l.controlsWidth, h, tr("trim_pattern")) { _, value ->
+            .create(l.controlsX, l.rowY(2), l.controlsWidth, h, tr("trim_pattern")) { _, value ->
                 draft = draft.copy(trim = value.getOrNull()?.let { ElytraCosmetic.Trim(it, material) })
                 needsRebuild = true
             })
 
-        label(2, "trim_material")
+        label(3, "trim_material")
         add("trim_material", CycleButton.builder<Identifier>({ CosmeticCatalog.trimMaterialName(it, registries) }, material)
             .withValues((trimMaterials + material).distinct())
             .displayOnlyValue()
-            .create(l.controlsX, l.rowY(2), l.controlsWidth, h, tr("trim_material")) { _, value ->
+            .create(l.controlsX, l.rowY(3), l.controlsWidth, h, tr("trim_material")) { _, value ->
                 material = value
                 draft.trim?.let { draft = draft.copy(trim = it.copy(material = value)) }
             }).active = draft.trim != null
 
-        // Row 3: dye color
-        label(3, "color")
+        // Row 4: dye color
+        label(4, "color")
         colorPreset = add("color_preset", Button.builder(colorName()) { cycleColorPreset() }
-            .bounds(l.controlsX, l.rowY(3), l.half, h)
+            .bounds(l.controlsX, l.rowY(4), l.half, h)
             .tooltip(Tooltip.create(tr("color.tooltip")))
             .build())
-        colorBox = EditBox(font, l.secondColumn, l.rowY(3), l.half - h - 4, h, tr("color")).apply {
+        colorBox = EditBox(font, l.secondColumn, l.rowY(4), l.half - h - 4, h, tr("color")).apply {
             setMaxLength(7)
             setHint(Text.literal("#RRGGBB"))
             setValue(colorText)
@@ -131,19 +139,23 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         add("color_box", colorBox)
         onColorTyped(colorText)
         swatchX = l.controlsX + l.controlsWidth - h
-        swatchY = l.rowY(3)
+        swatchY = l.rowY(4)
 
-        // Row 4-5: effects
-        label(4, "effects")
-        toggle(l.controlsX, l.rowY(4), "rainbow", draft.rainbow) { draft = draft.copy(rainbow = it) }
-        toggle(l.secondColumn, l.rowY(4), "glow", draft.glow) { draft = draft.copy(glow = it) }
-        toggle(l.controlsX, l.rowY(5), "gateway", draft.gateway) { draft = draft.copy(gateway = it) }
-        toggle(l.secondColumn, l.rowY(5), "animation", draft.animation) { draft = draft.copy(animation = it) }
+        // Row 5-6: effects
+        label(5, "effects")
+        toggle(l.controlsX, l.rowY(5), "rainbow", draft.rainbow) { draft = draft.copy(rainbow = it) }
+        toggle(l.secondColumn, l.rowY(5), "glow", draft.glow) { draft = draft.copy(glow = it) }
+        toggle(l.controlsX, l.rowY(6), "gateway", draft.gateway) { draft = draft.copy(gateway = it) }
+        toggle(l.secondColumn, l.rowY(6), "animation", draft.animation) { draft = draft.copy(animation = it) }
 
-        // Row 6: banner patterns, edited on their own screen
-        label(6, "patterns")
+        // Row 7-8: banner patterns and saved designs, on their own screens
+        label(7, "patterns")
         add("edit_patterns", Button.builder(tr("edit_patterns", draft.patterns.size)) { openPatternEditor() }
-            .bounds(l.controlsX, l.rowY(6), l.controlsWidth, h)
+            .bounds(l.controlsX, l.rowY(7), l.controlsWidth, h)
+            .build())
+        label(8, "designs")
+        add("designs", Button.builder(tr("designs.open")) { openDesigns() }
+            .bounds(l.controlsX, l.rowY(8), l.controlsWidth, h)
             .build())
 
         add("pose", preview.poseButton(l.previewX0, l.footerY, l.previewX1 - l.previewX0, h)
@@ -186,7 +198,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     override fun isPauseScreen(): Boolean = false
 
     override fun onClose() {
-        CosmeticSettings.update(CosmeticSettings.Data(enabled, draft))
+        CosmeticSettings.update(CosmeticSettings.data.copy(enabled = enabled, cosmetic = draft))
         minecraft.gui.setScreen(parent)
     }
 
@@ -224,6 +236,15 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private fun openPatternEditor() {
         minecraft.gui.setScreen(BannerPatternScreen(this, preview, draft) { patterns, bannerStyle ->
             draft = draft.copy(patterns = patterns, bannerStyle = bannerStyle)
+        })
+    }
+
+    private fun openDesigns() {
+        minecraft.gui.setScreen(DesignsScreen(this, preview, draft) { loaded ->
+            draft = loaded
+            material = loaded.trim?.material ?: DEFAULT_MATERIAL
+            colorText = loaded.color?.let(::hex).orEmpty()
+            colorCursor = colorText.length
         })
     }
 
