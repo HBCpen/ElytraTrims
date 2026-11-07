@@ -9,6 +9,10 @@
       {
         "adapter": "kotlin",
         "value": "dev.kikugie.elytratrims.test.ElytraTrimsGameTest"
+      },
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.elytratrims.test.ElytraCosmeticGameTest"
       }
     ]
   }

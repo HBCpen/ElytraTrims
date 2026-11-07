@@ -38,7 +38,7 @@ object ElytraTrimsGameTest : FabricClientGameTest {
     }
 }
 
-private inline fun ClientGameTestContext.runInWorld(action: TestSingleplayerContext.() -> Unit) {
+internal inline fun ClientGameTestContext.runInWorld(action: TestSingleplayerContext.() -> Unit) {
     runOnClient<Throwable> {
         it.options.chatVisibility().set(ChatVisiblity.HIDDEN)
         it.options.simulationDistance().set(5)
