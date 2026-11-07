@@ -4,8 +4,6 @@ import dev.kikugie.elytratrims.Text
 import dev.kikugie.elytratrims.cosmetic.CosmeticCatalog
 import dev.kikugie.elytratrims.cosmetic.CosmeticSettings
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic
-import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic.PatternLayer
-import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
@@ -18,39 +16,26 @@ import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.MouseButtonEvent
-import net.minecraft.client.renderer.entity.state.AvatarRenderState
 import net.minecraft.core.RegistryAccess
-import net.minecraft.core.component.DataComponents
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.resources.Identifier
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.DyeColor
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
-import org.joml.Quaternionf
-import org.joml.Vector3f
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
-import kotlin.math.PI
 
 /**
  * Editor for the local player's elytra cosmetic with a live preview.
  *
  * Closing with Escape or "Done" saves the changes, "Cancel" discards them.
+ * Banner patterns are edited in [BannerPatternScreen].
  */
 class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private companion object {
-        const val ROWS = 9
-        const val WIDGET_HEIGHT = 20
-        const val MAX_LABEL_WIDTH = 74
-        const val MARGIN = 6
-        /** Space below the rows: footer buttons plus a small gap. */
-        const val FOOTER_SPACE = 30
-        const val STATUS_TICKS = 60
+        const val ROWS = 7
         const val TEXT_COLOR = -1
-        const val HINT_COLOR = 0xFFA0A0A0.toInt()
         const val ERROR_COLOR = 0xFFFF5555.toInt()
+        const val HINT_COLOR = 0xFFA0A0A0.toInt()
 
         val DEFAULT_MATERIAL: Identifier = vanilla("gold")
         val HEX_PATTERN = Regex("#?([0-9a-fA-F]{6})")
@@ -58,16 +43,10 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         /** `null` stands for "undyed". */
         val COLOR_PRESETS: List<Int?> = listOf(null) + DyeColor.entries.map { it.textureDiffuseColor and 0xFFFFFF }
 
-        val LABEL_KEYS = listOf("enabled", "trim_pattern", "trim_material", "color", "effects", "patterns", "layer")
+        val LABEL_KEYS = listOf("enabled", "trim_pattern", "trim_material", "color", "effects", "patterns")
 
         /** Where keyboard focus goes when the focused widget is gone or inactive after a rebuild. */
         val FOCUS_FALLBACKS: Map<String, List<String>> = mapOf(
-            "remove_layer" to listOf("add_layer", "previous_layer"),
-            "add_layer" to listOf("remove_layer", "previous_layer"),
-            "previous_layer" to listOf("next_layer", "add_layer"),
-            "next_layer" to listOf("previous_layer", "add_layer"),
-            "layer_pattern" to listOf("add_layer"),
-            "layer_color" to listOf("add_layer"),
             "trim_material" to listOf("trim_pattern"),
         )
     }
@@ -77,13 +56,9 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private var enabled: Boolean = CosmeticSettings.data.enabled
     private var draft: ElytraCosmetic = CosmeticSettings.data.cosmetic
     private var material: Identifier = draft.trim?.material ?: DEFAULT_MATERIAL
-    private var selectedLayer: Int = 0
+    private val preview = ElytraPreview()
 
-    private var previewYaw: Float = 30F
-    private var draggingPreview: Boolean = false
     private var needsRebuild: Boolean = false
-    private var status: Text? = null
-    private var statusTicks: Int = 0
 
     /** Raw contents of the hex color box, kept across rebuilds even while incomplete. */
     private var colorText: String = draft.color?.let(::hex).orEmpty()
@@ -91,21 +66,11 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
     private val trimPatterns: List<Identifier> by lazy { CosmeticCatalog.trimPatterns(minecraft.resourceManager) }
     private val trimMaterials: List<Identifier> by lazy { CosmeticCatalog.trimMaterials(registries) }
-    private val bannerPatterns: List<Identifier> by lazy { CosmeticCatalog.bannerPatterns(registries) }
 
-    // Layout, recomputed in init()
-    private var previewRight = 0
-    private var labelX = 0
-    private var controlsX = 0
-    private var controlsWidth = 0
-    private var rowStep = 0
-    private var top = 0
+    private lateinit var layout: EditorLayout
     private val labels = mutableListOf<Pair<Text, Int>>()
     private var swatchX = 0
     private var swatchY = 0
-    private var layerCounterX = 0
-    private var layerCounterY = 0
-    private var labelWidth = 0
 
     /** Stable identities of the widgets, used to restore focus after rebuilding them. */
     private val widgetKeys = HashMap<GuiEventListener, String>()
@@ -116,32 +81,26 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     override fun init() {
         labels.clear()
         widgetKeys.clear()
-        // Must also fit the smallest GUI size Minecraft allows (320x240).
-        previewRight = (width * 0.3F).toInt().coerceIn(80, 260)
-        labelX = previewRight + MARGIN
-        labelWidth = (LABEL_KEYS.maxOf { font.width(tr(it)) } + 4).coerceAtMost(MAX_LABEL_WIDTH)
-        controlsX = labelX + labelWidth
-        controlsWidth = (width - controlsX - MARGIN).coerceAtMost(230)
-        top = 22
-        rowStep = ((height - FOOTER_SPACE - top) / ROWS).coerceIn(WIDGET_HEIGHT + 1, WIDGET_HEIGHT + 4)
-        val half = (controlsWidth - 4) / 2
-        val secondColumn = controlsX + controlsWidth - half
+        layout = EditorLayout.forControls(width, height, ROWS, LABEL_KEYS.maxOf { font.width(tr(it)) })
+        preview.setArea(layout.previewX0, layout.contentTop, layout.previewX1, layout.previewBottom)
+        val l = layout
+        val h = EditorLayout.WIDGET_HEIGHT
 
         // Row 0: master switch
         label(0, "enabled")
         add("enabled", CycleButton.onOffBuilder(enabled).displayOnlyValue()
-            .create(controlsX, rowY(0), controlsWidth, WIDGET_HEIGHT, tr("enabled")) { _, value -> enabled = value })
+            .create(l.controlsX, l.rowY(0), l.controlsWidth, h, tr("enabled")) { _, value -> enabled = value })
 
         // Row 1-2: trim
         label(1, "trim_pattern")
-        val noTrim = Optional.empty<Identifier>()
-        val patternValues = listOf(noTrim) + (trimPatterns + listOfNotNull(draft.trim?.pattern)).distinct().map { Optional.of(it) }
+        val patternValues = listOf(Optional.empty<Identifier>()) +
+            (trimPatterns + listOfNotNull(draft.trim?.pattern)).distinct().map { Optional.of(it) }
         add("trim_pattern", CycleButton.builder<Optional<Identifier>>({ id ->
             id.map { CosmeticCatalog.trimPatternName(it, registries) }.orElse(tr("none"))
         }, Optional.ofNullable(draft.trim?.pattern))
             .withValues(patternValues)
             .displayOnlyValue()
-            .create(controlsX, rowY(1), controlsWidth, WIDGET_HEIGHT, tr("trim_pattern")) { _, value ->
+            .create(l.controlsX, l.rowY(1), l.controlsWidth, h, tr("trim_pattern")) { _, value ->
                 draft = draft.copy(trim = value.getOrNull()?.let { ElytraCosmetic.Trim(it, material) })
                 needsRebuild = true
             })
@@ -150,7 +109,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         add("trim_material", CycleButton.builder<Identifier>({ CosmeticCatalog.trimMaterialName(it, registries) }, material)
             .withValues((trimMaterials + material).distinct())
             .displayOnlyValue()
-            .create(controlsX, rowY(2), controlsWidth, WIDGET_HEIGHT, tr("trim_material")) { _, value ->
+            .create(l.controlsX, l.rowY(2), l.controlsWidth, h, tr("trim_material")) { _, value ->
                 material = value
                 draft.trim?.let { draft = draft.copy(trim = it.copy(material = value)) }
             }).active = draft.trim != null
@@ -158,10 +117,10 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         // Row 3: dye color
         label(3, "color")
         colorPreset = add("color_preset", Button.builder(colorName()) { cycleColorPreset() }
-            .bounds(controlsX, rowY(3), half, WIDGET_HEIGHT)
+            .bounds(l.controlsX, l.rowY(3), l.half, h)
             .tooltip(Tooltip.create(tr("color.tooltip")))
             .build())
-        colorBox = EditBox(font, secondColumn, rowY(3), half - WIDGET_HEIGHT - 4, WIDGET_HEIGHT, tr("color")).apply {
+        colorBox = EditBox(font, l.secondColumn, l.rowY(3), l.half - h - 4, h, tr("color")).apply {
             setMaxLength(7)
             setHint(Text.literal("#RRGGBB"))
             setValue(colorText)
@@ -169,76 +128,36 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
             setHighlightPos(cursorPosition)
             setResponder(::onColorTyped)
         }
-        onColorTyped(colorText)
         add("color_box", colorBox)
-        swatchX = controlsX + controlsWidth - WIDGET_HEIGHT
-        swatchY = rowY(3)
+        onColorTyped(colorText)
+        swatchX = l.controlsX + l.controlsWidth - h
+        swatchY = l.rowY(3)
 
         // Row 4-5: effects
         label(4, "effects")
-        toggle(controlsX, rowY(4), half, "rainbow", draft.rainbow) { draft = draft.copy(rainbow = it) }
-        toggle(secondColumn, rowY(4), half, "glow", draft.glow) { draft = draft.copy(glow = it) }
-        toggle(controlsX, rowY(5), half, "gateway", draft.gateway) { draft = draft.copy(gateway = it) }
-        toggle(secondColumn, rowY(5), half, "animation", draft.animation) { draft = draft.copy(animation = it) }
+        toggle(l.controlsX, l.rowY(4), "rainbow", draft.rainbow) { draft = draft.copy(rainbow = it) }
+        toggle(l.secondColumn, l.rowY(4), "glow", draft.glow) { draft = draft.copy(glow = it) }
+        toggle(l.controlsX, l.rowY(5), "gateway", draft.gateway) { draft = draft.copy(gateway = it) }
+        toggle(l.secondColumn, l.rowY(5), "animation", draft.animation) { draft = draft.copy(animation = it) }
 
-        // Row 6-8: banner patterns
+        // Row 6: banner patterns, edited on their own screen
         label(6, "patterns")
-        add("pattern_style", CycleButton.booleanBuilder(tr("pattern_style.banner"), tr("pattern_style.shield"), draft.bannerStyle)
-            .create(controlsX, rowY(6), half, WIDGET_HEIGHT, tr("pattern_style")) { _, value -> draft = draft.copy(bannerStyle = value) })
-        add("import", Button.builder(tr("import")) { importFromHand() }
-            .bounds(secondColumn, rowY(6), half, WIDGET_HEIGHT)
-            .tooltip(Tooltip.create(tr("import.tooltip")))
+        add("edit_patterns", Button.builder(tr("edit_patterns", draft.patterns.size)) { openPatternEditor() }
+            .bounds(l.controlsX, l.rowY(6), l.controlsWidth, h)
             .build())
 
-        initLayerWidgets(half, secondColumn)
+        add("pose", preview.poseButton(l.previewX0, l.footerY, l.previewX1 - l.previewX0, h)
+            .also { it.setTooltip(Tooltip.create(tr("preview_hint"))) })
 
-        // Footer, below the controls column so it never overlaps the preview
-        val footerSpace = width - MARGIN - labelX
-        val footerWidth = ((footerSpace - 8) / 3).coerceAtMost(74)
-        val footerX = labelX + (footerSpace - (footerWidth * 3 + 8)) / 2
-        val footerY = height - FOOTER_SPACE + 4
-        add("reset", Button.builder(tr("reset")) { reset() }.bounds(footerX, footerY, footerWidth, WIDGET_HEIGHT).build())
+        val footer = l.footerButtons(3)
+        add("reset", Button.builder(tr("reset")) { reset() }.bounds(footer[0], l.footerY, l.footerWidth(3), h).build())
         add("cancel", Button.builder(CommonComponents.GUI_CANCEL) { minecraft.gui.setScreen(parent) }
-            .bounds(footerX + footerWidth + 4, footerY, footerWidth, WIDGET_HEIGHT).build())
+            .bounds(footer[1], l.footerY, l.footerWidth(3), h).build())
         add("done", Button.builder(CommonComponents.GUI_DONE) { onClose() }
-            .bounds(footerX + (footerWidth + 4) * 2, footerY, footerWidth, WIDGET_HEIGHT).build())
-    }
-
-    private fun initLayerWidgets(half: Int, secondColumn: Int) {
-        val layers = draft.patterns
-        selectedLayer = selectedLayer.coerceIn(0, (layers.size - 1).coerceAtLeast(0))
-
-        label(7, "layer")
-        add("previous_layer", Button.builder(Text.literal("<")) { selectLayer(-1) }
-            .bounds(controlsX, rowY(7), WIDGET_HEIGHT, WIDGET_HEIGHT).build()).active = selectedLayer > 0
-        add("next_layer", Button.builder(Text.literal(">")) { selectLayer(1) }
-            .bounds(controlsX + half - WIDGET_HEIGHT, rowY(7), WIDGET_HEIGHT, WIDGET_HEIGHT).build()).active = selectedLayer < layers.size - 1
-        layerCounterX = controlsX + half / 2
-        layerCounterY = rowY(7) + (WIDGET_HEIGHT - font.lineHeight) / 2 + 1
-
-        val quarter = (half - 4) / 2
-        add("add_layer", Button.builder(tr("add_layer")) { addLayer() }
-            .bounds(secondColumn, rowY(7), quarter, WIDGET_HEIGHT).build()).active =
-            bannerPatterns.isNotEmpty() && layers.size < ElytraCosmetic.MAX_PATTERN_LAYERS
-        add("remove_layer", Button.builder(tr("remove_layer")) { removeLayer() }
-            .bounds(secondColumn + half - quarter, rowY(7), quarter, WIDGET_HEIGHT).build()).active = layers.isNotEmpty()
-
-        val layer = layers.getOrNull(selectedLayer) ?: return
-        add("layer_pattern", CycleButton.builder<Identifier>({ CosmeticCatalog.bannerPatternName(it, layer.color, registries) }, layer.pattern)
-            .withValues((bannerPatterns + layer.pattern).distinct())
-            .displayOnlyValue()
-            .create(controlsX, rowY(8), half, WIDGET_HEIGHT, tr("layer")) { _, value -> updateLayer { it.copy(pattern = value) } })
-        add("layer_color", CycleButton.builder<DyeColor>(CosmeticCatalog::dyeName, layer.color)
-            .withValues(DyeColor.entries)
-            .displayOnlyValue()
-            .create(secondColumn, rowY(8), half, WIDGET_HEIGHT, tr("color")) { _, value ->
-                updateLayer { it.copy(color = value) }
-                needsRebuild = true // The pattern name includes the color
-            })
+            .bounds(footer[2], l.footerY, l.footerWidth(3), h).build())
     }
 
     override fun tick() {
-        if (statusTicks > 0 && --statusTicks == 0) status = null
         if (needsRebuild) {
             needsRebuild = false
             rebuildWidgets()
@@ -246,8 +165,8 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     }
 
     /**
-     * Also used when resizing. The vanilla implementation moves keyboard focus to the first widget,
-     * so a following key press would toggle the master switch; keep focus on the equivalent widget instead.
+     * Also used when resizing or returning from the pattern editor. The vanilla implementation moves keyboard focus to
+     * the first widget, so a following key press would toggle the master switch; keep focus on the equivalent widget instead.
      */
     override fun rebuildWidgets() {
         val focusedKey = focused?.let(widgetKeys::get)
@@ -273,75 +192,40 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
 
     override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick)
-        // Status messages temporarily replace the title, so they need no space of their own.
-        graphics.centeredText(font, status ?: title, width / 2, 8, TEXT_COLOR)
+        graphics.centeredText(font, title, width / 2, 8, TEXT_COLOR)
         for ((text, y) in labels) {
-            val clipped = Language.getInstance().getVisualOrder(font.substrByWidth(text, labelWidth - 4))
-            graphics.text(font, clipped, labelX, y + (WIDGET_HEIGHT - font.lineHeight) / 2 + 1, TEXT_COLOR)
+            val clipped = Language.getInstance().getVisualOrder(font.substrByWidth(text, layout.labelWidth - 4))
+            graphics.text(font, clipped, layout.labelX, y + (EditorLayout.WIDGET_HEIGHT - font.lineHeight) / 2 + 1, TEXT_COLOR)
         }
 
-        val counter = if (draft.patterns.isEmpty()) tr("no_layers") else Text.literal("${selectedLayer + 1}/${draft.patterns.size}")
-        graphics.centeredText(font, counter, layerCounterX, layerCounterY, TEXT_COLOR)
-
-        graphics.fill(swatchX, swatchY, swatchX + WIDGET_HEIGHT, swatchY + WIDGET_HEIGHT, 0xFFA0A0A0.toInt())
+        val size = EditorLayout.WIDGET_HEIGHT
+        graphics.fill(swatchX, swatchY, swatchX + size, swatchY + size, 0xFFA0A0A0.toInt())
         val color = draft.color
-        if (color != null) graphics.fill(swatchX + 1, swatchY + 1, swatchX + WIDGET_HEIGHT - 1, swatchY + WIDGET_HEIGHT - 1, color or (0xFF shl 24))
-        else graphics.centeredText(font, "-", swatchX + WIDGET_HEIGHT / 2, swatchY + 6, HINT_COLOR)
+        if (color != null) graphics.fill(swatchX + 1, swatchY + 1, swatchX + size - 1, swatchY + size - 1, color or (0xFF shl 24))
+        else graphics.centeredText(font, "-", swatchX + size / 2, swatchY + 6, HINT_COLOR)
 
-        // Wrapped to the preview column, so long translations don't run into the footer.
-        val hint = font.split(tr("preview_hint"), previewRight - 2 * MARGIN).take(2)
-        val hintY = height - FOOTER_SPACE + 10 - (hint.size - 1) * font.lineHeight
-        hint.forEachIndexed { i, line -> graphics.centeredText(font, line, previewRight / 2, hintY + i * font.lineHeight, HINT_COLOR) }
-        extractPreview(graphics, partialTick)
+        layout.extractPreviewHint(graphics, font)
+        preview.extract(graphics, draft.takeIf { enabled }, partialTick)
     }
 
-    private fun extractPreview(graphics: GuiGraphicsExtractor, partialTick: Float) {
-        val player = minecraft.player ?: return
-        val state = minecraft.entityRenderDispatcher.getRenderer(player).createRenderState(player, partialTick)
-        if (state !is AvatarRenderState) return
+    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean =
+        preview.mouseClicked(event) || super.mouseClicked(event, doubleClick)
 
-        state.shadowPieces.clear()
-        state.outlineColor = 0
-        state.nameTag = null
-        state.bodyRot = previewYaw
-        state.yRot = 0F
-        state.xRot = 0F
-        state.boundingBoxWidth /= state.scale
-        state.boundingBoxHeight /= state.scale
-        state.scale = 1F
-        // Show the cosmetic even when the player isn't wearing an elytra right now.
-        if (!state.chestEquipment.has(DataComponents.GLIDER)) state.chestEquipment = ItemStack(Items.ELYTRA)
-        state.setData(ElytraCosmetics.RENDER_KEY, draft.takeIf { enabled && !it.isEmpty })
-
-        val x0 = MARGIN
-        val y0 = top
-        val x1 = previewRight - MARGIN
-        val y1 = previewBottom()
-        val size = ((y1 - y0) / 2.4F).coerceAtMost((x1 - x0) / 1.2F)
-        val translation = Vector3f(0F, state.boundingBoxHeight / 2F + 0.0625F, 0F)
-        graphics.entity(state, size, translation, Quaternionf().rotateZ(PI.toFloat()), null, x0, y0, x1, y1)
-    }
-
-    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
-        if (event.x() >= MARGIN && event.x() < previewRight - MARGIN && event.y() >= top && event.y() < previewBottom()) {
-            draggingPreview = true
-            return true
-        }
-        return super.mouseClicked(event, doubleClick)
-    }
-
-    override fun mouseDragged(event: MouseButtonEvent, dx: Double, dy: Double): Boolean {
-        if (!draggingPreview) return super.mouseDragged(event, dx, dy)
-        previewYaw = (previewYaw - dx.toFloat() * 2F) % 360F
-        return true
-    }
+    override fun mouseDragged(event: MouseButtonEvent, dx: Double, dy: Double): Boolean =
+        preview.mouseDragged(dx, dy) || super.mouseDragged(event, dx, dy)
 
     override fun mouseReleased(event: MouseButtonEvent): Boolean {
-        draggingPreview = false
+        preview.mouseReleased()
         return super.mouseReleased(event)
     }
 
     // Actions
+
+    private fun openPatternEditor() {
+        minecraft.gui.setScreen(BannerPatternScreen(this, preview, draft) { patterns, bannerStyle ->
+            draft = draft.copy(patterns = patterns, bannerStyle = bannerStyle)
+        })
+    }
 
     private fun cycleColorPreset() {
         val step = if (minecraft.hasShiftDown()) -1 else 1
@@ -366,87 +250,30 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         return dye?.let(CosmeticCatalog::dyeName) ?: tr("color.custom")
     }
 
-    private fun selectLayer(step: Int) {
-        selectedLayer += step
-        needsRebuild = true
-    }
-
-    private fun addLayer() {
-        val pattern = bannerPatterns.firstOrNull() ?: return
-        val layers = draft.patterns
-        if (layers.size >= ElytraCosmetic.MAX_PATTERN_LAYERS) return
-        val insertAt = if (layers.isEmpty()) 0 else selectedLayer + 1
-        draft = draft.copy(patterns = layers.toMutableList().apply { add(insertAt, PatternLayer(pattern, DyeColor.WHITE)) })
-        selectedLayer = insertAt
-        needsRebuild = true
-    }
-
-    private fun removeLayer() {
-        val layers = draft.patterns
-        if (selectedLayer !in layers.indices) return
-        draft = draft.copy(patterns = layers.toMutableList().apply { removeAt(selectedLayer) })
-        selectedLayer = (selectedLayer - 1).coerceAtLeast(0)
-        needsRebuild = true
-    }
-
-    private fun updateLayer(transform: (PatternLayer) -> PatternLayer) {
-        val layers = draft.patterns
-        if (selectedLayer !in layers.indices) return
-        draft = draft.copy(patterns = layers.toMutableList().apply { this[selectedLayer] = transform(this[selectedLayer]) })
-    }
-
-    /** Copies the pattern layers of a banner or shield held in either hand. */
-    private fun importFromHand() {
-        val player = minecraft.player ?: return
-        val source = InteractionHand.entries.asSequence()
-            .map { player.getItemInHand(it).get(DataComponents.BANNER_PATTERNS) }
-            .firstOrNull { it != null && it.layers().isNotEmpty() }
-        if (source == null) return showStatus(tr("import.failed"))
-
-        val layers = source.layers().take(ElytraCosmetic.MAX_PATTERN_LAYERS).map { layer ->
-            val id = layer.pattern().unwrapKey().map { it.identifier() }.orElseGet { layer.pattern().value().assetId() }
-            PatternLayer(id, layer.color())
-        }
-        draft = draft.copy(patterns = layers)
-        selectedLayer = 0
-        showStatus(tr("import.success", layers.size))
-        needsRebuild = true
-    }
-
     private fun reset() {
         draft = ElytraCosmetic.EMPTY
         material = DEFAULT_MATERIAL
         colorText = ""
         colorCursor = 0
-        selectedLayer = 0
         needsRebuild = true
     }
 
     // Helpers
 
-    private fun showStatus(text: Text) {
-        status = text
-        statusTicks = STATUS_TICKS
+    private fun label(row: Int, key: String) {
+        labels += tr(key) to layout.rowY(row)
     }
-
-    private fun rowY(row: Int): Int = top + row * rowStep
-
-    private fun previewBottom(): Int = height - FOOTER_SPACE + 2
 
     private fun <T> add(key: String, widget: T): T where T : GuiEventListener, T : Renderable, T : NarratableEntry {
         widgetKeys[widget] = key
         return addRenderableWidget(widget)
     }
 
-    private fun label(row: Int, key: String) {
-        labels += tr(key) to rowY(row)
-    }
-
-    private fun toggle(x: Int, y: Int, width: Int, key: String, initial: Boolean, onChange: (Boolean) -> Unit) {
-        add(key, CycleButton.onOffBuilder(initial).create(x, y, width, WIDGET_HEIGHT, tr(key)) { _, value -> onChange(value) })
+    private fun toggle(x: Int, y: Int, key: String, initial: Boolean, onChange: (Boolean) -> Unit) {
+        add(key, CycleButton.onOffBuilder(initial).create(x, y, layout.half, EditorLayout.WIDGET_HEIGHT, tr(key)) { _, value -> onChange(value) })
     }
 
     private fun hex(color: Int): String = "#%06X".format(color and 0xFFFFFF)
 }
 
-private fun tr(key: String, vararg args: Any): Text = Text.translatable("screen.elytratrims.cosmetic.$key", *args)
+internal fun tr(key: String, vararg args: Any): Text = Text.translatable("screen.elytratrims.cosmetic.$key", *args)
