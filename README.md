@@ -20,9 +20,11 @@ Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to ope
 - **Trim / Material**: any armor trim pattern and material.
 - **Dye**: click to cycle through dye colors (Shift+click to go back) or type a hex color such as `#3355FF`.
 - **Effects**: rainbow, glow in the dark, cosmic (end portal) and an animation easter egg.
-- **Patterns**: add banner pattern layers, or copy them from a banner or shield in your hand.
-  *Style* switches between the shield and the high-resolution banner textures.
-- Drag the preview to rotate it. *Done* or <kbd>Esc</kbd> saves, *Cancel* discards the changes.
+- **Patterns**: *Edit Patterns* opens a loom-like editor. Pick a color, then click a pattern to stack a new layer,
+  or select a layer in the list to recolor, replace, move or remove it. Layers can also be copied from a banner or
+  shield in your hand. *Style* switches between the shield and the high-resolution banner textures.
+- Drag the preview to rotate and tilt it, and switch its pose between standing, sneaking and gliding.
+  *Done* or <kbd>Esc</kbd> saves, *Cancel* discards the changes.
 
 Settings are stored in `config/elytratrims_cosmetic.json`.
 
