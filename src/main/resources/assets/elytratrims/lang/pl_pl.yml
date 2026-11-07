@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Elytry, które można zdobić
-view.elytratrims.type.decorating: Zdobienie elytr
 flag.item.elytratrims:
   glow: §bŚwiecące
   gateway: §dKosmiczne
   banner: Sztandar HD
   animation: §cJedno jabłko dziennie i lekarz niepotrzebny
-recipe.elytratrims:
-  apply_glow_effect: §7Sprawia, że zdobienia elytr świecą w ciemności
-  apply_gateway_effect: §7Nadaje elytrom wygląd portalu Kresu
-  apply_animation_effect: §7Nakłada na elytry pewną animację
-  apply_shield_pattern: §7Nakłada na elytry wzory tarczy; nie obejmuje koloru bazowego sztandaru
-  apply_banner_pattern: §7Nakłada na elytry wzory sztandaru; nie obejmuje koloru bazowego sztandaru
-  apply_random_trim: §7Nakłada losowe zdobienie, losowane ponownie, gdy ktoś je wytworzy
-  apply_random_trim_reroll: §7Nakłada losowe zdobienie, losowane ponownie przy każdej zmianie przedmiotów
 trim_pattern:
   alexscaves:
     polarity: Zdobienie zbroi «Polaryzacja» (Alex's Caves)

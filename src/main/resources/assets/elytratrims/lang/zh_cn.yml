@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: 可装饰的鞘翅
-view.elytratrims.type.decorating: 鞘翅装饰
 flag.item.elytratrims:
   glow: §b发光
   gateway: §d宇宙
   banner: 高清旗帜
   animation: §c一天一苹果，医生远离我
-recipe.elytratrims:
-  apply_glow_effect: §7让鞘翅上的装饰在黑暗中发光
-  apply_gateway_effect: §7让鞘翅呈现末地传送门的外观
-  apply_animation_effect: §7为鞘翅应用某种动画
-  apply_shield_pattern: §7将盾牌图案应用到鞘翅上，不包括旗帜的底色
-  apply_banner_pattern: §7将旗帜图案应用到鞘翅上，不包括旗帜的底色
-  apply_random_trim: §7应用随机纹饰，有人合成后会重新抽取
-  apply_random_trim_reroll: §7应用随机纹饰，每次物品变动都会重新抽取
 trim_pattern:
   alexscaves:
     polarity: 极性纹饰 (Alex's Caves)

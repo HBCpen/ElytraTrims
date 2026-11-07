@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Élytres décorables
-view.elytratrims.type.decorating: Décoration d'élytres
 flag.item.elytratrims:
   glow: §bLuminescent
   gateway: §dCosmique
   banner: Bannière HD
   animation: §cUne pomme par jour éloigne le médecin
-recipe.elytratrims:
-  apply_glow_effect: §7Fait briller les décorations des élytres dans le noir
-  apply_gateway_effect: §7Donne aux élytres l'apparence d'un portail de l'End
-  apply_animation_effect: §7Applique une certaine animation aux élytres
-  apply_shield_pattern: §7Applique des motifs de bouclier aux élytres ; n'inclut pas la couleur de base de la bannière
-  apply_banner_pattern: §7Applique des motifs de bannière aux élytres ; n'inclut pas la couleur de base de la bannière
-  apply_random_trim: §7Applique un ornement aléatoire, tiré à nouveau lorsque quelqu'un le fabrique
-  apply_random_trim_reroll: §7Applique un ornement aléatoire, tiré à nouveau à chaque changement d'objets
 trim_pattern:
   alexscaves:
     polarity: Ornement d'armure de polarité (Alex's Caves)

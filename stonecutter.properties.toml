@@ -7,7 +7,6 @@ deps.fabric-loader="0.19.5"
 deps.fabric-kotlin="1.14.1+kotlin.2.4.20"
 deps.kotlin-stdlib="2.4.20"
 deps.kotlin-coroutines="1.11.0"
-deps.rvv_base="8.10.5"
 
 loomx.loom_version="1.17-SNAPSHOT"
 

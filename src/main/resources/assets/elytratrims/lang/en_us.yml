@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Decoratable Elytras
-view.elytratrims.type.decorating: Elytra Decoration
 flag.item.elytratrims:
   glow: §bGlowing
   gateway: §dCosmic
   banner: HD banner
   animation: §cAn apple a day keeps the doctor away
-recipe.elytratrims:
-  apply_glow_effect: §7Makes the elytra's decorations glow in the dark
-  apply_gateway_effect: §7Gives the elytra an appearance of an end portal
-  apply_animation_effect: §7Applies a certain animation to the elytra
-  apply_shield_pattern: §7Applies shield patterns to the elytra; doesn't include the base color of the banner
-  apply_banner_pattern: §7Applies banner patterns to the elytra; doesn't include the base color of the banner
-  apply_random_trim: §7Applies a random trim, which is rerolled when someone crafts it
-  apply_random_trim_reroll: §7Applies a random trim, which is rerolled every time items change
 trim_pattern:
   alexscaves:
     polarity: Polarity Armor Trim (Alex's Caves)

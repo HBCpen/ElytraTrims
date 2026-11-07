@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Elitre decorabili
-view.elytratrims.type.decorating: Decorazione delle elitre
 flag.item.elytratrims:
   glow: §bLuminescente
   gateway: §dCosmico
   banner: Stendardo HD
   animation: §cUna mela al giorno leva il medico di torno
-recipe.elytratrims:
-  apply_glow_effect: §7Fa brillare al buio le decorazioni delle elitre
-  apply_gateway_effect: §7Dona alle elitre l'aspetto di un portale dell'End
-  apply_animation_effect: §7Applica una certa animazione alle elitre
-  apply_shield_pattern: §7Applica alle elitre i motivi dello scudo; non include il colore di base dello stendardo
-  apply_banner_pattern: §7Applica alle elitre i motivi dello stendardo; non include il colore di base dello stendardo
-  apply_random_trim: §7Applica un fregio casuale, riestratto quando qualcuno lo fabbrica
-  apply_random_trim_reroll: §7Applica un fregio casuale, riestratto ogni volta che gli oggetti cambiano
 trim_pattern:
   alexscaves:
     polarity: Fregio della polarità (Alex's Caves)

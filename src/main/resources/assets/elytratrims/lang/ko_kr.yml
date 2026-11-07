@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: 장식 가능한 겉날개
-view.elytratrims.type.decorating: 겉날개 장식
 flag.item.elytratrims:
   glow: §b발광
   gateway: §d우주
   banner: HD 현수막
   animation: §c하루 사과 한개면 의사가 필요 없다
-recipe.elytratrims:
-  apply_glow_effect: §7겉날개의 장식이 어둠 속에서도 빛나게 합니다
-  apply_gateway_effect: §7겉날개에 엔드 차원문 같은 모습을 부여합니다
-  apply_animation_effect: §7겉날개에 어떤 애니메이션을 적용합니다
-  apply_shield_pattern: §7겉날개에 방패 무늬를 적용합니다. 현수막의 기본 색상은 포함되지 않습니다
-  apply_banner_pattern: §7겉날개에 현수막 무늬를 적용합니다. 현수막의 기본 색상은 포함되지 않습니다
-  apply_random_trim: §7무작위 갑옷 장식을 적용하며, 누군가 제작하면 다시 뽑습니다
-  apply_random_trim_reroll: §7무작위 갑옷 장식을 적용하며, 아이템이 바뀔 때마다 다시 뽑습니다
 trim_pattern:
   alexscaves:
     polarity: 양극성 갑옷 장식 (Alex's Caves)

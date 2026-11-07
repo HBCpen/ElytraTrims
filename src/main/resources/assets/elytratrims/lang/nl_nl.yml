@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Versierbare elytra's
-view.elytratrims.type.decorating: Elytraversiering
 flag.item.elytratrims:
   glow: §bGloeiend
   gateway: §dKosmisch
   banner: HD-vlag
   animation: §cEen appel per dag houdt de dokter weg
-recipe.elytratrims:
-  apply_glow_effect: §7Laat de versieringen van de elytra in het donker gloeien
-  apply_gateway_effect: §7Geeft de elytra het uiterlijk van een Endportaal
-  apply_animation_effect: §7Past een bepaalde animatie toe op de elytra
-  apply_shield_pattern: §7Past schildpatronen toe op de elytra; de basiskleur van de vlag wordt niet overgenomen
-  apply_banner_pattern: §7Past vlagpatronen toe op de elytra; de basiskleur van de vlag wordt niet overgenomen
-  apply_random_trim: §7Past een willekeurige versiering toe, die opnieuw wordt geloot wanneer iemand hem maakt
-  apply_random_trim_reroll: §7Past een willekeurige versiering toe, die opnieuw wordt geloot bij elke wijziging van voorwerpen
 trim_pattern:
   alexscaves:
     polarity: Polariteitsharnasversiering (Alex's Caves)

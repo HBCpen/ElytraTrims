@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "template": "minecraft:trial_key",
-  "base": "#elytratrims:decoratable",
-  "addition": "#minecraft:trim_materials",
-  "result": {"id": "minecraft:elytra"}
-}

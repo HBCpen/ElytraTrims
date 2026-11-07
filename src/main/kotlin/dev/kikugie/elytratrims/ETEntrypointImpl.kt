@@ -3,8 +3,6 @@ package dev.kikugie.elytratrims
 import dev.kikugie.elytratrims.api.ETClientInitializer
 import dev.kikugie.elytratrims.api.ETCommonInitializer
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI.registerDecorator
-import dev.kikugie.elytratrims.debug.registerServerDebugCommands
-import dev.kikugie.elytratrims.recipe.cauldron.ETCauldronInteractions
 import dev.kikugie.elytratrims.render.ElytraRenderPipelines
 import dev.kikugie.elytratrims.render.impl.*
 
@@ -17,11 +15,6 @@ fun clientInit(entrypoints: Iterable<ETClientInitializer>) {
 fun commonInit(entrypoints: Iterable<ETCommonInitializer>) {
     entrypoints.sortedByDescending(ETCommonInitializer::priority)
         .forEach(ETCommonInitializer::onInitializeCommonET)
-
-    //? if fabric {
-    if (ModData.isDevEnv) net.fabricmc.fabric.api.command.v2
-        .CommandRegistrationCallback.EVENT.register(::registerServerDebugCommands)
-    //?}
 }
 
 fun clientEP() {
@@ -36,11 +29,7 @@ fun clientEP() {
 }
 
 fun commonEP() {
-    ETCauldronInteractions.register()
-//    registerCauldronInteraction(elytratrims("remove_dye"), REMOVE_COLOR)
-//    registerCauldronInteraction(elytratrims("remove_glow"), REMOVE_GLOW)
-//    registerCauldronInteraction(elytratrims("remove_pattern"), REMOVE_PATTERNS)
-    // registerCauldronInteraction(elytratrims("remove_touhou"), REMOVE_TOUHOU)
+    // Decorations are purely client-side cosmetics, so there is nothing to register on the logical server.
 }
 
 private fun registerTrimicaCompat() {

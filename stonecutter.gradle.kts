@@ -16,7 +16,6 @@ stonecutter parameters {
         match(loader, "fabric", "neoforge")
         this["trimica"] = false
         this["iris"] = false
-        this["rvv"] = false
     }
 
     swaps {

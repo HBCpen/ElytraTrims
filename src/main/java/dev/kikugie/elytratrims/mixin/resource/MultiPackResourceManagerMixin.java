@@ -18,7 +18,8 @@ import java.util.List;
 public class MultiPackResourceManagerMixin {
     @ModifyVariable(method = "<init>", at = @At(value = "HEAD"), argsOnly = true)
     private static List<PackResources> injectElytraTrimsPacks(List<PackResources> packs, @Local(argsOnly = true) PackType type) {
-        if (ETRuntimePackUtilsKt.isWrapped(packs) || !ETRuntimePackUtilsKt.hasElytraTrimsPack(packs))
+        // Only client resources are generated; the (integrated) server is left untouched.
+        if (type != PackType.CLIENT_RESOURCES || ETRuntimePackUtilsKt.isWrapped(packs) || !ETRuntimePackUtilsKt.hasElytraTrimsPack(packs))
             return packs;
 
         ETRuntimePack injected = ETRuntimePack.of(type, new MultiPackResourceManager(type, ETRuntimePackUtilsKt.wrap(packs)));

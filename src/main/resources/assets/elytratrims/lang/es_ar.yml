@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Élitros decorables
-view.elytratrims.type.decorating: Decoración de élitros
 flag.item.elytratrims:
   glow: §bBrillante
   gateway: §dCósmico
   banner: Estandarte HD
   animation: §cUna manzana al día mantiene alejado al doctor
-recipe.elytratrims:
-  apply_glow_effect: §7Hace que las decoraciones de los élitros brillen en la oscuridad
-  apply_gateway_effect: §7Les da a los élitros la apariencia de un portal del End
-  apply_animation_effect: §7Aplica cierta animación a los élitros
-  apply_shield_pattern: §7Aplica patrones de escudo a los élitros; no incluye el color base del estandarte
-  apply_banner_pattern: §7Aplica patrones de estandarte a los élitros; no incluye el color base del estandarte
-  apply_random_trim: §7Aplica un adorno al azar, que se vuelve a sortear cuando alguien lo fabrica
-  apply_random_trim_reroll: §7Aplica un adorno al azar, que se vuelve a sortear cada vez que cambian los objetos
 trim_pattern:
   alexscaves:
     polarity: Adorno de Polaridad (Alex's Caves)

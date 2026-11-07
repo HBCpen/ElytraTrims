@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: 装飾可能なエリトラ
-view.elytratrims.type.decorating: エリトラの装飾
 flag.item.elytratrims:
   glow: §b発光
   gateway: §dコズミック
   banner: HD旗
   animation: §c1日1個のリンゴで医者いらず
-recipe.elytratrims:
-  apply_glow_effect: §7エリトラの装飾が暗闇で光るようになります
-  apply_gateway_effect: §7エリトラをエンドポータルのような見た目にします
-  apply_animation_effect: §7エリトラに特定のアニメーションを適用します
-  apply_shield_pattern: §7エリトラに盾の模様を適用します。旗のベース色は含まれません
-  apply_banner_pattern: §7エリトラに旗の模様を適用します。旗のベース色は含まれません
-  apply_random_trim: §7ランダムな装飾を適用します。誰かがクラフトすると引き直されます
-  apply_random_trim_reroll: §7ランダムな装飾を適用します。アイテムが変わるたびに引き直されます
 trim_pattern:
   alexscaves:
     polarity: 極性の鎧の飾り (Alex's Caves)

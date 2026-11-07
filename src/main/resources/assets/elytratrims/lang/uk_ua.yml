@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Елітри, які можна прикрашати
-view.elytratrims.type.decorating: Оздоблення елітр
 flag.item.elytratrims:
   glow: §bСяйво
   gateway: §dКосмос
   banner: HD-прапор
   animation: §cОдне яблуко на день - і лікар не потрібен
-recipe.elytratrims:
-  apply_glow_effect: §7Змушує оздоблення елітр світитися в темряві
-  apply_gateway_effect: §7Надає елітрам вигляду порталу Енду
-  apply_animation_effect: §7Застосовує до елітр певну анімацію
-  apply_shield_pattern: §7Наносить на елітри візерунки щита; основний колір прапора не переноситься
-  apply_banner_pattern: §7Наносить на елітри візерунки прапора; основний колір прапора не переноситься
-  apply_random_trim: §7Наносить випадкове оздоблення, яке обирається наново, коли хтось його виготовить
-  apply_random_trim_reroll: §7Наносить випадкове оздоблення, яке обирається наново щоразу, коли змінюються предмети
 trim_pattern:
   alexscaves:
     polarity: Оздоблення обладунків «Полярність» (Alex's Caves)

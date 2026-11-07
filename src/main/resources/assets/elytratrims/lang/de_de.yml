@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Dekorierbare Elytren
-view.elytratrims.type.decorating: Elytren-Dekoration
 flag.item.elytratrims:
   glow: §bLeuchtend
   gateway: §dKosmisch
   banner: HD-Banner
   animation: §cEin Apfel am Tag hält den Doktor fern
-recipe.elytratrims:
-  apply_glow_effect: §7Lässt die Dekorationen der Elytren im Dunkeln leuchten
-  apply_gateway_effect: §7Verleiht den Elytren das Aussehen eines Endportals
-  apply_animation_effect: §7Wendet eine gewisse Animation auf die Elytren an
-  apply_shield_pattern: §7Wendet Schildmuster auf die Elytren an; die Grundfarbe des Banners wird nicht übernommen
-  apply_banner_pattern: §7Wendet Bannermuster auf die Elytren an; die Grundfarbe des Banners wird nicht übernommen
-  apply_random_trim: §7Wendet eine zufällige Verzierung an, die neu ausgewürfelt wird, sobald jemand sie herstellt
-  apply_random_trim_reroll: §7Wendet eine zufällige Verzierung an, die bei jeder Änderung der Gegenstände neu ausgewürfelt wird
 trim_pattern:
   alexscaves:
     polarity: Polaritäts-Rüstungsverzierung (Alex's Caves)

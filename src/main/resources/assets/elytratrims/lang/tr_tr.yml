@@ -1,18 +1,8 @@
-tag.item.elytratrims.decoratable: Süslenebilir Elitralar
-view.elytratrims.type.decorating: Elitra Süsleme
 flag.item.elytratrims:
   glow: §bParlayan
   gateway: §dKozmik
   banner: HD flama
   animation: §cGünde bir elma doktoru uzak tutar
-recipe.elytratrims:
-  apply_glow_effect: §7Elitranın süslemelerinin karanlıkta parlamasını sağlar
-  apply_gateway_effect: §7Elitraya bir End portalı görünümü kazandırır
-  apply_animation_effect: §7Elitraya belirli bir animasyon uygular
-  apply_shield_pattern: §7Elitraya kalkan desenlerini uygular; flamanın temel rengini içermez
-  apply_banner_pattern: §7Elitraya flama desenlerini uygular; flamanın temel rengini içermez
-  apply_random_trim: §7Biri ürettiğinde yeniden belirlenen rastgele bir süs uygular
-  apply_random_trim_reroll: §7Eşyalar her değiştiğinde yeniden belirlenen rastgele bir süs uygular
 trim_pattern:
   alexscaves:
     polarity: Kutupluluk Zırh Süsü (Alex's Caves)

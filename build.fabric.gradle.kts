@@ -45,7 +45,6 @@ loom {
 repositories {
     mavenLocal()
     maven("https://maven.bawnorton.com/releases")
-    maven("https://maven.cassian.cc")
     maven("https://api.modrinth.com/maven")
 }
 
@@ -60,7 +59,6 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
-    modCompileOnly("cc.cassian.rrv:reliable-recipe-viewer-fabric:${property("deps.rvv_base")}+${findProperty("deps.rvv_mc") ?: property("deps.minecraft")}")
 
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
     fletchingTable.modrinth("iris")?.let {
@@ -69,10 +67,6 @@ dependencies {
 
         modRuntimeOnly(fletchingTable.modrinth("sodium")!!)
     }
-}
-
-stonecutter {
-    constants["rvv"] = true
 }
 
 kotlin {
@@ -84,7 +78,7 @@ kotlin {
 
 tasks {
     processResources {
-        exclude("**/neoforge.mods.toml", "gen.sh")
+        exclude("**/neoforge.mods.toml")
     }
 
     named("runClientGameTest") {
@@ -123,7 +117,6 @@ fletchingTable {
     fabric.configure(sourceSets.main) {
         entrypoint("elytratrims-client", "dev.kikugie.elytratrims.api.ETClientInitializer")
         entrypoint("elytratrims-common", "dev.kikugie.elytratrims.api.ETCommonInitializer")
-        entrypoint("rrv_client", "cc.cassian.rrv.api.ReliableRecipeViewerClientPlugin")
     }
 }
 
