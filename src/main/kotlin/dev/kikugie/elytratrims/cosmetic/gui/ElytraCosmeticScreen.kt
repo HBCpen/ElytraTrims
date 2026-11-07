@@ -59,6 +59,17 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         val COLOR_PRESETS: List<Int?> = listOf(null) + DyeColor.entries.map { it.textureDiffuseColor and 0xFFFFFF }
 
         val LABEL_KEYS = listOf("enabled", "trim_pattern", "trim_material", "color", "effects", "patterns", "layer")
+
+        /** Where keyboard focus goes when the focused widget is gone or inactive after a rebuild. */
+        val FOCUS_FALLBACKS: Map<String, List<String>> = mapOf(
+            "remove_layer" to listOf("add_layer", "previous_layer"),
+            "add_layer" to listOf("remove_layer", "previous_layer"),
+            "previous_layer" to listOf("next_layer", "add_layer"),
+            "next_layer" to listOf("previous_layer", "add_layer"),
+            "layer_pattern" to listOf("add_layer"),
+            "layer_color" to listOf("add_layer"),
+            "trim_material" to listOf("trim_pattern"),
+        )
     }
 
     private val registries: RegistryAccess? get() = minecraft.level?.registryAccess()
@@ -73,6 +84,10 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private var needsRebuild: Boolean = false
     private var status: Text? = null
     private var statusTicks: Int = 0
+
+    /** Raw contents of the hex color box, kept across rebuilds even while incomplete. */
+    private var colorText: String = draft.color?.let(::hex).orEmpty()
+    private var colorCursor: Int = colorText.length
 
     private val trimPatterns: List<Identifier> by lazy { CosmeticCatalog.trimPatterns(minecraft.resourceManager) }
     private val trimMaterials: List<Identifier> by lazy { CosmeticCatalog.trimMaterials(registries) }
@@ -149,9 +164,12 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         colorBox = EditBox(font, secondColumn, rowY(3), half - WIDGET_HEIGHT - 4, WIDGET_HEIGHT, tr("color")).apply {
             setMaxLength(7)
             setHint(Text.literal("#RRGGBB"))
-            setValue(draft.color?.let(::hex).orEmpty())
+            setValue(colorText)
+            setCursorPosition(colorCursor.coerceIn(0, colorText.length))
+            setHighlightPos(cursorPosition)
             setResponder(::onColorTyped)
         }
+        onColorTyped(colorText)
         add("color_box", colorBox)
         swatchX = controlsX + controlsWidth - WIDGET_HEIGHT
         swatchY = rowY(3)
@@ -223,12 +241,27 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (statusTicks > 0 && --statusTicks == 0) status = null
         if (needsRebuild) {
             needsRebuild = false
-            // Rebuilding resets focus to the first widget, which would redirect keyboard input; keep it in place instead.
-            val focusedKey = focused?.let(widgetKeys::get)
             rebuildWidgets()
-            val replacement = widgetKeys.entries.firstOrNull { it.value == focusedKey }?.key
-            if (replacement != null && (replacement as? AbstractWidget)?.active != false) setFocused(replacement)
         }
+    }
+
+    /**
+     * Also used when resizing. The vanilla implementation moves keyboard focus to the first widget,
+     * so a following key press would toggle the master switch; keep focus on the equivalent widget instead.
+     */
+    override fun rebuildWidgets() {
+        val focusedKey = focused?.let(widgetKeys::get)
+        if (::colorBox.isInitialized) colorCursor = colorBox.cursorPosition
+        clearWidgets()
+        clearFocus()
+        init()
+
+        if (focusedKey == null) return setInitialFocus()
+        val target = (listOf(focusedKey) + FOCUS_FALLBACKS[focusedKey].orEmpty()).firstNotNullOfOrNull { key ->
+            widgetKeys.entries.firstOrNull { it.value == key && (it.key as? AbstractWidget)?.active != false }?.key
+        }
+        // Without a suitable replacement, leave nothing focused rather than landing on an unrelated control.
+        if (target != null) setFocused(target)
     }
 
     override fun isPauseScreen(): Boolean = false
@@ -255,7 +288,10 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (color != null) graphics.fill(swatchX + 1, swatchY + 1, swatchX + WIDGET_HEIGHT - 1, swatchY + WIDGET_HEIGHT - 1, color or (0xFF shl 24))
         else graphics.centeredText(font, "-", swatchX + WIDGET_HEIGHT / 2, swatchY + 6, HINT_COLOR)
 
-        graphics.centeredText(font, tr("preview_hint"), previewRight / 2, height - FOOTER_SPACE + 10, HINT_COLOR)
+        // Wrapped to the preview column, so long translations don't run into the footer.
+        val hint = font.split(tr("preview_hint"), previewRight - 2 * MARGIN).take(2)
+        val hintY = height - FOOTER_SPACE + 10 - (hint.size - 1) * font.lineHeight
+        hint.forEachIndexed { i, line -> graphics.centeredText(font, line, previewRight / 2, hintY + i * font.lineHeight, HINT_COLOR) }
         extractPreview(graphics, partialTick)
     }
 
@@ -316,6 +352,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     }
 
     private fun onColorTyped(text: String) {
+        colorText = text
         val match = HEX_PATTERN.matchEntire(text.trim())
         val valid = text.isBlank() || match != null
         if (valid) draft = draft.copy(color = match?.groupValues?.get(1)?.toInt(16))
@@ -379,6 +416,8 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private fun reset() {
         draft = ElytraCosmetic.EMPTY
         material = DEFAULT_MATERIAL
+        colorText = ""
+        colorCursor = 0
         selectedLayer = 0
         needsRebuild = true
     }
