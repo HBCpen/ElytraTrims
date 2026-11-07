@@ -15,39 +15,9 @@ publish.status="stable"
 publish.modrinth_id="XpzGz7KD"
 publish.curseforge_id="876199"
 
-["1.21.11"]
-mod.compat.fabric=">1.21.10 <=1.21.11"
-mod.compat.neoforge="[1.21.11, 1.21.11]"
-mod.releases=["1.21.11"]
-
-deps.minecraft = "1.21.11"
-deps.fabric-api="0.141.3+1.21.11"
-deps.neo-loader="21.11.10-beta"
-
-["26.1"]
-mod.compat.fabric="~26.1"
-mod.compat.neoforge="[26.1.2, 26.2)"
-mod.releases.fabric=["26.1", "26.1.1", "26.1.2"]
-mod.releases.neoforge=["26.1.2"]
-
-deps.minecraft="26.1.2"
-deps.fabric-api="0.155.2+26.1.2"
-deps.neo-loader="26.1.2.109"
-
-["26.2"]
-mod.compat.fabric=">=26.2 <26.3"
-mod.compat.neoforge="[26.2, 26.3)"
-mod.releases=["26.2"]
-
-deps.minecraft="26.2"
-deps.fabric-api="0.159.0+26.2"
-deps.neo-loader="26.2.0.88"
-
 ["26.3"]
 mod.compat.fabric=">=26.3 <26.4"
-mod.compat.neoforge="[26.3, 26.4)"
 mod.releases=["26.3"]
 
 deps.minecraft="26.3"
 deps.fabric-api="0.160.5+26.3"
-deps.neo-loader="26.3.0.1-beta"
