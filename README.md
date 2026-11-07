@@ -49,4 +49,4 @@ Run `./gradlew :26.3-fabric:runClientGameTest` to run the client game tests.
 
 ## License
 
-[LGPL-3.0](LICENSE), same as the original mod.
+[LGPL-3.0](LICENSE), same as the original mod. The LGPL supplements the [GPL-3.0](COPYING), whose text is included as well.

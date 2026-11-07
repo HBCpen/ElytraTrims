@@ -81,6 +81,11 @@ tasks {
         exclude("**/neoforge.mods.toml")
     }
 
+    // LGPL-3.0 builds on GPL-3.0, so ship both texts with every jar.
+    withType<Jar>().configureEach {
+        from(file("../../LICENSE"), file("../../COPYING"))
+    }
+
     named("runClientGameTest") {
         mustRunAfter("copyGametestFmj")
     }
