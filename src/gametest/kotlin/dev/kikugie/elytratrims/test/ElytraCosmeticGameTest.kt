@@ -10,14 +10,17 @@ import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.item.has
 import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.vanilla
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext
 import net.minecraft.client.CameraType
+import net.minecraft.client.gui.components.CycleButton
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import java.util.Optional
 
 /**
  * Smoke test for the client-side cosmetics: renders the local player with a cosmetic applied
@@ -55,10 +58,35 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         context.waitTicks(20)
         context.takeScreenshot("cosmetic_world")
 
+        context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC.copy(rainbow = true))) }
+        context.waitTicks(5)
+        context.takeScreenshot("cosmetic_rainbow")
+        context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC)) }
+
         context.setScreen { ElytraCosmeticScreen(null) }
         context.waitTicks(10)
         context.takeScreenshot("cosmetic_editor")
+
+        // Cycling a value rebuilds the widgets; keyboard focus must stay on the same control.
+        context.input.pressKey(InputConstants.KEY_TAB)
+        context.input.pressKey(InputConstants.KEY_TAB)
+        context.input.pressKey(InputConstants.KEY_SPACE)
+        context.waitTicks(2)
+        context.runOnClient<Throwable> { client ->
+            val focused = client.gui.screen()?.focused
+            check((focused as? CycleButton<*>)?.value is Optional<*>) { "Focus moved away from the trim button: $focused" }
+        }
+
+        // Smallest GUI size supported by Minecraft (320x240 at GUI scale 2).
+        val (width, height) = context.computeOnClient<Pair<Int, Int>, Throwable> { it.window.width to it.window.height }
+        val guiScale = context.computeOnClient<Int, Throwable> { it.options.guiScale().get() }
+        context.input.resizeWindow(640, 480)
+        context.runOnClient<Throwable> { it.options.guiScale().set(2); it.resizeGui() }
+        context.waitTicks(5)
+        context.takeScreenshot("cosmetic_editor_small")
         context.setScreen { null }
+        context.input.resizeWindow(width, height)
+        context.runOnClient<Throwable> { it.options.guiScale().set(guiScale); it.resizeGui() }
 
         context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data()) }
     }
