@@ -11,8 +11,12 @@ deps.kotlin-coroutines="1.11.0"
 loomx.loom_version="1.17-SNAPSHOT"
 
 publish.status="stable"
-publish.modrinth_id="XpzGz7KD"
-publish.curseforge_id="876199"
+# The fork has no Modrinth/CurseForge projects yet. Don't reuse the upstream IDs;
+# set the fork's own project IDs and enable the destinations before publishing.
+publish.modrinth=false
+publish.curseforge=false
+publish.modrinth_id=""
+publish.curseforge_id=""
 
 ["26.3"]
 mod.compat.fabric=">=26.3 <26.4"
