@@ -3,11 +3,13 @@ package dev.kikugie.elytratrims
 import dev.kikugie.elytratrims.api.ETClientInitializer
 import dev.kikugie.elytratrims.api.ETCommonInitializer
 import dev.kikugie.elytratrims.api.render.ETRenderingAPI.registerDecorator
+import dev.kikugie.elytratrims.cosmetic.CosmeticSettings
 import dev.kikugie.elytratrims.render.ElytraRenderPipelines
 import dev.kikugie.elytratrims.render.impl.*
 
 fun clientInit(entrypoints: Iterable<ETClientInitializer>) {
     ElytraRenderPipelines.init()
+    CosmeticSettings.load()
     entrypoints.sortedByDescending(ETClientInitializer::priority)
         .forEach(ETClientInitializer::onInitializeClientET)
 }
