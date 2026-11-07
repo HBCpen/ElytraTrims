@@ -7,7 +7,9 @@ import dev.kikugie.elytratrims.cosmetic.CosmeticSettings
 import dev.kikugie.elytratrims.cosmetic.CosmeticStacks
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic.PatternLayer
+import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics
 import dev.kikugie.elytratrims.cosmetic.gui.BannerPatternScreen
+import dev.kikugie.elytratrims.cosmetic.gui.DesignsScreen
 import dev.kikugie.elytratrims.cosmetic.gui.ElytraCosmeticScreen
 import dev.kikugie.elytratrims.cosmetic.gui.ElytraPreview
 import dev.kikugie.elytratrims.elytratrims
@@ -16,6 +18,8 @@ import dev.kikugie.elytratrims.item.has
 import dev.kikugie.elytratrims.vanilla
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext
+import net.minecraft.client.Minecraft
 import net.minecraft.client.CameraType
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button
@@ -71,6 +75,8 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         context.takeScreenshot("cosmetic_rainbow")
         context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC)) }
 
+        testVirtualWings(context)
+
         val (width, height) = context.computeOnClient<Pair<Int, Int>, Throwable> { it.window.width to it.window.height }
         val guiScale = context.computeOnClient<Int, Throwable> { it.options.guiScale().get() }
         try {
@@ -78,6 +84,7 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             context.setWindow(1920, 1080, 2)
             testEditor(context)
             testPatternEditor(context)
+            testDesigns(context)
 
             // Smallest GUI size supported by Minecraft (320x240 at GUI scale 2).
             context.setScreen { ElytraCosmeticScreen(null) }
@@ -85,6 +92,9 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             context.takeScreenshot("cosmetic_editor_small")
             context.click { it.widget<Button>(translated("edit_patterns", 1)) }
             context.takeScreenshot("cosmetic_patterns_small")
+            context.setScreen { ElytraCosmeticScreen(null) }
+            context.click { it.widget<Button>(translated("designs.open")) }
+            context.takeScreenshot("cosmetic_designs_small")
         } finally {
             context.setScreen { null }
             context.input.resizeWindow(width, height)
@@ -105,8 +115,8 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
 
         // Cycling a value rebuilds the widgets; keyboard focus must stay on the same control.
         context.runOnClient<Throwable> { it.gui.screen()!!.clearFocus() }
-        context.input.pressKey(InputConstants.KEY_TAB)
-        context.input.pressKey(InputConstants.KEY_TAB)
+        // Third widget: master switch, elytra visibility, trim pattern.
+        repeat(3) { context.input.pressKey(InputConstants.KEY_TAB) }
         context.input.pressKey(InputConstants.KEY_SPACE)
         context.waitTicks(2)
         context.runOnClient<Throwable> { client ->
@@ -133,27 +143,52 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         context.setWindow(1920, 1080, 2)
     }
 
+    /** With "over chestplate", the elytra is drawn on top of a worn chestplate, which stays visible. */
+    private fun TestSingleplayerContext.testVirtualWings(context: ClientGameTestContext) {
+        server.runCommand("item replace entity @a armor.chest with minecraft:diamond_chestplate")
+        context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC.copy(visibility = ElytraCosmetic.Visibility.OVER_ARMOR))) }
+        context.waitTicks(10)
+        context.runOnClient<Throwable> { client -> check(virtualWings(client)) { "Virtual wings are missing over the chestplate" } }
+        context.takeScreenshot("cosmetic_over_chestplate")
+
+        context.runOnClient<Throwable> { client ->
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
+            check(!virtualWings(client)) { "Virtual wings must only be drawn when enabled" }
+        }
+        server.runCommand("item replace entity @a armor.chest with minecraft:elytra")
+        context.waitTicks(5)
+    }
+
+    private fun virtualWings(client: Minecraft): Boolean {
+        val player = client.player!!
+        val state = client.entityRenderDispatcher.getRenderer(player).createRenderState(player, 1F)
+        return state.getData(ElytraCosmetics.VIRTUAL_WINGS_KEY) == true
+    }
+
     private fun testPatternEditor(context: ClientGameTestContext) {
         context.click { it.widget<Button>(translated("edit_patterns", 1)) }
         context.runOnClient<Throwable> { check(it.gui.screen() is BannerPatternScreen) { "The pattern editor did not open" } }
         context.takeScreenshot("cosmetic_patterns")
+        fun layers() = context.computeOnClient<List<PatternLayer>, Throwable> { (it.gui.screen() as BannerPatternScreen).currentLayers }
 
-        // Pick a color, then a pattern: a new layer is stacked on top.
+        // "+ New Layer" adds a layer right away and selects it; the palette and grid then edit it.
+        context.clickAt { (it as BannerPatternScreen).newLayerRowCenter()!! }
+        check(layers().size == 2) { "New layer was not added: ${layers()}" }
         context.clickAt { (it as BannerPatternScreen).swatchCenter(DyeColor.RED) }
         context.clickAt { (it as BannerPatternScreen).patternTileCenter(vanilla("stripe_bottom"))!! }
-        context.runOnClient<Throwable> { client ->
-            val layers = (client.gui.screen() as BannerPatternScreen).currentLayers
-            check(layers == listOf(COSMETIC.patterns[0], PatternLayer(vanilla("stripe_bottom"), DyeColor.RED))) { "Unexpected layers: $layers" }
-        }
+        check(layers() == listOf(COSMETIC.patterns[0], PatternLayer(vanilla("stripe_bottom"), DyeColor.RED))) { "Unexpected layers: ${layers()}" }
 
         // Selecting a layer makes the palette edit it.
         context.clickAt { (it as BannerPatternScreen).layerRowCenter(0)!! }
         context.clickAt { (it as BannerPatternScreen).swatchCenter(DyeColor.BLUE) }
-        context.runOnClient<Throwable> { client ->
-            val layers = (client.gui.screen() as BannerPatternScreen).currentLayers
-            check(layers[0] == PatternLayer(vanilla("creeper"), DyeColor.BLUE)) { "Selected layer was not recolored: $layers" }
-        }
+        check(layers()[0] == PatternLayer(vanilla("creeper"), DyeColor.BLUE)) { "Selected layer was not recolored: ${layers()}" }
         context.takeScreenshot("cosmetic_patterns_edited")
+
+        // Each row has buttons to move and remove its layer.
+        context.clickAt { (it as BannerPatternScreen).layerRowCenter(0, "up")!! }
+        check(layers().map { it.pattern } == listOf(vanilla("stripe_bottom"), vanilla("creeper"))) { "Layer was not moved up: ${layers()}" }
+        context.clickAt { (it as BannerPatternScreen).layerRowCenter(0, "remove")!! }
+        check(layers() == listOf(PatternLayer(vanilla("creeper"), DyeColor.BLUE))) { "Layer was not removed: ${layers()}" }
 
         // Confirming returns to the editor, whose Done button saves everything.
         context.click { it.widget<Button>(Component.translatable("gui.done")) }
@@ -161,10 +196,46 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         context.runOnClient<Throwable> { client ->
             check(client.gui.screen() == null) { "The editor did not close" }
             val saved = CosmeticSettings.data.cosmetic.patterns
-            check(saved == listOf(PatternLayer(vanilla("creeper"), DyeColor.BLUE), PatternLayer(vanilla("stripe_bottom"), DyeColor.RED))) {
-                "Unexpected saved patterns: $saved"
-            }
-            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
+            check(saved == listOf(PatternLayer(vanilla("creeper"), DyeColor.BLUE))) { "Unexpected saved patterns: $saved" }
+        }
+    }
+
+    private fun testDesigns(context: ClientGameTestContext) {
+        val edited = context.computeOnClient<ElytraCosmetic, Throwable> { CosmeticSettings.data.cosmetic }
+        context.setScreen { ElytraCosmeticScreen(null) }
+        context.click { it.widget<Button>(translated("designs.open")) }
+        fun names() = context.computeOnClient<List<String>, Throwable> { (it.gui.screen() as DesignsScreen).designNames }
+
+        context.runOnClient<Throwable> { client ->
+            val screen = client.gui.screen()!!
+            screen.focused = screen.widget<EditBox>()
+        }
+        context.input.typeChars("Test")
+        context.click { it.widget<Button>(translated("designs.save")) }
+        check(names() == listOf("Test")) { "Design was not saved: ${names()}" }
+        check(context.computeOnClient<Int, Throwable> { CosmeticSettings.data.designs.size } == 1) { "Design was not persisted" }
+
+        // Copy and paste through the clipboard; the pasted copy gets a unique name.
+        context.click { it.widget<Button>(translated("designs.copy")) }
+        context.click { it.widget<Button>(translated("designs.paste")) }
+        check(names() == listOf("Test", "Test (2)")) { "Design was not pasted: ${names()}" }
+        context.takeScreenshot("cosmetic_designs")
+
+        // Deleting needs a second click.
+        context.clickAt { (it as DesignsScreen).rowCenter(1, deleteButton = true)!! }
+        check(names().size == 2) { "Deleted without confirmation" }
+        context.clickAt { (it as DesignsScreen).rowCenter(1, deleteButton = true)!! }
+        check(names() == listOf("Test")) { "Design was not deleted: ${names()}" }
+
+        // Loading a design replaces the one being edited.
+        context.click { it.widget<Button>(Component.translatable("gui.back")) }
+        context.click { it.widget<Button>(translated("reset")) }
+        context.click { it.widget<Button>(translated("designs.open")) }
+        context.clickAt { (it as DesignsScreen).rowCenter(0)!! }
+        context.click { it.widget<Button>(translated("designs.load")) }
+        context.click { it.widget<Button>(Component.translatable("gui.done")) }
+        context.runOnClient<Throwable> {
+            check(CosmeticSettings.data.cosmetic == edited) { "Loaded design differs: ${CosmeticSettings.data.cosmetic}" }
         }
     }
 }
