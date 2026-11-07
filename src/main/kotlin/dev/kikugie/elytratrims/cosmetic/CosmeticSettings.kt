@@ -19,12 +19,39 @@ object CosmeticSettings {
     private val GSON = GsonBuilder().setPrettyPrinting().create()
     private val path: Path get() = FabricLoader.getInstance().configDir.resolve("elytratrims_cosmetic.json")
 
-    data class Data(val enabled: Boolean = true, val cosmetic: ElytraCosmetic = ElytraCosmetic.EMPTY) {
+    data class Data(
+        val enabled: Boolean = true,
+        val cosmetic: ElytraCosmetic = ElytraCosmetic.EMPTY,
+        val designs: List<Design> = emptyList(),
+    ) {
         companion object {
             val CODEC: Codec<Data> = RecordCodecBuilder.create { it.group(
                 Codec.BOOL.optionalFieldOf("enabled", true).forGetter(Data::enabled),
                 ElytraCosmetic.CODEC.optionalFieldOf("cosmetic", ElytraCosmetic.EMPTY).forGetter(Data::cosmetic),
+                Design.CODEC.listOf().optionalFieldOf("designs", emptyList()).forGetter(Data::designs),
             ).apply(it, ::Data) }
+        }
+    }
+
+    /** A named cosmetic saved for later. */
+    data class Design(val name: String, val cosmetic: ElytraCosmetic) {
+        companion object {
+            const val MAX_NAME_LENGTH = 32
+
+            val CODEC: Codec<Design> = RecordCodecBuilder.create { it.group(
+                Codec.string(1, MAX_NAME_LENGTH).fieldOf("name").forGetter(Design::name),
+                ElytraCosmetic.CODEC.fieldOf("cosmetic").forGetter(Design::cosmetic),
+            ).apply(it, ::Design) }
+
+            private val COMPACT_GSON = GsonBuilder().disableHtmlEscaping().create()
+
+            /** Single-line JSON, for sharing a design through the clipboard. */
+            fun encode(design: Design): String = COMPACT_GSON.toJson(CODEC.encodeStart(JsonOps.INSTANCE, design).orThrow)
+
+            /** Reads a design from [encode]d text, or `null` if the text isn't one. */
+            fun decode(text: String): Design? = runCatching {
+                CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(text.trim())).result().orElse(null)
+            }.getOrNull()
         }
     }
 
@@ -46,6 +73,9 @@ object CosmeticSettings {
             Data()
         }
     }
+
+    /** Replaces the saved designs only, keeping the applied cosmetic as it was saved. */
+    fun updateDesigns(designs: List<Design>) = update(data.copy(designs = designs))
 
     fun update(new: Data) {
         data = new
