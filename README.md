@@ -17,12 +17,16 @@ etc.). Showing the cosmetics of other players who use this mod is planned, but n
 
 Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to open the editor.
 
+- **Show Elytra**: draw the elytra only while worn, also on top of a chestplate, or always.
+  Only the looks change: gliding still needs a real elytra.
 - **Trim / Material**: any armor trim pattern and material.
 - **Dye**: click to cycle through dye colors (Shift+click to go back) or type a hex color such as `#3355FF`.
 - **Effects**: rainbow, glow in the dark, cosmic (end portal) and an animation easter egg.
-- **Patterns**: *Edit Patterns* opens a loom-like editor. Pick a color, then click a pattern to stack a new layer,
-  or select a layer in the list to recolor, replace, move or remove it. Layers can also be copied from a banner or
-  shield in your hand. *Style* switches between the shield and the high-resolution banner textures.
+- **Patterns**: *Edit Patterns* opens a loom-like editor. Click *+ New Layer*, then pick its color and pattern;
+  select a layer to change it, and use the buttons on its row to move or remove it. Layers can also be copied from a
+  banner or shield in your hand. *Style* switches between the shield and the high-resolution banner textures.
+- **Designs**: save the current look under a name and load it later, or copy a design to the clipboard to share it
+  and paste one from someone else.
 - Drag the preview to rotate and tilt it, and switch its pose between standing, sneaking and gliding.
   *Done* or <kbd>Esc</kbd> saves, *Cancel* discards the changes.
 
