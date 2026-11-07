@@ -136,7 +136,7 @@ publishMods {
     file = loomx.modJar.map { it.archiveFile.get() }
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
-    displayName = "Elytra Trims Fabric ${property("mod.version")} for ${sc.current.version}"
+    displayName = "Elytra Trims Cosmetic Fabric ${property("mod.version")} for ${sc.current.version}"
     version = sc.properties.get<String>("mod.version")
     changelog = providers.fileContents { file("../../CHANGELOG.md") }.asText
     modLoaders.add("fabric")
