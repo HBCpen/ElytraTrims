@@ -37,15 +37,22 @@ class SignedCosmetic(
     class InvalidException(message: String) : Exception(message)
 
     /**
-     * Checks that the record belongs to [expected] and was signed with a valid key of that player,
-     * and returns its cosmetic, or `null` when the player shows none.
+     * A record that passed [verify].
+     *
+     * @property cosmetic the cosmetic, or `null` when the player withdrew theirs
+     * @property expiresAt when the signing key expires; the record must not be shown after that
+     */
+    data class Verified(val cosmetic: ElytraCosmetic?, val issuedAt: Instant, val expiresAt: Instant)
+
+    /**
+     * Checks that the record belongs to [expected] and was signed with a valid key of that player.
      *
      * @param services validator for the certificates Mojang issues to profile keys
      */
     @Throws(InvalidException::class)
-    fun verify(expected: UUID, services: SignatureValidator, now: Instant = Instant.now()): ElytraCosmetic? {
+    fun verify(expected: UUID, services: SignatureValidator, now: Instant = Instant.now()): Verified {
         if (profileId != expected) throw InvalidException("Record of $profileId was returned for $expected")
-        if (key.hasExpired()) throw InvalidException("Expired profile key")
+        if (!key.expiresAt().isAfter(now)) throw InvalidException("Expired profile key")
         if (issuedAt.isAfter(now + MAX_CLOCK_SKEW)) throw InvalidException("Issued in the future")
         try {
             ProfilePublicKey.createValidated(services, profileId, key)
@@ -54,7 +61,7 @@ class SignedCosmetic(
         }
         if (!ProfilePublicKey(key).createSignatureValidator().validate(signedPayload(profileId, issuedAt, cosmetic), signature))
             throw InvalidException("Invalid signature")
-        return parseCosmetic(cosmetic)
+        return Verified(parseCosmetic(cosmetic), issuedAt, key.expiresAt())
     }
 
     fun toJson(): String = GSON.toJson(CODEC.encodeStart(JsonOps.INSTANCE, this).orThrow)

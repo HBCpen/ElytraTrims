@@ -6,10 +6,12 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.core.UUIDUtil
 import net.minecraft.util.StringRepresentable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import java.util.UUID
 import kotlin.io.path.*
 
 /**
@@ -40,9 +42,24 @@ object CosmeticSettings {
      * Exchanging cosmetics with other players of this mod through a relay server.
      *
      * @property relayUrl base URL of the relay, see `relay/README.md`; blank disables syncing.
+     * @property published relays that may still serve a cosmetic of an account, kept until a withdrawal is confirmed,
+     *   so turning sharing off also takes effect for cosmetics published before a restart or a lost response.
      */
-    data class Sync(val mode: SyncMode = SyncMode.SHARE, val relayUrl: String = DEFAULT_RELAY_URL) {
-        val relay: String? get() = relayUrl.trim().trimEnd('/').takeIf { it.startsWith("https://") || it.startsWith("http://") }
+    data class Sync(
+        val mode: SyncMode = SyncMode.SHARE,
+        val relayUrl: String = DEFAULT_RELAY_URL,
+        val published: List<Published> = emptyList(),
+    ) {
+        val relay: String? get() = normalizeRelay(relayUrl)
+
+        data class Published(val profileId: UUID, val relay: String) {
+            companion object {
+                val CODEC: Codec<Published> = RecordCodecBuilder.create { it.group(
+                    UUIDUtil.STRING_CODEC.fieldOf("profile_id").forGetter(Published::profileId),
+                    Codec.STRING.fieldOf("relay").forGetter(Published::relay),
+                ).apply(it, ::Published) }
+            }
+        }
 
         companion object {
             /** The relay run for this fork, see `relay/`. */
@@ -51,7 +68,11 @@ object CosmeticSettings {
             val CODEC: Codec<Sync> = RecordCodecBuilder.create { it.group(
                 SyncMode.CODEC.optionalFieldOf("mode", SyncMode.SHARE).forGetter(Sync::mode),
                 Codec.STRING.optionalFieldOf("relay_url", DEFAULT_RELAY_URL).forGetter(Sync::relayUrl),
+                Published.CODEC.listOf().optionalFieldOf("published", emptyList()).forGetter(Sync::published),
             ).apply(it, ::Sync) }
+
+            fun normalizeRelay(url: String): String? =
+                url.trim().trimEnd('/').takeIf { it.startsWith("https://") || it.startsWith("http://") }
         }
     }
 
@@ -110,6 +131,9 @@ object CosmeticSettings {
             Data()
         }
     }
+
+    /** Replaces the sync bookkeeping only. */
+    fun updatePublished(published: List<Sync.Published>) = update(data.copy(sync = data.sync.copy(published = published)))
 
     /** Replaces the saved designs only, keeping the applied cosmetic as it was saved. */
     fun updateDesigns(designs: List<Design>) = update(data.copy(designs = designs))
