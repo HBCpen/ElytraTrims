@@ -13,7 +13,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.nio.file.Path
+import java.time.Duration
 import java.time.Instant
+import java.util.Optional
 import java.util.UUID
 import kotlin.io.path.*
 
@@ -61,11 +63,17 @@ object CosmeticSettings {
             fun isFor(profileId: UUID, relay: String): Boolean = this.profileId == profileId && this.relay == relay
 
             companion object {
+                /**
+                 * Lifetime of Mojang's profile keys. Notes written before expiry times were kept are assumed to last
+                 * this long from now, which is never shorter than their real expiry.
+                 */
+                private val KEY_LIFETIME: Duration = Duration.ofHours(48)
+
                 val CODEC: Codec<Published> = RecordCodecBuilder.create { it.group(
                     UUIDUtil.STRING_CODEC.fieldOf("profile_id").forGetter(Published::profileId),
                     Codec.STRING.fieldOf("relay").forGetter(Published::relay),
-                    ExtraCodecs.INSTANT_ISO8601.fieldOf("expires_at").forGetter(Published::expiresAt),
-                ).apply(it, ::Published) }
+                    ExtraCodecs.INSTANT_ISO8601.optionalFieldOf("expires_at").forGetter { note -> Optional.of(note.expiresAt) },
+                ).apply(it) { id, relay, expiresAt -> Published(id, relay, expiresAt.orElseGet { Instant.now() + KEY_LIFETIME }) } }
             }
         }
 

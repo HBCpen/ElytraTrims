@@ -49,25 +49,12 @@ object CosmeticSync {
         fun protects(now: Instant): Boolean = record != null && record.expiresAt.isAfter(now)
     }
 
-    /** What was last published in this session, to republish only on changes. */
-    private data class Sent(val relay: String, val profileId: UUID, val cosmetic: ElytraCosmetic?, val keys: ProfileKeyPair)
-
     private val remotes = ConcurrentHashMap<UUID, Remote>()
 
     private var ticks = 0
     private var lookupInFlight = false
     private var nextLookup: Instant = Instant.EPOCH
     private var lookupRetry: Duration = MIN_RETRY
-
-    private var sent: Sent? = null
-    private var publishInFlight = false
-    private var nextPublish: Instant = Instant.EPOCH
-    private var publishRetry: Duration = MIN_RETRY
-
-    /** Withdrawals from relays no longer shared to, retried per relay so a dead relay doesn't hold up anything else. */
-    private var withdrawInFlight = false
-    private val nextWithdraw = HashMap<String, Instant>()
-    private val withdrawRetry = HashMap<String, Duration>()
 
     fun init() {
         ClientTickEvents.END_CLIENT_TICK.register { client -> if (++ticks % CHECK_INTERVAL_TICKS == 0) tick(client) }
@@ -114,12 +101,14 @@ object CosmeticSync {
         if (lookupInFlight || now.isBefore(nextLookup)) return
 
         // Only online-mode accounts (random UUIDs) can have certified keys; skips offline players and NPCs.
-        // With a full cache, only players already in it are refreshed, since new ones couldn't be stored anyway.
-        val full = remotes.size >= MAX_REMOTES
+        // Newcomers are only looked up while there is room for them, counting entries that could be evicted as room.
+        var room = MAX_REMOTES - remotes.values.count { it.protects(now) }
         val due = players.asSequence()
-            .filter { it != self && it.version() == 4 && (!full || remotes.containsKey(it)) }
+            .filter { it != self && it.version() == 4 }
             .filter { id -> remotes[id].let { it == null || it.fetchedAt.plus(REFRESH_AFTER).isBefore(now) } }
-            .distinct().take(MAX_BATCH).toList()
+            .distinct()
+            .filter { id -> remotes.containsKey(id) || room-- > 0 }
+            .take(MAX_BATCH).toList()
         if (due.isEmpty()) return
         val services = client.services().profileKeySignatureValidator() ?: return
 
@@ -171,123 +160,149 @@ object CosmeticSync {
     }
 
     // Publishing our own
+    //
+    // Each relay that may serve the own cosmetic is noted in the config (CosmeticSettings.Sync.published) before
+    // publishing to it, and the note is removed once the relay confirmed a withdrawal or the signing key expired.
+    // Only one write is in flight at a time, so a withdrawal and a publication to the same relay can't overtake each
+    // other, while retries are scheduled per relay, so a broken relay doesn't hold up the others.
+
+    /** A write to send: [cosmetic] to [relay], where `null` withdraws it. */
+    data class Write(val relay: String, val cosmetic: ElytraCosmetic?)
+
+    /** What a relay is known to serve after its last confirmed write, and when to try it again after a failure. */
+    private class RelayState {
+        /** `null` when unknown, e.g. while a write is in flight. */
+        var confirmed: Confirmed? = null
+        var next: Instant = Instant.EPOCH
+        var retry: Duration = MIN_RETRY
+
+        val withdrawn: Boolean get() = confirmed.let { it != null && it.cosmetic == null }
+    }
+
+    private data class Confirmed(val cosmetic: ElytraCosmetic?, val keys: ProfileKeyPair)
+
+    private val relays = HashMap<Pair<UUID, String>, RelayState>()
+    private var writeInFlight = false
+    private var nextNoteWrite: Instant = Instant.EPOCH
+    private var noteWriteRetry: Duration = MIN_RETRY
+
+    private fun state(profileId: UUID, relay: String) = relays.getOrPut(profileId to relay, ::RelayState)
+
+    /** Forgets what relays are known to serve; for tests. */
+    fun resetPublishing() {
+        relays.clear()
+        writeInFlight = false
+        nextNoteWrite = Instant.EPOCH
+        noteWriteRetry = MIN_RETRY
+    }
 
     /**
-     * Publishes the own cosmetic while sharing, and withdraws it from every relay that may still serve it otherwise.
-     * Relays that may serve it are noted in the config (see [CosmeticSettings.Sync.published]) before publishing,
-     * and the note is removed once a withdrawal is confirmed or the signing key has expired.
+     * The next write to make: the current [cosmetic] to [current] (the relay shared to, `null` when not sharing) if
+     * it doesn't serve it yet, otherwise a withdrawal from a noted relay that is no longer shared to.
+     * `null` while a write is in flight or everything is up to date or waiting for a retry. Public for tests.
      */
+    fun nextWrite(profileId: UUID, current: String?, cosmetic: ElytraCosmetic?, keys: ProfileKeyPair, notes: List<Published>, now: Instant): Write? {
+        if (writeInFlight) return null
+        if (current != null) {
+            val state = state(profileId, current)
+            val confirmed = state.confirmed
+            // A withdrawal needs no new signature when the key changes; a cosmetic does, as it expires with the key.
+            val upToDate = confirmed != null && confirmed.cosmetic == cosmetic && (cosmetic == null || confirmed.keys == keys)
+            val mayServe = notes.any { it.isFor(profileId, current) }
+            if (!upToDate && (cosmetic != null || mayServe) && !now.isBefore(state.next)) return Write(current, cosmetic)
+        }
+        return notes.asSequence()
+            .filter { it.profileId == profileId && it.relay != current }
+            .map { it.relay to state(profileId, it.relay) }
+            .filter { (_, state) -> !state.withdrawn && !now.isBefore(state.next) }
+            .minByOrNull { (_, state) -> state.next }
+            ?.let { (relay, _) -> Write(relay, null) }
+    }
+
+    /** Marks [write] as sent; it's unknown what the relay serves until [completed] is called. Public for tests. */
+    fun started(profileId: UUID, write: Write) {
+        writeInFlight = true
+        state(profileId, write.relay).confirmed = null
+    }
+
+    /** Records the outcome of [write]: `null` [error] means the relay confirmed it. Public for tests. */
+    fun completed(profileId: UUID, write: Write, keys: ProfileKeyPair, error: Throwable?, now: Instant) {
+        writeInFlight = false
+        val state = state(profileId, write.relay)
+        when (error) {
+            null -> {
+                state.confirmed = Confirmed(write.cosmetic, keys)
+                state.retry = MIN_RETRY
+                state.next = Instant.EPOCH
+            }
+            is RelayClient.Outdated -> {
+                // The relay keeps a newer record, e.g. from another device whose clock is ahead.
+                // Sign again once this clock has passed it, so the new record wins.
+                LOGGER.info("{} has a newer record of this account; writing again after {}", write.relay, error.storedIssuedAt)
+                state.next = maxOf(now + Duration.ofSeconds(5), error.storedIssuedAt + Duration.ofSeconds(1))
+            }
+            else -> {
+                LOGGER.warn("Failed to update the cosmetic on {}: {}", write.relay, error.toString())
+                // A rejection won't change by retrying soon, so wait longer for those.
+                if (error is RelayClient.Rejected) state.retry = MAX_RETRY
+                state.next = now + state.retry
+                state.retry = (state.retry * 2).coerceAtMost(MAX_RETRY)
+            }
+        }
+    }
+
+    /** Notes that are still needed: not expired, and not for a relay that confirmed a withdrawal. Public for tests. */
+    fun notesToKeep(profileId: UUID, notes: List<Published>, now: Instant): List<Published> = notes.filter { note ->
+        note.expiresAt.isAfter(now) && !(note.profileId == profileId && relays[profileId to note.relay]?.withdrawn == true)
+    }
+
     private fun publish(client: Minecraft, sync: CosmeticSettings.Sync, now: Instant) {
         val keys = client.connection?.chatSession?.keyPair() ?: return
         val profileId = client.user.profileId
-        val relay = sync.relay.takeIf { sync.mode == SyncMode.SHARE }
+        tidyNotes(profileId, now)
 
-        // Records signed with an expired key are no longer served, so there's nothing left to withdraw.
-        if (sync.published.any { !it.expiresAt.isAfter(now) })
-            CosmeticSettings.updatePublished(sync.published.filter { it.expiresAt.isAfter(now) })
+        val current = sync.relay.takeIf { sync.mode == SyncMode.SHARE }
+        val cosmetic = if (current != null) CosmeticSettings.active else null
+        val write = nextWrite(profileId, current, cosmetic, keys, CosmeticSettings.data.sync.published, now) ?: return
 
-        if (!withdrawInFlight) CosmeticSettings.data.sync.published
-            .filter { it.profileId == profileId && it.relay != relay && !now.isBefore(nextWithdraw[it.relay] ?: Instant.EPOCH) }
-            .minByOrNull { nextWithdraw[it.relay] ?: Instant.EPOCH }
-            ?.let { withdraw(client, it, keys) }
-
-        if (relay != null && !publishInFlight && !now.isBefore(nextPublish)) share(client, profileId, relay, keys, now)
-    }
-
-    /** Publishes the current cosmetic, or a withdrawal when there's none, to the relay shared to. */
-    private fun share(client: Minecraft, profileId: UUID, relay: String, keys: ProfileKeyPair, now: Instant) {
-        val cosmetic = CosmeticSettings.active
-        val published = CosmeticSettings.data.sync.published
-        val note = published.firstOrNull { it.isFor(profileId, relay) }
-        val last = sent?.takeIf { it.relay == relay && it.profileId == profileId }
-        // A new key pair means the old record expires with the old key, so sign it again.
-        if (last != null && last.cosmetic == cosmetic && last.keys == keys) return
-        // Nothing to share and nothing that could still be served: no need to contact the relay.
-        if (cosmetic == null && note == null) return
-
-        val record = sign(profileId, cosmetic, keys)
-        if (record == null) {
-            nextPublish = now + MAX_RETRY
-            return
+        val record = try {
+            SignedCosmetic.sign(profileId, write.cosmetic, keys)
+        } catch (e: Exception) {
+            LOGGER.warn("Can't sign the cosmetic: {}", e.message)
+            return completed(profileId, write, keys, RelayClient.Rejected(0, e.message ?: "Signing failed"), now)
         }
-        if (cosmetic != null) {
-            // Note the relay before sending: it may store the record even if the response gets lost.
-            val expiresAt = maxOf(keys.publicKey().data().expiresAt(), note?.expiresAt ?: Instant.EPOCH)
-            if (note?.expiresAt != expiresAt) {
-                val noted = published.filterNot { it.isFor(profileId, relay) } + Published(profileId, relay, expiresAt)
-                if (!CosmeticSettings.updatePublished(noted)) {
-                    LOGGER.warn("Not sharing the cosmetic, since the config can't be saved to note where it is shared")
-                    nextPublish = now + publishRetry
-                    publishRetry = (publishRetry * 2).coerceAtMost(MAX_RETRY)
-                    return
-                }
-            }
-        }
+        if (write.cosmetic != null && !noteBeforePublishing(profileId, write.relay, keys))
+            return completed(profileId, write, keys, java.io.IOException("Can't save the config"), now)
 
-        publishInFlight = true
-        RelayClient(relay).publish(record).whenComplete { _, error ->
-            client.execute {
-                publishInFlight = false
-                val cause = error?.unwrap()
-                when {
-                    cause is RelayClient.Outdated -> {
-                        // The relay keeps a newer record, e.g. from another device whose clock is ahead.
-                        // Sign again once this clock has passed it, so the new record wins.
-                        LOGGER.info("The relay has a newer cosmetic of this account; publishing again after {}", cause.storedIssuedAt)
-                        nextPublish = maxOf(Instant.now() + Duration.ofSeconds(5), cause.storedIssuedAt + Duration.ofSeconds(1))
-                    }
-                    cause != null -> {
-                        LOGGER.warn("Failed to publish the cosmetic to {}: {}", relay, cause.toString())
-                        // A rejection won't change by retrying soon, so wait longer for those.
-                        if (cause is RelayClient.Rejected) publishRetry = MAX_RETRY
-                        nextPublish = Instant.now() + publishRetry
-                        publishRetry = (publishRetry * 2).coerceAtMost(MAX_RETRY)
-                    }
-                    else -> {
-                        publishRetry = MIN_RETRY
-                        sent = Sent(relay, profileId, cosmetic, keys)
-                        if (cosmetic == null) forget(profileId, relay)
-                    }
-                }
-            }
+        started(profileId, write)
+        RelayClient(write.relay).publish(record).whenComplete { _, error ->
+            client.execute { completed(profileId, write, keys, error?.unwrap(), Instant.now()) }
         }
     }
 
-    /** Withdraws the cosmetic from a relay that is no longer shared to. */
-    private fun withdraw(client: Minecraft, note: Published, keys: ProfileKeyPair) {
-        val record = sign(note.profileId, null, keys) ?: return
-        withdrawInFlight = true
-        RelayClient(note.relay).publish(record).whenComplete { _, error ->
-            client.execute {
-                withdrawInFlight = false
-                val cause = error?.unwrap()
-                if (cause == null) {
-                    nextWithdraw.remove(note.relay)
-                    withdrawRetry.remove(note.relay)
-                    forget(note.profileId, note.relay)
-                    return@execute
-                }
-                LOGGER.warn("Failed to withdraw the cosmetic from {}: {}", note.relay, cause.toString())
-                val retry = withdrawRetry[note.relay] ?: MIN_RETRY
-                withdrawRetry[note.relay] = (retry * 2).coerceAtMost(MAX_RETRY)
-                // 409: a newer record from elsewhere is stored; sign again once this clock has passed it.
-                val after = (cause as? RelayClient.Outdated)?.storedIssuedAt?.plusSeconds(1) ?: Instant.EPOCH
-                nextWithdraw[note.relay] = maxOf(Instant.now() + retry, after)
-            }
+    /** Notes [relay] until the key expires, before publishing to it; the relay may store a record whose response is lost. */
+    private fun noteBeforePublishing(profileId: UUID, relay: String, keys: ProfileKeyPair): Boolean {
+        val notes = CosmeticSettings.data.sync.published
+        val note = notes.firstOrNull { it.isFor(profileId, relay) }
+        val expiresAt = maxOf(keys.publicKey().data().expiresAt(), note?.expiresAt ?: Instant.EPOCH)
+        if (note?.expiresAt == expiresAt) return true
+        if (CosmeticSettings.updatePublished(notes.filterNot { it.isFor(profileId, relay) } + Published(profileId, relay, expiresAt))) return true
+        LOGGER.warn("Not sharing the cosmetic, since the config can't be saved to note where it is shared")
+        return false
+    }
+
+    /** Removes notes that are no longer needed, retrying with a delay if the config can't be saved. */
+    private fun tidyNotes(profileId: UUID, now: Instant) {
+        if (now.isBefore(nextNoteWrite)) return
+        val notes = CosmeticSettings.data.sync.published
+        val keep = notesToKeep(profileId, notes, now)
+        if (keep.size == notes.size) return
+        if (CosmeticSettings.updatePublished(keep)) {
+            noteWriteRetry = MIN_RETRY
+        } else {
+            nextNoteWrite = now + noteWriteRetry
+            noteWriteRetry = (noteWriteRetry * 2).coerceAtMost(MAX_RETRY)
         }
-    }
-
-    private fun sign(profileId: UUID, cosmetic: ElytraCosmetic?, keys: ProfileKeyPair): SignedCosmetic? = try {
-        SignedCosmetic.sign(profileId, cosmetic, keys)
-    } catch (e: Exception) {
-        LOGGER.warn("Can't sign the cosmetic: {}", e.message)
-        null
-    }
-
-    private fun forget(profileId: UUID, relay: String) {
-        val published = CosmeticSettings.data.sync.published
-        if (published.any { it.isFor(profileId, relay) })
-            CosmeticSettings.updatePublished(published.filterNot { it.isFor(profileId, relay) })
     }
 
     private fun Throwable.unwrap(): Throwable = if (this is CompletionException) cause ?: this else this
