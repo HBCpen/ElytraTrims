@@ -7,10 +7,13 @@ import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.core.UUIDUtil
+import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.StringRepresentable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.URI
 import java.nio.file.Path
+import java.time.Instant
 import java.util.UUID
 import kotlin.io.path.*
 
@@ -42,8 +45,9 @@ object CosmeticSettings {
      * Exchanging cosmetics with other players of this mod through a relay server.
      *
      * @property relayUrl base URL of the relay, see `relay/README.md`; blank disables syncing.
-     * @property published relays that may still serve a cosmetic of an account, kept until a withdrawal is confirmed,
-     *   so turning sharing off also takes effect for cosmetics published before a restart or a lost response.
+     * @property published relays that may still serve a cosmetic of an account, kept until a withdrawal is confirmed
+     *   or the key it was signed with expires, so turning sharing off also takes effect for cosmetics published before
+     *   a restart or a lost response.
      */
     data class Sync(
         val mode: SyncMode = SyncMode.SHARE,
@@ -52,11 +56,15 @@ object CosmeticSettings {
     ) {
         val relay: String? get() = normalizeRelay(relayUrl)
 
-        data class Published(val profileId: UUID, val relay: String) {
+        /** A [relay] that may serve a cosmetic of [profileId] until [expiresAt], when the signing key expires. */
+        data class Published(val profileId: UUID, val relay: String, val expiresAt: Instant) {
+            fun isFor(profileId: UUID, relay: String): Boolean = this.profileId == profileId && this.relay == relay
+
             companion object {
                 val CODEC: Codec<Published> = RecordCodecBuilder.create { it.group(
                     UUIDUtil.STRING_CODEC.fieldOf("profile_id").forGetter(Published::profileId),
                     Codec.STRING.fieldOf("relay").forGetter(Published::relay),
+                    ExtraCodecs.INSTANT_ISO8601.fieldOf("expires_at").forGetter(Published::expiresAt),
                 ).apply(it, ::Published) }
             }
         }
@@ -71,8 +79,13 @@ object CosmeticSettings {
                 Published.CODEC.listOf().optionalFieldOf("published", emptyList()).forGetter(Sync::published),
             ).apply(it, ::Sync) }
 
-            fun normalizeRelay(url: String): String? =
-                url.trim().trimEnd('/').takeIf { it.startsWith("https://") || it.startsWith("http://") }
+            /** The URL without a trailing slash if it is an absolute HTTP(S) URL with a host, `null` otherwise. */
+            fun normalizeRelay(url: String): String? {
+                val trimmed = url.trim().trimEnd('/')
+                val uri = runCatching { URI(trimmed) }.getOrNull() ?: return null
+                val valid = uri.scheme in setOf("http", "https") && !uri.host.isNullOrEmpty() && uri.query == null && uri.fragment == null
+                return trimmed.takeIf { valid }
+            }
         }
     }
 
@@ -132,8 +145,17 @@ object CosmeticSettings {
         }
     }
 
-    /** Replaces the sync bookkeeping only. */
-    fun updatePublished(published: List<Sync.Published>) = update(data.copy(sync = data.sync.copy(published = published)))
+    /**
+     * Replaces the sync bookkeeping only. Returns whether it was saved; if not, nothing changes, since a cosmetic must
+     * not be published without a durable note to withdraw it later.
+     */
+    fun updatePublished(published: List<Sync.Published>): Boolean {
+        val old = data
+        data = old.copy(sync = old.sync.copy(published = published))
+        if (save()) return true
+        data = old
+        return false
+    }
 
     /** Replaces the saved designs only, keeping the applied cosmetic as it was saved. */
     fun updateDesigns(designs: List<Design>) = update(data.copy(designs = designs))
@@ -143,14 +165,14 @@ object CosmeticSettings {
         save()
     }
 
-    private fun save() {
+    private fun save(): Boolean {
         val file = path
-        runCatching {
+        return runCatching {
             val json = Data.CODEC.encodeStart(JsonOps.INSTANCE, data).orThrow
             file.createParentDirectories()
             val temp = file.resolveSibling("${file.name}.tmp")
             temp.writer().use { GSON.toJson(json, it) }
             temp.moveTo(file, overwrite = true)
-        }.onFailure { LOGGER.error("Failed to save $file", it) }
+        }.onFailure { LOGGER.error("Failed to save $file", it) }.isSuccess
     }
 }

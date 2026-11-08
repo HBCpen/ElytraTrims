@@ -30,16 +30,21 @@ class RelayClient(private val baseUrl: String, private val timeout: Duration = T
     /** The relay already stores a record issued at [storedIssuedAt], which is not older than the published one. */
     class Outdated(val storedIssuedAt: Instant) : Rejected(409, "The relay stores a record issued at $storedIssuedAt")
 
-    fun publish(record: SignedCosmetic): CompletableFuture<Unit> =
+    fun publish(record: SignedCosmetic): CompletableFuture<Unit> = guarded {
         send(request("v1/cosmetics/${record.profileId}").PUT(HttpRequest.BodyPublishers.ofString(record.toJson())).build())
             .thenApply { }
+    }
 
     /** Records stored for [ids]; ids without one are left out. */
-    fun lookup(ids: Collection<UUID>): CompletableFuture<List<JsonElement>> {
+    fun lookup(ids: Collection<UUID>): CompletableFuture<List<JsonElement>> = guarded {
         val body = JsonObject().apply { add("profile_ids", JsonArray().apply { ids.forEach { add(it.toString()) } }) }
-        return send(request("v1/cosmetics/lookup").POST(HttpRequest.BodyPublishers.ofString(body.toString())).build())
+        send(request("v1/cosmetics/lookup").POST(HttpRequest.BodyPublishers.ofString(body.toString())).build())
             .thenApply { text -> JsonParser.parseString(text).asJsonObject.getAsJsonArray("records").toList() }
     }
+
+    /** Reports failures to build or start a request (such as a malformed URL) through the future, like any other. */
+    private inline fun <T> guarded(block: () -> CompletableFuture<T>): CompletableFuture<T> =
+        try { block() } catch (e: Exception) { CompletableFuture.failedFuture(e) }
 
     private fun request(path: String): HttpRequest.Builder = HttpRequest.newBuilder(URI.create("$baseUrl/$path"))
         .timeout(timeout)
