@@ -10,6 +10,7 @@ import dev.kikugie.elytratrims.cosmetic.CosmeticSettings.SyncMode
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics
 import dev.kikugie.elytratrims.cosmetic.sync.CosmeticSync
+import dev.kikugie.elytratrims.cosmetic.sync.RelayClient
 import dev.kikugie.elytratrims.cosmetic.sync.SignedCosmetic
 import dev.kikugie.elytratrims.vanilla
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest
@@ -24,7 +25,14 @@ import net.minecraft.world.entity.decoration.Mannequin
 import net.minecraft.world.entity.player.ProfileKeyPair
 import net.minecraft.world.entity.player.ProfilePublicKey
 import net.minecraft.world.item.DyeColor
+import com.sun.net.httpserver.HttpServer
+import java.io.IOException
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.nio.ByteBuffer
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.time.Duration
@@ -48,6 +56,8 @@ object ElytraSyncGameTest : FabricClientGameTest {
 
     override fun runTest(context: ClientGameTestContext) {
         testSignatures()
+        testRollbackAndExpiry()
+        testRelayClient()
         context.runInWorld { testRemoteRendering(context) }
     }
 
@@ -59,8 +69,8 @@ object ElytraSyncGameTest : FabricClientGameTest {
 
         val signed = SignedCosmetic.sign(PROFILE_ID, COSMETIC, keys)
         val received = SignedCosmetic.fromJson(signed.toJson()) ?: error("Record didn't survive a JSON round trip")
-        check(received.verify(PROFILE_ID, services) == COSMETIC) { "Verified cosmetic differs" }
-        check(SignedCosmetic.sign(PROFILE_ID, null, keys).verify(PROFILE_ID, services) == null) { "A withdrawn cosmetic must verify as none" }
+        check(received.verify(PROFILE_ID, services).cosmetic == COSMETIC) { "Verified cosmetic differs" }
+        check(SignedCosmetic.sign(PROFILE_ID, null, keys).verify(PROFILE_ID, services).cosmetic == null) { "A withdrawn cosmetic must verify as none" }
 
         expectInvalid("another player's record") { received.verify(UUID.randomUUID(), services) }
         expectInvalid("a changed cosmetic") {
@@ -102,6 +112,73 @@ object ElytraSyncGameTest : FabricClientGameTest {
         println("Wrote a signed sample record to ${path.toAbsolutePath()}")
     }
 
+    /** A relay can't roll a player back to an older record, and records stop showing when their key expires. */
+    private fun testRollbackAndExpiry() {
+        val id = UUID.randomUUID()
+        val now = Instant.now()
+        val older = verified(COSMETIC, now - Duration.ofMinutes(2))
+        val newer = verified(COSMETIC.copy(glow = false), now - Duration.ofMinutes(1))
+        CosmeticSync.accept(id, newer, now)
+        CosmeticSync.accept(id, older, now)
+        check(CosmeticSync.cosmeticFor(id) == newer.cosmetic) { "An older record replaced a newer one" }
+        CosmeticSync.accept(id, null, now)
+        check(CosmeticSync.cosmeticFor(id) == newer.cosmetic) { "A missing record dropped a valid one" }
+
+        // A withdrawal is a record too, and can't be undone by replaying the cosmetic before it.
+        CosmeticSync.accept(id, verified(null, now - Duration.ofSeconds(30)), now)
+        CosmeticSync.accept(id, newer, now)
+        check(CosmeticSync.cosmeticFor(id) == null) { "A replayed record undid a withdrawal" }
+
+        val expiring = UUID.randomUUID()
+        CosmeticSync.accept(expiring, verified(COSMETIC, now, expiresAt = Instant.now() + Duration.ofMillis(200)))
+        check(CosmeticSync.cosmeticFor(expiring) == COSMETIC) { "The record was not accepted" }
+        Thread.sleep(300)
+        check(CosmeticSync.cosmeticFor(expiring) == null) { "A record was shown after its key expired" }
+    }
+
+    private fun verified(cosmetic: ElytraCosmetic?, issuedAt: Instant, expiresAt: Instant = Instant.now() + Duration.ofHours(1)) =
+        SignedCosmetic.Verified(cosmetic, issuedAt, expiresAt)
+
+    /** Requests give up on bodies that never finish or are too large, and stale writes are reported as such. */
+    private fun testRelayClient() {
+        val server = HttpServer.create(InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0)
+        server.executor = Executors.newCachedThreadPool()
+        server.createContext("/stall/") { exchange ->
+            exchange.sendResponseHeaders(200, 0)
+            exchange.responseBody.write("{\"records\":[".toByteArray())
+            exchange.responseBody.flush()
+            Thread.sleep(10_000)
+            exchange.close()
+        }
+        server.createContext("/huge/") { exchange ->
+            exchange.sendResponseHeaders(200, 0)
+            exchange.responseBody.use { out -> repeat(2048) { out.write(ByteArray(1024) { ' '.code.toByte() }) } }
+        }
+        server.createContext("/outdated/") { exchange ->
+            val body = """{"error":"A newer record is stored","issued_at":1234}""".toByteArray()
+            exchange.sendResponseHeaders(409, body.size.toLong())
+            exchange.responseBody.use { it.write(body) }
+        }
+        server.start()
+        try {
+            val base = "http://127.0.0.1:${server.address.port}"
+            fun failure(path: String, timeout: Duration = Duration.ofSeconds(5)): Throwable {
+                val start = System.nanoTime()
+                val error = runCatching { RelayClient("$base/$path", timeout).lookup(listOf(PROFILE_ID)).get(30, TimeUnit.SECONDS) }
+                    .exceptionOrNull() ?: error("Request to $path succeeded")
+                check(Duration.ofNanos(System.nanoTime() - start) < Duration.ofSeconds(8)) { "Request to $path took too long" }
+                return (error as? ExecutionException)?.cause ?: error
+            }
+            failure("stall", Duration.ofSeconds(1))
+            check(failure("huge") is IOException) { "Too large responses must fail" }
+            val outdated = failure("outdated")
+            check(outdated is RelayClient.Outdated && outdated.storedIssuedAt == Instant.ofEpochMilli(1234)) { "Unexpected: $outdated" }
+        } finally {
+            server.stop(0)
+            (server.executor as java.util.concurrent.ExecutorService).shutdownNow()
+        }
+    }
+
     private fun expectInvalid(case: String, action: () -> Unit) {
         try {
             action()
@@ -136,7 +213,7 @@ object ElytraSyncGameTest : FabricClientGameTest {
             val mannequins = client.level!!.entitiesForRendering().filterIsInstance<Mannequin>().sortedBy { it.x }
             check(mannequins.size == 2) { "Expected two mannequins, found ${mannequins.size}" }
             CosmeticSettings.update(CosmeticSettings.Data(sync = CosmeticSettings.Sync(SyncMode.SHARE, "")))
-            CosmeticSync.putVerified(mannequins[0].uuid, COSMETIC)
+            CosmeticSync.accept(mannequins[0].uuid, verified(COSMETIC, Instant.now()))
             client.options.cameraType = CameraType.FIRST_PERSON
             client.player!!.yRot = 0F
             client.player!!.xRot = 10F
