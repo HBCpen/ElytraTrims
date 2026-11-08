@@ -45,8 +45,8 @@ object CosmeticSettings {
         val relay: String? get() = relayUrl.trim().trimEnd('/').takeIf { it.startsWith("https://") || it.startsWith("http://") }
 
         companion object {
-            /** No public relay is run for this mod yet; set `sync.relay_url` in the config to use one. */
-            const val DEFAULT_RELAY_URL: String = ""
+            /** The relay run for this fork, see `relay/`. */
+            const val DEFAULT_RELAY_URL: String = "https://elytratrims-cosmetic-relay.elytratrims-cosmetic-relay.workers.dev"
 
             val CODEC: Codec<Sync> = RecordCodecBuilder.create { it.group(
                 SyncMode.CODEC.optionalFieldOf("mode", SyncMode.SHARE).forGetter(Sync::mode),

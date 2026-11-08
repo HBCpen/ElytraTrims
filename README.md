@@ -11,7 +11,7 @@ rainbow effects — as a pure cosmetic:
 - **Not limited by the server.** Every trim pattern with a wings texture can be used, even if the server doesn't know it.
 
 The cosmetic is applied to whatever elytra you are wearing. Other players who use this mod see it too once a relay
-server is set up (see [Syncing with other players](#syncing-with-other-players)); everyone else sees your real elytra.
+server is reachable (see [Syncing with other players](#syncing-with-other-players)); everyone else sees your real elytra.
 
 ## Usage
 
@@ -36,8 +36,8 @@ Settings are stored in `config/elytratrims_cosmetic.json`.
 ## Syncing with other players
 
 Vanilla servers don't pass data between the clients of a mod, so cosmetics are exchanged through a small relay
-server instead, which you can run on the Cloudflare Workers Free plan. See [`relay/`](relay/README.md) for how to
-deploy it, then set its URL as `sync.relay_url` in the config file. No public relay is run for this mod.
+server instead. The mod uses the relay run for this fork on the Cloudflare Workers Free plan by default; to run your
+own, see [`relay/`](relay/README.md) and set its URL as `sync.relay_url` in the config file.
 
 - Cosmetics are signed with the chat signing key Mojang issues to each player, and every client verifies them. Neither
   the relay nor other players can make someone show a cosmetic they didn't publish.
