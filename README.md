@@ -43,7 +43,10 @@ own, see [`relay/`](relay/README.md) and set its URL as `sync.relay_url` in the 
   the relay nor other players can make someone show a cosmetic they didn't publish.
 - Syncing needs a Microsoft account signed in online: sharing uses its chat signing key, and checking the cosmetics of
   others needs the Mojang keys the game downloads at startup.
-- Only players in view are looked up, and shared cosmetics are public.
+- Sharing is on by default. Shared cosmetics are public: anyone can fetch them by UUID.
+- Unless syncing is off (also in *Show Only* mode), the mod sends the relay the UUIDs of the players your client
+  tracks around you, whether or not they use this mod. The relay's operator can therefore see your IP address and who
+  was near you, and when. Turning sharing off withdraws your cosmetic from the relay.
 
 Elytras that are really decorated (for example on a server running the original Elytra Trims) are still rendered as-is
 for other players.

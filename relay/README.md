@@ -21,8 +21,9 @@ UUID; vanilla uses the same key to verify chat messages.
 - **Requirements:** only players signed in with a Microsoft account (online mode) have such a key, so only they can
   share a cosmetic. Players on offline-mode servers aren't looked up, since their UUIDs aren't the ones of their account.
 
-Shared cosmetics are public: anyone can fetch them by UUID. The operator of the relay can see the IP addresses of the
-players using it, like with any web service.
+Shared cosmetics are public: anyone can fetch them by UUID. Clients look up the UUIDs of all players they track
+nearby, including players without this mod, so the operator of the relay can see each client's IP address together
+with who was near that player and when. The relay doesn't log or store lookups, but Cloudflare may keep request logs.
 
 ## Free plan
 
