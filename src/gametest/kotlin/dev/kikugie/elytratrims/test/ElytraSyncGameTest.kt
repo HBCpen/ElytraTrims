@@ -134,6 +134,30 @@ object ElytraSyncGameTest : FabricClientGameTest {
         check(CosmeticSync.cosmeticFor(expiring) == COSMETIC) { "The record was not accepted" }
         Thread.sleep(300)
         check(CosmeticSync.cosmeticFor(expiring) == null) { "A record was shown after its key expired" }
+
+        // A full cache evicts entries without a valid record, never the ones that guard against rollback.
+        CosmeticSync.clearRemotes()
+        CosmeticSync.accept(id, verified(null, now - Duration.ofSeconds(30)), now)
+        repeat(CosmeticSync.MAX_REMOTES + 10) { CosmeticSync.accept(UUID.randomUUID(), null, now) }
+        CosmeticSync.accept(id, newer, now)
+        check(CosmeticSync.cosmeticFor(id) == null) { "Filling the cache allowed rolling back a withdrawal" }
+
+        // Full of valid records, new players aren't admitted rather than evicting one.
+        CosmeticSync.clearRemotes()
+        val guarded = List(CosmeticSync.MAX_REMOTES) { UUID.randomUUID() }
+        guarded.forEach { CosmeticSync.accept(it, verified(null, now), now) }
+        val newcomer = UUID.randomUUID()
+        CosmeticSync.accept(newcomer, verified(COSMETIC, now), now)
+        check(CosmeticSync.cosmeticFor(newcomer) == null) { "A full cache admitted another player" }
+        CosmeticSync.accept(guarded[0], verified(COSMETIC, now - Duration.ofSeconds(1)), now)
+        check(CosmeticSync.cosmeticFor(guarded[0]) == null) { "A full cache dropped a guarding record" }
+        CosmeticSync.clearRemotes()
+
+        // Only absolute HTTP(S) URLs with a host are used as relays.
+        val normalize = CosmeticSettings.Sync.Companion::normalizeRelay
+        check(normalize("https://relay.example/ ") == "https://relay.example") { "A valid relay URL was rejected" }
+        for (invalid in listOf("https://", "http:///path", "ftp://relay.example", "relay.example", "https://relay.example/?a=b", ""))
+            check(normalize(invalid) == null) { "Accepted the relay URL '$invalid'" }
     }
 
     private fun verified(cosmetic: ElytraCosmetic?, issuedAt: Instant, expiresAt: Instant = Instant.now() + Duration.ofHours(1)) =
