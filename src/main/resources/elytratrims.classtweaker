@@ -10,3 +10,6 @@ accessible class net/minecraft/client/renderer/entity/layers/EquipmentLayerRende
 accessible field net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer layerTextureLookup Ljava/util/function/Function;
 #? if >=26.3
 accessible field net/minecraft/client/renderer/entity/layers/EquipmentLayerRenderer trimTextureLookup Ljava/util/function/Function;
+
+# Signing the shared cosmetic with the chat key the client already uses
+accessible field net/minecraft/client/multiplayer/ClientPacketListener chatSession Lnet/minecraft/network/chat/LocalChatSession;

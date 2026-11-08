@@ -1,6 +1,7 @@
 package dev.kikugie.elytratrims.cosmetic
 
 import dev.kikugie.elytratrims.MINECRAFT
+import dev.kikugie.elytratrims.cosmetic.sync.CosmeticSync
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState
@@ -48,8 +49,7 @@ object ElytraCosmetics {
     @JvmStatic
     fun forEntity(entity: Entity): ElytraCosmetic? = when {
         isLocalPlayer(entity.uuid) -> CosmeticSettings.active
-        // Hook for synchronizing other players' cosmetics later on.
-        else -> null
+        else -> CosmeticSync.cosmeticFor(entity.uuid)
     }
 
     /** Replaces the rendered wings stack if the render state carries a cosmetic. */
