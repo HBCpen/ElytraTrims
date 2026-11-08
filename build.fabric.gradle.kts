@@ -65,7 +65,9 @@ dependencies {
         modImplementation(it)
         sc.constants["iris"] = true
 
-        modRuntimeOnly(fletchingTable.modrinth("sodium")!!)
+        // Pinned: the latest Sodium (0.9.3-beta.4) declares itself incompatible with Iris 1.11.7 and below,
+        // so the dev client refuses to start. This is 0.9.3-beta.3 for 26.3; unpin once a matching Iris is out.
+        modRuntimeOnly("maven.modrinth:AANobbMI:aFVpk3tG")
     }
 }
 
