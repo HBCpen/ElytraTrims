@@ -10,13 +10,14 @@ rainbow effects — as a pure cosmetic:
 - **No materials needed.** Pick any look in an editor instead of crafting with smithing templates, dyes or banners.
 - **Not limited by the server.** Every trim pattern with a wings texture can be used, even if the server doesn't know it.
 
-The cosmetic is applied to whatever elytra you are wearing and is only visible to you (third-person view, inventory,
-etc.). Showing the cosmetics of other players who use this mod is planned, but not implemented yet.
+The cosmetic is applied to whatever elytra you are wearing. Other players who use this mod see it too once a relay
+server is set up (see [Syncing with other players](#syncing-with-other-players)); everyone else sees your real elytra.
 
 ## Usage
 
 Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to open the editor.
 
+- **Sync**: share your cosmetic with other players of this mod and see theirs, only see theirs, or turn syncing off.
 - **Show Elytra**: draw the elytra only while worn, also on top of a chestplate, or always.
   Only the looks change: gliding still needs a real elytra.
 - **Trim / Material**: any armor trim pattern and material.
@@ -31,6 +32,18 @@ Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to ope
   *Done* or <kbd>Esc</kbd> saves, *Cancel* discards the changes.
 
 Settings are stored in `config/elytratrims_cosmetic.json`.
+
+## Syncing with other players
+
+Vanilla servers don't pass data between the clients of a mod, so cosmetics are exchanged through a small relay
+server instead, which you can run on the Cloudflare Workers Free plan. See [`relay/`](relay/README.md) for how to
+deploy it, then set its URL as `sync.relay_url` in the config file. No public relay is run for this mod.
+
+- Cosmetics are signed with the chat signing key Mojang issues to each player, and every client verifies them. Neither
+  the relay nor other players can make someone show a cosmetic they didn't publish.
+- Syncing needs a Microsoft account signed in online: sharing uses its chat signing key, and checking the cosmetics of
+  others needs the Mojang keys the game downloads at startup.
+- Only players in view are looked up, and shared cosmetics are public.
 
 Elytras that are really decorated (for example on a server running the original Elytra Trims) are still rendered as-is
 for other players.
