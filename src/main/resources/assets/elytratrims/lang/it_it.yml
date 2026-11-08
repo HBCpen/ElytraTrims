@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "Sposta giù (dietro)"
   patterns.move_up: "Sposta su (davanti)"
   patterns.limit: "Al massimo %s strati"
+  sync: "Sincronizza"
+  sync.off: "No"
+  sync.receive: "Solo mostra"
+  sync.share: "Condividi"
+  sync.tooltip.off: "Non sincronizza l'aspetto con gli altri giocatori."
+  sync.tooltip.receive: "Mostra l'aspetto degli altri giocatori che usano questa mod, senza condividere il tuo."
+  sync.tooltip.share: "Condivide il tuo aspetto tramite il server relay e mostra quello degli altri giocatori che usano questa mod. Chiunque può ottenere un aspetto condiviso. Per condividere serve un account Minecraft con accesso online."
+  sync.unconfigured: "Nessun server relay impostato, quindi non viene ancora sincronizzato nulla. Imposta sync.relay_url in config/elytratrims_cosmetic.json."
 flag.item.elytratrims:
   glow: §bLuminescente
   gateway: §dCosmico

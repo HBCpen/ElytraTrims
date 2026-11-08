@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "Вниз (позаду)"
   patterns.move_up: "Вгору (попереду)"
   patterns.limit: "Не більше %s шарів"
+  sync: "Синхронізація"
+  sync.off: "Вимк."
+  sync.receive: "Лише показ"
+  sync.share: "Поширювати"
+  sync.tooltip.off: "Не синхронізує вигляд з іншими гравцями."
+  sync.tooltip.receive: "Показує вигляд інших гравців із цим модом, не поширюючи ваш."
+  sync.tooltip.share: "Поширює ваш вигляд через сервер-посередник і показує вигляд інших гравців із цим модом. Поширений вигляд може отримати будь-хто. Для поширення потрібен обліковий запис Minecraft з онлайн-входом."
+  sync.unconfigured: "Сервер-посередник не налаштовано, тож нічого ще не синхронізується. Вкажіть sync.relay_url у config/elytratrims_cosmetic.json."
 flag.item.elytratrims:
   glow: §bСяйво
   gateway: §dКосмос

@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "下移(靠后)"
   patterns.move_up: "上移(靠前)"
   patterns.limit: "最多 %s 个图层"
+  sync: "同步"
+  sync.off: "关"
+  sync.receive: "仅显示"
+  sync.share: "公开"
+  sync.tooltip.off: "不与其他玩家同步外观。"
+  sync.tooltip.receive: "显示其他使用本模组的玩家的外观，不公开你自己的外观。"
+  sync.tooltip.share: "通过中继服务器公开你的外观，并显示其他使用本模组的玩家的外观。任何人都可以获取公开的外观。公开需要在线登录的 Minecraft 账户。"
+  sync.unconfigured: "尚未设置中继服务器，因此还不会同步。请在 config/elytratrims_cosmetic.json 中设置 sync.relay_url。"
 flag.item.elytratrims:
   glow: §b发光
   gateway: §d宇宙

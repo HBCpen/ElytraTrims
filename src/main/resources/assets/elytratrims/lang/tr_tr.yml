@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "Aşağı (arkaya)"
   patterns.move_up: "Yukarı (öne)"
   patterns.limit: "En fazla %s katman"
+  sync: "Eşitle"
+  sync.off: "Kapalı"
+  sync.receive: "Yalnızca göster"
+  sync.share: "Paylaş"
+  sync.tooltip.off: "Görünümü diğer oyuncularla eşitlemez."
+  sync.tooltip.receive: "Bu modu kullanan diğer oyuncuların görünümünü gösterir, seninkini paylaşmaz."
+  sync.tooltip.share: "Görünümünü aktarma sunucusu üzerinden paylaşır ve bu modu kullanan diğer oyuncuların görünümünü gösterir. Paylaşılan görünümü herkes alabilir. Paylaşmak için çevrim içi oturum açılmış bir Minecraft hesabı gerekir."
+  sync.unconfigured: "Aktarma sunucusu ayarlanmadığı için henüz hiçbir şey eşitlenmiyor. config/elytratrims_cosmetic.json içindeki sync.relay_url değerini ayarla."
 flag.item.elytratrims:
   glow: §bParlayan
   gateway: §dKozmik

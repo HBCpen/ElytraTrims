@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "W dół (za)"
   patterns.move_up: "W górę (przed)"
   patterns.limit: "Maksymalnie %s warstw"
+  sync: "Synchronizacja"
+  sync.off: "Wył."
+  sync.receive: "Tylko pokaż"
+  sync.share: "Udostępnij"
+  sync.tooltip.off: "Nie synchronizuje wyglądu z innymi graczami."
+  sync.tooltip.receive: "Pokazuje wygląd innych graczy używających tego moda, bez udostępniania twojego."
+  sync.tooltip.share: "Udostępnia twój wygląd przez serwer pośredniczący i pokazuje wygląd innych graczy używających tego moda. Każdy może pobrać udostępniony wygląd. Udostępnianie wymaga konta Minecraft zalogowanego online."
+  sync.unconfigured: "Nie ustawiono serwera pośredniczącego, więc nic nie jest jeszcze synchronizowane. Ustaw sync.relay_url w config/elytratrims_cosmetic.json."
 flag.item.elytratrims:
   glow: §bŚwiecące
   gateway: §dKosmiczne

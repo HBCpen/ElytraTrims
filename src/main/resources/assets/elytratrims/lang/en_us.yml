@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "Move down (behind)"
   patterns.move_up: "Move up (in front)"
   patterns.limit: "Up to %s layers"
+  sync: "Sync"
+  sync.off: "Off"
+  sync.receive: "Show Only"
+  sync.share: "Share"
+  sync.tooltip.off: "Doesn't sync cosmetics with other players."
+  sync.tooltip.receive: "Shows the cosmetics of other players using this mod, without sharing yours."
+  sync.tooltip.share: "Shares your cosmetic through the relay server and shows those of other players using this mod. Anyone can fetch a shared cosmetic. Sharing needs a Minecraft account that is signed in online."
+  sync.unconfigured: "No relay server is set, so nothing is synced yet. Set sync.relay_url in config/elytratrims_cosmetic.json."
 flag.item.elytratrims:
   glow: §bGlowing
   gateway: §dCosmic

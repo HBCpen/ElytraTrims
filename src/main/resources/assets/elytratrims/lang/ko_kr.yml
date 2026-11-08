@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "아래로 (뒤로)"
   patterns.move_up: "위로 (앞으로)"
   patterns.limit: "층은 최대 %s개입니다"
+  sync: "동기화"
+  sync.off: "끔"
+  sync.receive: "보기만"
+  sync.share: "공유"
+  sync.tooltip.off: "다른 플레이어와 외형을 동기화하지 않습니다."
+  sync.tooltip.receive: "이 모드를 쓰는 다른 플레이어의 외형을 표시합니다. 내 외형은 공유하지 않습니다."
+  sync.tooltip.share: "중계 서버로 내 외형을 공유하고, 이 모드를 쓰는 다른 플레이어의 외형도 표시합니다. 공유한 외형은 누구나 가져갈 수 있습니다. 공유하려면 온라인으로 로그인한 Minecraft 계정이 필요합니다."
+  sync.unconfigured: "중계 서버가 설정되지 않아 아직 동기화되지 않습니다. config/elytratrims_cosmetic.json의 sync.relay_url을 설정하세요."
 flag.item.elytratrims:
   glow: §b발광
   gateway: §d우주

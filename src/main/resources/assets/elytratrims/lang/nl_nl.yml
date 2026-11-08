@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "Omlaag (achter)"
   patterns.move_up: "Omhoog (voor)"
   patterns.limit: "Maximaal %s lagen"
+  sync: "Synchroniseren"
+  sync.off: "Uit"
+  sync.receive: "Alleen tonen"
+  sync.share: "Delen"
+  sync.tooltip.off: "Synchroniseert het uiterlijk niet met andere spelers."
+  sync.tooltip.receive: "Toont het uiterlijk van andere spelers met deze mod, zonder het jouwe te delen."
+  sync.tooltip.share: "Deelt je uiterlijk via de relayserver en toont dat van andere spelers met deze mod. Iedereen kan een gedeeld uiterlijk ophalen. Delen vereist een online aangemeld Minecraft-account."
+  sync.unconfigured: "Er is geen relayserver ingesteld, dus er wordt nog niets gesynchroniseerd. Stel sync.relay_url in in config/elytratrims_cosmetic.json."
 flag.item.elytratrims:
   glow: §bGloeiend
   gateway: §dKosmisch

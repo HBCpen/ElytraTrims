@@ -3,6 +3,7 @@ package dev.kikugie.elytratrims.cosmetic.gui
 import dev.kikugie.elytratrims.Text
 import dev.kikugie.elytratrims.cosmetic.CosmeticCatalog
 import dev.kikugie.elytratrims.cosmetic.CosmeticSettings
+import dev.kikugie.elytratrims.cosmetic.CosmeticSettings.SyncMode
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic
 import dev.kikugie.elytratrims.vanilla
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -54,6 +55,7 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private val registries: RegistryAccess? get() = minecraft.level?.registryAccess()
 
     private var enabled: Boolean = CosmeticSettings.data.enabled
+    private var syncMode: SyncMode = CosmeticSettings.data.sync.mode
     private var draft: ElytraCosmetic = CosmeticSettings.data.cosmetic
     private var material: Identifier = draft.trim?.material ?: DEFAULT_MATERIAL
     private val preview = ElytraPreview()
@@ -86,10 +88,14 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         val l = layout
         val h = EditorLayout.WIDGET_HEIGHT
 
-        // Row 0: master switch
+        // Row 0: master switch and syncing with other players
         label(0, "enabled")
         add("enabled", CycleButton.onOffBuilder(enabled).displayOnlyValue()
-            .create(l.controlsX, l.rowY(0), l.controlsWidth, h, tr("enabled")) { _, value -> enabled = value })
+            .create(l.controlsX, l.rowY(0), l.half, h, tr("enabled")) { _, value -> enabled = value })
+        add("sync", CycleButton.builder<SyncMode>({ tr("sync.${it.serializedName}") }, syncMode)
+            .withValues(SyncMode.entries)
+            .withTooltip(::syncTooltip)
+            .create(l.secondColumn, l.rowY(0), l.half, h, tr("sync")) { _, value -> syncMode = value })
 
         // Row 1: when to draw the elytra
         label(1, "visibility")
@@ -198,7 +204,8 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     override fun isPauseScreen(): Boolean = false
 
     override fun onClose() {
-        CosmeticSettings.update(CosmeticSettings.data.copy(enabled = enabled, cosmetic = draft))
+        val data = CosmeticSettings.data
+        CosmeticSettings.update(data.copy(enabled = enabled, cosmetic = draft, sync = data.sync.copy(mode = syncMode)))
         minecraft.gui.setScreen(parent)
     }
 
@@ -263,6 +270,12 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         if (valid) draft = draft.copy(color = match?.groupValues?.get(1)?.toInt(16))
         colorBox.setTextColor(if (valid) TEXT_COLOR else ERROR_COLOR)
         colorPreset.message = colorName()
+    }
+
+    private fun syncTooltip(mode: SyncMode): Tooltip {
+        val text = tr("sync.tooltip.${mode.serializedName}")
+        if (mode == SyncMode.OFF || CosmeticSettings.data.sync.relay != null) return Tooltip.create(text)
+        return Tooltip.create(Text.empty().append(text).append("\n\n").append(tr("sync.unconfigured")))
     }
 
     private fun colorName(): Text {

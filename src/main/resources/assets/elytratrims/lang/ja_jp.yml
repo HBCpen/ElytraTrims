@@ -62,6 +62,14 @@ screen.elytratrims.cosmetic:
   patterns.move_down: "下へ(奥へ)"
   patterns.move_up: "上へ(手前へ)"
   patterns.limit: "レイヤーは最大%s枚です"
+  sync: "同期"
+  sync.off: "オフ"
+  sync.receive: "表示のみ"
+  sync.share: "公開"
+  sync.tooltip.off: "他のプレイヤーと見た目を同期しません。"
+  sync.tooltip.receive: "このModを使う他のプレイヤーの見た目を表示します。自分の見た目は公開しません。"
+  sync.tooltip.share: "自分の見た目を中継サーバーで公開し、このModを使う他のプレイヤーの見た目も表示します。公開した見た目は誰でも取得できます。公開にはオンラインでログインしたMinecraftアカウントが必要です。"
+  sync.unconfigured: "中継サーバーが設定されていないため、まだ同期されません。config/elytratrims_cosmetic.json の sync.relay_url を設定してください。"
 flag.item.elytratrims:
   glow: §b発光
   gateway: §dコズミック
