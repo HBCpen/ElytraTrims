@@ -115,8 +115,8 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
 
         // Cycling a value rebuilds the widgets; keyboard focus must stay on the same control.
         context.runOnClient<Throwable> { it.gui.screen()!!.clearFocus() }
-        // Third widget: master switch, elytra visibility, trim pattern.
-        repeat(3) { context.input.pressKey(InputConstants.KEY_TAB) }
+        // Fourth widget: master switch, sync, elytra visibility, trim pattern.
+        repeat(4) { context.input.pressKey(InputConstants.KEY_TAB) }
         context.input.pressKey(InputConstants.KEY_SPACE)
         context.waitTicks(2)
         context.runOnClient<Throwable> { client ->
