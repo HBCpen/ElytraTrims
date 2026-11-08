@@ -57,6 +57,7 @@ object ElytraSyncGameTest : FabricClientGameTest {
     override fun runTest(context: ClientGameTestContext) {
         testSignatures()
         testRollbackAndExpiry()
+        testPublishing()
         testRelayClient()
         context.runInWorld { testRemoteRendering(context) }
     }
@@ -158,6 +159,58 @@ object ElytraSyncGameTest : FabricClientGameTest {
         check(normalize("https://relay.example/ ") == "https://relay.example") { "A valid relay URL was rejected" }
         for (invalid in listOf("https://", "http:///path", "ftp://relay.example", "relay.example", "https://relay.example/?a=b", ""))
             check(normalize(invalid) == null) { "Accepted the relay URL '$invalid'" }
+    }
+
+    /** The order of writes to relays when sharing is switched on and off, the relay changes, or writes fail. */
+    private fun testPublishing() {
+        val mojang = rsa()
+        val keys = certifiedKeys(PROFILE_ID, mojang, Instant.now() + Duration.ofHours(48))
+        val a = "https://a.example"
+        val b = "https://b.example"
+        var notes = listOf<CosmeticSettings.Sync.Published>()
+        val now = Instant.now()
+        CosmeticSync.resetPublishing()
+
+        fun next(current: String?, cosmetic: ElytraCosmetic? = COSMETIC.takeIf { current != null }) =
+            CosmeticSync.nextWrite(PROFILE_ID, current, cosmetic, keys, notes, now)
+        fun write(write: CosmeticSync.Write, error: Throwable? = null) {
+            if (write.cosmetic != null && notes.none { it.isFor(PROFILE_ID, write.relay) })
+                notes = notes + CosmeticSettings.Sync.Published(PROFILE_ID, write.relay, now + Duration.ofHours(48))
+            CosmeticSync.started(PROFILE_ID, write)
+            check(next(a) == null && next(null) == null) { "A second write started while one was in flight" }
+            // While a write is in flight, it's unknown what the relay serves, so its note must stay.
+            check(CosmeticSync.notesToKeep(PROFILE_ID, notes, now) == notes) { "A note was dropped during a write" }
+            CosmeticSync.completed(PROFILE_ID, write, keys, error, now)
+            notes = CosmeticSync.notesToKeep(PROFILE_ID, notes, now)
+        }
+
+        check(next(null) == null) { "Nothing was shared, so nothing needs withdrawing" }
+        check(next(a) == CosmeticSync.Write(a, COSMETIC)) { "Sharing must publish" }
+        write(CosmeticSync.Write(a, COSMETIC))
+        check(next(a) == null) { "Published twice" }
+
+        // Show only: withdraw; sharing again: publish again, although cosmetic and key are unchanged.
+        check(next(null) == CosmeticSync.Write(a, null)) { "Turning sharing off must withdraw" }
+        write(CosmeticSync.Write(a, null))
+        check(notes.isEmpty()) { "The note stayed after a confirmed withdrawal: $notes" }
+        check(next(null) == null) { "Withdrew twice" }
+        check(next(a) == CosmeticSync.Write(a, COSMETIC)) { "Sharing again didn't publish again" }
+        write(CosmeticSync.Write(a, COSMETIC))
+
+        // Switching relays: the failing old relay is retried on its own schedule and doesn't hold up the new one.
+        check(next(b) == CosmeticSync.Write(b, COSMETIC)) { "Changing the relay must publish there first" }
+        write(CosmeticSync.Write(b, COSMETIC))
+        check(next(b) == CosmeticSync.Write(a, null)) { "The old relay was not withdrawn from" }
+        write(CosmeticSync.Write(a, null), java.io.IOException("offline"))
+        check(next(b) == null) { "A failed relay was retried without waiting" }
+        check(next(b, COSMETIC.copy(glow = false)) == CosmeticSync.Write(b, COSMETIC.copy(glow = false))) { "A failing old relay held up the new one" }
+        check(notes.any { it.relay == a }) { "The note of a relay whose withdrawal failed was dropped" }
+
+        // Notes written before expiry times were kept are loaded, not dropped.
+        val legacy = com.google.gson.JsonParser.parseString("""{"profile_id":"$PROFILE_ID","relay":"$a"}""")
+        val loaded = CosmeticSettings.Sync.Published.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, legacy).result().orElse(null)
+        check(loaded != null && loaded.expiresAt.isAfter(Instant.now() + Duration.ofHours(47))) { "A legacy note was lost: $loaded" }
+        CosmeticSync.resetPublishing()
     }
 
     private fun verified(cosmetic: ElytraCosmetic?, issuedAt: Instant, expiresAt: Instant = Instant.now() + Duration.ofHours(1)) =
