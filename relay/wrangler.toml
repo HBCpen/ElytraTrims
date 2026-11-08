@@ -1,0 +1,13 @@
+name = "elytratrims-cosmetic-relay"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "elytratrims-cosmetics"
+# Replace with the id printed by `npx wrangler d1 create elytratrims-cosmetics`.
+database_id = "00000000-0000-0000-0000-000000000000"
+
+# Deletes records whose key has expired.
+[triggers]
+crons = ["17 */6 * * *"]
