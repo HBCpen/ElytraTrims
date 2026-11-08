@@ -15,6 +15,9 @@ UUID; vanilla uses the same key to verify chat messages.
   overwrite someone else's.
 - **Fetching:** clients verify every cosmetic again themselves, so a broken or malicious relay can't make anyone show a
   cosmetic they didn't publish.
+- **Mojang's keys:** Mojang's API refuses requests from Cloudflare Workers, so the relay ships Mojang's current
+  certificate keys in `src/mojang-keys.js` and uses any it manages to fetch in addition. If Mojang ever rotates them,
+  update that file and deploy again.
 - **Requirements:** only players signed in with a Microsoft account (online mode) have such a key, so only they can
   share a cosmetic. Players on offline-mode servers aren't looked up, since their UUIDs aren't the ones of their account.
 
@@ -44,7 +47,7 @@ npx wrangler login
 npx wrangler d1 create elytratrims-cosmetics
 ```
 
-Copy the printed `database_id` into `wrangler.toml`, then:
+Copy the printed `database_id` into `wrangler.toml` (it holds the id of the fork's own relay), then:
 
 ```sh
 npx wrangler d1 execute elytratrims-cosmetics --remote --file=schema.sql

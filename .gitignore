@@ -34,3 +34,7 @@ run/
 .env
 /extensions/.architectury-transformer/
 /.kotlin/
+
+# wrangler (local state; contains the Cloudflare account name)
+relay/.wrangler/
+relay/node_modules/

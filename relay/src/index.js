@@ -10,6 +10,8 @@
  *   POST /v1/cosmetics/lookup   body: {"profile_ids": [uuid, ...]}  ->  {"records": [record, ...]}
  */
 
+import { PLAYER_CERTIFICATE_KEYS } from "./mojang-keys.js";
+
 const MOJANG_KEYS_URL = "https://api.minecraftservices.com/publickeys";
 const DOMAIN = new TextEncoder().encode("elytratrims_cosmetic/v1\n");
 
@@ -151,17 +153,38 @@ export async function verifyRecord(record, profileId, mojangPublicKeys, now) {
 /** Mojang's keys for player certificates, cached per isolate. */
 let mojangCache = null;
 
+/**
+ * Mojang's current keys if they can be fetched, the bundled ones otherwise. Mojang's API answers requests from
+ * Cloudflare Workers with 403, so the bundled keys are what is normally used.
+ */
 async function mojangKeys(env) {
   if (env.MOJANG_KEYS) return env.MOJANG_KEYS; // Tests
   if (mojangCache && mojangCache.fetchedAt + LIMITS.mojangKeysTtlMs > Date.now()) return mojangCache.keys;
-  const response = await fetch(MOJANG_KEYS_URL);
-  if (!response.ok) throw new HttpError(503, "Mojang's public keys are unavailable");
-  const body = await response.json();
-  const keys = await Promise.all((body.playerCertificateKeys ?? []).map(({ publicKey }) =>
-    crypto.subtle.importKey("spki", base64(publicKey, "publicKey"), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-1" }, false, ["verify"])));
-  if (keys.length === 0) throw new HttpError(503, "Mojang's public keys are unavailable");
+  const encoded = [...new Set([...((await fetchMojangKeys()) ?? []), ...PLAYER_CERTIFICATE_KEYS])];
+  const keys = (await Promise.all(encoded.map(async (key) => {
+    try {
+      return await crypto.subtle.importKey("spki", base64(key, "publicKey"), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-1" }, false, ["verify"]);
+    } catch {
+      return null;
+    }
+  }))).filter((key) => key !== null);
   mojangCache = { keys, fetchedAt: Date.now() };
   return keys;
+}
+
+async function fetchMojangKeys() {
+  try {
+    const response = await fetch(MOJANG_KEYS_URL, { headers: { Accept: "application/json" } });
+    if (!response.ok) {
+      console.log(`Using the bundled Mojang keys: ${MOJANG_KEYS_URL} answered ${response.status}`);
+      return null;
+    }
+    const keys = (await response.json()).playerCertificateKeys?.map(({ publicKey }) => publicKey);
+    return Array.isArray(keys) && keys.length > 0 && keys.every((key) => typeof key === "string") ? keys : null;
+  } catch (e) {
+    console.log(`Using the bundled Mojang keys: ${e}`);
+    return null;
+  }
 }
 
 // Helpers

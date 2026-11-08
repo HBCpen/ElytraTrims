@@ -5,8 +5,8 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "elytratrims-cosmetics"
-# Replace with the id printed by `npx wrangler d1 create elytratrims-cosmetics`.
-database_id = "00000000-0000-0000-0000-000000000000"
+# Created with `npx wrangler d1 create elytratrims-cosmetics`; use your own id when deploying a separate relay.
+database_id = "d3e61699-9503-4f32-89d0-726696fdf0ac"
 
 # Deletes records whose key has expired.
 [triggers]
