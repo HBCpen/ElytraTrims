@@ -11,7 +11,7 @@ const SCHEMA = readFileSync(new URL("../schema.sql", import.meta.url), "utf8");
 const DOMAIN = Buffer.from("elytratrims_cosmetic/v1\n");
 const HOUR = 60 * 60 * 1000;
 
-/** The subset of the D1 API used by the relay, backed by SQLite like D1 itself. */
+/** The subset of the D1 API used by the relay, backed by SQLite like D1 itself, with D1's parameter limit. */
 class FakeD1 {
   constructor() {
     this.db = new DatabaseSync(":memory:");
@@ -21,10 +21,13 @@ class FakeD1 {
   prepare(sql) {
     const statement = this.db.prepare(sql);
     return {
-      bind: (...args) => ({
-        run: async () => (statement.run(...args), { success: true }),
-        all: async () => ({ results: statement.all(...args) }),
-      }),
+      bind: (...args) => {
+        if (args.length > 100) throw new Error(`D1 allows 100 bound parameters, got ${args.length}`);
+        return {
+          run: async () => ({ success: true, meta: { changes: Number(statement.run(...args).changes) } }),
+          all: async () => ({ results: statement.all(...args) }),
+        };
+      },
     };
   }
 }
@@ -110,7 +113,12 @@ test("keeps the newest record", async () => {
   const newer = record(ALEX, key, COSMETIC, now);
   const older = record(ALEX, key, "", now - 1000);
   assert.equal((await r.put(ALEX, newer)).status, 204);
-  assert.equal((await r.put(ALEX, older)).status, 204);
+  // Sending the same record again (a retry) is fine; an older one is refused with the time of the stored one.
+  assert.equal((await r.put(ALEX, newer)).status, 204);
+  const refused = await r.put(ALEX, older);
+  assert.equal(refused.status, 409);
+  assert.equal((await refused.json()).issued_at, now);
+  assert.equal((await r.put(ALEX, record(ALEX, key, "", now))).status, 409);
   assert.deepEqual(await r.lookup([ALEX]), [newer]);
 
   const cleared = record(ALEX, key, "", now + 1000);
@@ -152,6 +160,30 @@ test("rejects expired keys, future records and malformed input", async () => {
   assert.equal((await r.call("POST", "/v1/cosmetics/lookup", { profile_ids: Array(101).fill(ALEX) })).status, 400);
   assert.equal((await r.call("GET", `/v1/cosmetics/${ALEX}`)).status, 405);
   assert.equal((await r.call("GET", "/elsewhere")).status, 404);
+});
+
+test("looks up a full batch within D1's parameter limit", async () => {
+  const r = relay();
+  const key = playerKey(ALEX);
+  const published = record(ALEX, key, COSMETIC);
+  assert.equal((await r.put(ALEX, published)).status, 204);
+  const ids = Array.from({ length: 99 }, (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`);
+  assert.deepEqual(await r.lookup([...ids, ALEX]), [published]);
+});
+
+test("rejects large bodies without a length while reading them", async () => {
+  const r = relay();
+  let pulled = 0;
+  const body = new ReadableStream({
+    pull(controller) {
+      pulled += 1024;
+      if (pulled > 1024 * 1024) controller.close();
+      else controller.enqueue(new Uint8Array(1024));
+    },
+  });
+  const response = await worker.fetch(new Request(`https://relay.test/v1/cosmetics/${ALEX}`, { method: "PUT", body, duplex: "half" }), r.env);
+  assert.equal(response.status, 413);
+  assert.ok(pulled < 64 * 1024, `read ${pulled} bytes before rejecting`);
 });
 
 test("doesn't serve records whose key has expired, and cleans them up", async () => {

@@ -20,6 +20,7 @@ export const LIMITS = {
   cosmeticLength: 4096,
   lookupBytes: 8 * 1024,
   lookupIds: 100,
+  idsPerQuery: 99,
   clockSkewMs: 10 * 60 * 1000,
   mojangKeysTtlMs: 60 * 60 * 1000,
 };
@@ -71,12 +72,20 @@ async function route(request, env) {
 async function publish(request, env, profileId) {
   const record = parseJson(await readBody(request, LIMITS.recordBytes));
   const verified = await verifyRecord(record, profileId, await mojangKeys(env), Date.now());
+  const stored = JSON.stringify(record);
   // Only a newer record replaces the stored one, so an old record can't be replayed over a newer one.
-  await env.DB.prepare(
+  const result = await env.DB.prepare(
     `INSERT INTO cosmetics (profile_id, issued_at, expires_at, record) VALUES (?1, ?2, ?3, ?4)
      ON CONFLICT (profile_id) DO UPDATE SET issued_at = ?2, expires_at = ?3, record = ?4 WHERE ?2 > cosmetics.issued_at`,
-  ).bind(profileId, verified.issuedAt, verified.expiresAt, JSON.stringify(record)).run();
-  return new Response(null, { status: 204 });
+  ).bind(profileId, verified.issuedAt, verified.expiresAt, stored).run();
+  if (result.meta.changes > 0) return new Response(null, { status: 204 });
+
+  // Not newer than the stored record: fine if it is the same one (a retry), otherwise tell the client which one wins,
+  // so it can publish again once its clock has passed it.
+  const { results } = await env.DB.prepare("SELECT issued_at, record FROM cosmetics WHERE profile_id = ?1").bind(profileId).all();
+  const current = results[0];
+  if (current && current.record === stored) return new Response(null, { status: 204 });
+  return json({ error: "A newer record is stored", issued_at: current?.issued_at ?? null }, 409);
 }
 
 async function lookup(request, env) {
@@ -87,11 +96,18 @@ async function lookup(request, env) {
   if (!unique.every((id) => UUID_PATTERN.test(id))) throw new HttpError(400, "Invalid UUID");
   if (unique.length === 0) return json({ records: [] });
 
-  const placeholders = unique.map((_, i) => `?${i + 2}`).join(", ");
-  const { results } = await env.DB.prepare(
-    `SELECT record FROM cosmetics WHERE expires_at > ?1 AND profile_id IN (${placeholders})`,
-  ).bind(Date.now(), ...unique).all();
-  return json({ records: results.map((row) => JSON.parse(row.record)) });
+  // D1 allows 100 bound parameters per query, one of which is the time.
+  const now = Date.now();
+  const records = [];
+  for (let start = 0; start < unique.length; start += LIMITS.idsPerQuery) {
+    const chunk = unique.slice(start, start + LIMITS.idsPerQuery);
+    const placeholders = chunk.map((_, i) => `?${i + 2}`).join(", ");
+    const { results } = await env.DB.prepare(
+      `SELECT record FROM cosmetics WHERE expires_at > ?1 AND profile_id IN (${placeholders})`,
+    ).bind(now, ...chunk).all();
+    records.push(...results.map((row) => JSON.parse(row.record)));
+  }
+  return json({ records });
 }
 
 /**
@@ -189,12 +205,25 @@ async function fetchMojangKeys() {
 
 // Helpers
 
+/** Reads at most [limit] bytes, rejecting larger bodies without buffering them first. */
 async function readBody(request, limit) {
   const declared = Number(request.headers.get("Content-Length"));
   if (declared > limit) throw new HttpError(413, "Body is too large");
-  const body = await request.arrayBuffer();
-  if (body.byteLength > limit) throw new HttpError(413, "Body is too large");
-  return new TextDecoder().decode(body);
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const chunks = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel();
+      throw new HttpError(413, "Body is too large");
+    }
+    chunks.push(value);
+  }
+  return new TextDecoder().decode(concat(...chunks));
 }
 
 function parseJson(text) {
