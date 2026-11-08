@@ -206,6 +206,18 @@ object ElytraSyncGameTest : FabricClientGameTest {
         check(next(b, COSMETIC.copy(glow = false)) == CosmeticSync.Write(b, COSMETIC.copy(glow = false))) { "A failing old relay held up the new one" }
         check(notes.any { it.relay == a }) { "The note of a relay whose withdrawal failed was dropped" }
 
+        // Results are collected by polling, not through the client's task queue (which a disconnect empties):
+        // a write stays in flight until its future completes, and is handled on the next collection.
+        CosmeticSync.resetPublishing()
+        notes = emptyList()
+        val response = java.util.concurrent.CompletableFuture<Unit>()
+        CosmeticSync.track(PROFILE_ID, CosmeticSync.Write(a, COSMETIC), keys, response)
+        CosmeticSync.collectResults()
+        check(next(a) == null) { "A write was considered done before its response" }
+        response.complete(Unit)
+        CosmeticSync.collectResults()
+        check(next(a) == null && next(a, COSMETIC.copy(glow = false)) != null) { "A finished write was not collected" }
+
         // Notes written before expiry times were kept are loaded, not dropped.
         val legacy = com.google.gson.JsonParser.parseString("""{"profile_id":"$PROFILE_ID","relay":"$a"}""")
         val loaded = CosmeticSettings.Sync.Published.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, legacy).result().orElse(null)

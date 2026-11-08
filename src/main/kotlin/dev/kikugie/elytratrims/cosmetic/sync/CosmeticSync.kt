@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,12 +53,41 @@ object CosmeticSync {
     private val remotes = ConcurrentHashMap<UUID, Remote>()
 
     private var ticks = 0
-    private var lookupInFlight = false
+    /**
+     * Requests in flight. Their results are collected from the client tick rather than handed to the client's task
+     * queue, which a disconnect empties; a dropped result would leave the request in flight forever.
+     */
+    private class PendingLookup(val future: CompletableFuture<Map<UUID, SignedCosmetic.Verified>>, val relay: String, val due: List<UUID>)
+    private class PendingWrite(val future: CompletableFuture<Unit>, val profileId: UUID, val write: Write, val keys: ProfileKeyPair)
+
+    private var pendingLookup: PendingLookup? = null
+    private var pendingWrite: PendingWrite? = null
     private var nextLookup: Instant = Instant.EPOCH
     private var lookupRetry: Duration = MIN_RETRY
 
     fun init() {
-        ClientTickEvents.END_CLIENT_TICK.register { client -> if (++ticks % CHECK_INTERVAL_TICKS == 0) tick(client) }
+        ClientTickEvents.END_CLIENT_TICK.register { client ->
+            collectResults()
+            if (++ticks % CHECK_INTERVAL_TICKS == 0) tick(client)
+        }
+    }
+
+    /** Handles requests that finished since the last tick, also while not in a world. Public for tests. */
+    fun collectResults() {
+        pendingLookup?.takeIf { it.future.isDone }?.let {
+            pendingLookup = null
+            lookupCompleted(it)
+        }
+        pendingWrite?.takeIf { it.future.isDone }?.let {
+            pendingWrite = null
+            completed(it.profileId, it.write, it.keys, it.future.errorOrNull(), Instant.now())
+        }
+    }
+
+    /** Tracks [future] as the result of [write]; for tests and [publish]. */
+    fun track(profileId: UUID, write: Write, keys: ProfileKeyPair, future: CompletableFuture<Unit>) {
+        started(profileId, write)
+        pendingWrite = PendingWrite(future, profileId, write, keys)
     }
 
     /** The verified cosmetic of another player, or `null` if they have none, its key expired or syncing is off. */
@@ -98,7 +128,7 @@ object CosmeticSync {
         val self = client.user.profileId
         for (id in players) remotes[id]?.seenAt = now
         forgetStale(now)
-        if (lookupInFlight || now.isBefore(nextLookup)) return
+        if (pendingLookup != null || now.isBefore(nextLookup)) return
 
         // Only online-mode accounts (random UUIDs) can have certified keys; skips offline players and NPCs.
         // Newcomers are only looked up while there is room for them, counting entries that could be evicted as room.
@@ -112,24 +142,22 @@ object CosmeticSync {
         if (due.isEmpty()) return
         val services = client.services().profileKeySignatureValidator() ?: return
 
-        lookupInFlight = true
         nextLookup = now + MIN_LOOKUP_GAP
-        RelayClient(relay).lookup(due)
-            .thenApply { records -> verifyAll(due, records, services) }
-            .whenComplete { verified, error ->
-                client.execute {
-                    lookupInFlight = false
-                    if (error != null) {
-                        LOGGER.warn("Failed to fetch cosmetics from {}: {}", relay, error.unwrap().toString())
-                        nextLookup = Instant.now() + lookupRetry
-                        lookupRetry = (lookupRetry * 2).coerceAtMost(MAX_RETRY)
-                        return@execute
-                    }
-                    lookupRetry = MIN_RETRY
-                    val fetched = Instant.now()
-                    for (id in due) accept(id, verified[id], fetched)
-                }
-            }
+        pendingLookup = PendingLookup(RelayClient(relay).lookup(due).thenApply { records -> verifyAll(due, records, services) }, relay, due)
+    }
+
+    private fun lookupCompleted(lookup: PendingLookup) {
+        val error = lookup.future.errorOrNull()
+        if (error != null) {
+            LOGGER.warn("Failed to fetch cosmetics from {}: {}", lookup.relay, error.toString())
+            nextLookup = Instant.now() + lookupRetry
+            lookupRetry = (lookupRetry * 2).coerceAtMost(MAX_RETRY)
+            return
+        }
+        lookupRetry = MIN_RETRY
+        val verified = lookup.future.join()
+        val fetched = Instant.now()
+        for (id in lookup.due) accept(id, verified[id], fetched)
     }
 
     /** Forgets players out of sight for a while, except for records that still protect against rollback. */
@@ -191,6 +219,7 @@ object CosmeticSync {
     /** Forgets what relays are known to serve; for tests. */
     fun resetPublishing() {
         relays.clear()
+        pendingWrite = null
         writeInFlight = false
         nextNoteWrite = Instant.EPOCH
         noteWriteRetry = MIN_RETRY
@@ -274,10 +303,7 @@ object CosmeticSync {
         if (write.cosmetic != null && !noteBeforePublishing(profileId, write.relay, keys))
             return completed(profileId, write, keys, java.io.IOException("Can't save the config"), now)
 
-        started(profileId, write)
-        RelayClient(write.relay).publish(record).whenComplete { _, error ->
-            client.execute { completed(profileId, write, keys, error?.unwrap(), Instant.now()) }
-        }
+        track(profileId, write, keys, RelayClient(write.relay).publish(record))
     }
 
     /** Notes [relay] until the key expires, before publishing to it; the relay may store a record whose response is lost. */
@@ -305,7 +331,9 @@ object CosmeticSync {
         }
     }
 
-    private fun Throwable.unwrap(): Throwable = if (this is CompletionException) cause ?: this else this
+    /** The failure of a completed future, without the wrapping [CompletionException]; `null` if it succeeded. */
+    private fun CompletableFuture<*>.errorOrNull(): Throwable? = runCatching { join() }.exceptionOrNull()
+        ?.let { if (it is CompletionException) it.cause ?: it else it }
 
     private operator fun Duration.times(factor: Int): Duration = multipliedBy(factor.toLong())
 }
