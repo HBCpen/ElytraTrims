@@ -272,8 +272,8 @@ object CosmeticSync {
             }
             else -> {
                 LOGGER.warn("Failed to update the cosmetic on {}: {}", write.relay, error.toString())
-                // A rejection won't change by retrying soon, so wait longer for those.
-                if (error is RelayClient.Rejected) state.retry = MAX_RETRY
+                // A rejection won't change by retrying soon, so wait longer for those; rate limits and server errors may.
+                if (error is RelayClient.Rejected && error.status != 429 && error.status < 500) state.retry = MAX_RETRY
                 state.next = now + state.retry
                 state.retry = (state.retry * 2).coerceAtMost(MAX_RETRY)
             }

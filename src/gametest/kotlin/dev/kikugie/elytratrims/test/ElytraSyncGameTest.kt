@@ -206,6 +206,17 @@ object ElytraSyncGameTest : FabricClientGameTest {
         check(next(b, COSMETIC.copy(glow = false)) == CosmeticSync.Write(b, COSMETIC.copy(glow = false))) { "A failing old relay held up the new one" }
         check(notes.any { it.relay == a }) { "The note of a relay whose withdrawal failed was dropped" }
 
+        // Rate limits and server errors are retried soon, other rejections only after the longest wait.
+        fun retriedSoon(error: Throwable): Boolean {
+            CosmeticSync.resetPublishing()
+            CosmeticSync.started(PROFILE_ID, CosmeticSync.Write(a, COSMETIC))
+            CosmeticSync.completed(PROFILE_ID, CosmeticSync.Write(a, COSMETIC), keys, error, now)
+            return CosmeticSync.nextWrite(PROFILE_ID, a, COSMETIC, keys, emptyList(), now + Duration.ofMinutes(2)) != null
+        }
+        check(retriedSoon(RelayClient.Rejected(429, "Too many requests"))) { "A rate-limited write waited too long" }
+        check(retriedSoon(RelayClient.Rejected(503, "Unavailable"))) { "A write that hit a server error waited too long" }
+        check(!retriedSoon(RelayClient.Rejected(400, "Invalid"))) { "A rejected write was retried too soon" }
+
         // Results are collected by polling, not through the client's task queue (which a disconnect empties):
         // a write stays in flight until its future completes, and is handled on the next collection.
         CosmeticSync.resetPublishing()
