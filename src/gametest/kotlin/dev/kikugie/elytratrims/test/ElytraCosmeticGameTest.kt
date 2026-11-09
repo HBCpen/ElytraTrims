@@ -33,6 +33,9 @@ import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import com.google.gson.JsonParser
+import dev.kikugie.elytratrims.render.GLOWING_WINGS_MIN_LIGHT
+import dev.kikugie.elytratrims.render.glowingWingsLight
+import net.minecraft.client.resources.model.EquipmentClientInfo
 import com.mojang.serialization.JsonOps
 import java.util.Optional
 
@@ -65,6 +68,7 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             check(worn.get(DataComponents.TRIM) == null) { "The real item must stay untouched" }
 
             testRemovedEffects(registries)
+            testGlowingWingsLight(stack)
 
             CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
             client.options.cameraType = CameraType.THIRD_PERSON_BACK
@@ -182,6 +186,17 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         val stack = CosmeticStacks.apply(COSMETIC, decorated, registries)
         check(!(stack has ETItemFlag.GATEWAY) && !(stack has ETItemFlag.BAD_APPLE)) { "The cosmetic kept effects of the real item" }
         check(decorated has ETItemFlag.GATEWAY) { "The real item must stay untouched" }
+    }
+
+    /** Glowing wings get at least a faint block light; other layers, other stacks and brighter light are left alone. */
+    private fun testGlowingWingsLight(glowing: ItemStack) {
+        val wings = EquipmentClientInfo.LayerType.WINGS
+        val dark = 0x00F0_0000 // Sky light 15, block light 0.
+        val expected = 0x00F0_0000 or (GLOWING_WINGS_MIN_LIGHT shl 4)
+        check(glowingWingsLight(wings, glowing, dark) == expected) { "Glowing wings weren't lit: ${glowingWingsLight(wings, glowing, dark)}" }
+        check(glowingWingsLight(wings, glowing, 0xF000F0) == 0xF000F0) { "Brighter light must be kept" }
+        check(glowingWingsLight(wings, ItemStack(Items.ELYTRA), dark) == dark) { "Wings without glow were lit" }
+        check(glowingWingsLight(EquipmentClientInfo.LayerType.HUMANOID, glowing, dark) == dark) { "Other layers were lit" }
     }
 
     private fun testEditor(context: ClientGameTestContext) {

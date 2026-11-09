@@ -2,6 +2,7 @@ package dev.kikugie.elytratrims.mixin.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics;
+import dev.kikugie.elytratrims.render.ETRenderingUtilsKt;
 import dev.kikugie.fletching_table.mixin.MixinEnvironment;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
@@ -31,5 +32,15 @@ public class ElytraCosmeticMixin {
         @Local(argsOnly = true) Object state
     ) {
         return ElytraCosmetics.applyToWings(layerType, state, stack);
+    }
+
+    /** Keeps glowing wings faintly lit in the dark. Declared after the stack swap, so it sees the cosmetic stack. */
+    @ModifyVariable(method = RENDER_METHOD, at = @At("HEAD"), argsOnly = true, ordinal = 0)
+    private int lightGlowingWings(
+        int lightCoords,
+        @Local(argsOnly = true) EquipmentClientInfo.LayerType layerType,
+        @Local(argsOnly = true) ItemStack stack
+    ) {
+        return ETRenderingUtilsKt.glowingWingsLight(layerType, stack, lightCoords);
     }
 }

@@ -23,7 +23,7 @@ Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to ope
   Only the looks change: gliding still needs a real elytra.
 - **Trim / Material**: any armor trim pattern and material.
 - **Dye**: click to cycle through dye colors (Shift+click to go back) or type a hex color such as `#3355FF`.
-- **Effects**: rainbow and glow in the dark (the decorations stay fully lit in the dark). With
+- **Effects**: rainbow and glow in the dark (the decorations stay fully lit and the elytra itself faintly lit). With
   [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) installed, glowing elytras also faintly light up
   their surroundings, including those of other players.
 - **Patterns**: *Edit Patterns* opens a loom-like editor. Click *+ New Layer*, then pick its color and pattern;
