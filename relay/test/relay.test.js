@@ -205,3 +205,24 @@ test("accepts a record signed by the mod", { skip: !process.env.ET_SYNC_SAMPLE &
   assert.equal(result.issuedAt, sample.record.issued_at);
   assert.equal(result.expiresAt, Date.parse(sample.record.key.expires_at.replace(/(\.\d{3})\d*Z$/, "$1Z")));
 });
+
+test("limits requests per client before touching the database", async () => {
+  const r = relay();
+  const seen = [];
+  const limiter = (allowed) => ({ limit: async ({ key }) => { seen.push(key); return { success: allowed }; } });
+  r.env.LOOKUP_LIMITER = limiter(false);
+  r.env.PUBLISH_LIMITER = limiter(false);
+  r.env.DB = { prepare: () => { throw new Error("The database was used by a limited request"); } };
+  const headers = { "CF-Connecting-IP": "203.0.113.7" };
+  const call = (method, path, body) => worker.fetch(new Request(`https://relay.test${path}`, { method, headers, body: JSON.stringify(body) }), r.env);
+
+  const looked = await call("POST", "/v1/cosmetics/lookup", { profile_ids: [ALEX] });
+  assert.equal(looked.status, 429);
+  assert.equal(looked.headers.get("Retry-After"), "60");
+  assert.equal((await call("PUT", `/v1/cosmetics/${ALEX}`, record(ALEX, playerKey(ALEX), COSMETIC))).status, 429);
+  assert.deepEqual(seen, ["203.0.113.7", "203.0.113.7"]);
+
+  const open = relay();
+  open.env.LOOKUP_LIMITER = limiter(true);
+  assert.deepEqual(await open.lookup([ALEX]), []);
+});

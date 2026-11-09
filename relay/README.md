@@ -35,7 +35,16 @@ The Workers Free plan is enough for small and medium groups.
 | 5 million D1 rows read | 1 row per player looked up |
 | 100,000 D1 rows written | 1 row per published change |
 
-When a daily limit is reached, requests fail until 00:00 UTC; nothing is charged on the Free plan. See the current
+When a daily limit is reached, requests fail until 00:00 UTC; nothing is charged on the Free plan.
+
+## Rate limits
+
+`wrangler.toml` limits each client IP (per Cloudflare location) to 60 lookups and 10 publications per minute, using
+[Workers rate limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/). A client looks up
+at most once per 10 seconds, so this leaves room for several players behind one address. Limited requests are answered
+with `429 Too Many Requests` before the database is touched, which keeps one client from using up the D1 quota and CPU
+time. They still count as Worker requests, though: blocking floods before they reach the Worker needs a custom domain
+with Cloudflare's WAF rate limiting rules. See the current
 [Workers](https://developers.cloudflare.com/workers/platform/pricing/) and
 [D1](https://developers.cloudflare.com/d1/platform/pricing/) pricing.
 

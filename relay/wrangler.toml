@@ -11,3 +11,15 @@ database_id = "d3e61699-9503-4f32-89d0-726696fdf0ac"
 # Deletes records whose key has expired.
 [triggers]
 crons = ["17 */6 * * *"]
+
+# Requests per client IP and Cloudflare location. A client looks up at most once per 10 seconds and publishes only
+# when its cosmetic or key changes, so these leave room for several players behind one address.
+[[ratelimits]]
+name = "LOOKUP_LIMITER"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }
+
+[[ratelimits]]
+name = "PUBLISH_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }

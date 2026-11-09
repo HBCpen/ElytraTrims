@@ -39,7 +39,11 @@ export default {
     try {
       return await route(request, env);
     } catch (e) {
-      if (e instanceof HttpError) return json({ error: e.message }, e.status);
+      if (e instanceof HttpError) {
+        const response = json({ error: e.message }, e.status);
+        if (e.status === 429) response.headers.set("Retry-After", "60");
+        return response;
+      }
       console.error(e);
       return json({ error: "Internal error" }, 500);
     }
@@ -58,12 +62,14 @@ async function route(request, env) {
 
   if (pathname === "/v1/cosmetics/lookup") {
     if (request.method !== "POST") throw new HttpError(405, "Use POST");
+    await rateLimit(env.LOOKUP_LIMITER, request);
     return lookup(request, env);
   }
 
   const match = pathname.match(/^\/v1\/cosmetics\/([0-9a-fA-F-]{36})$/);
   if (match) {
     if (request.method !== "PUT") throw new HttpError(405, "Use PUT");
+    await rateLimit(env.PUBLISH_LIMITER, request);
     return publish(request, env, match[1].toLowerCase());
   }
   throw new HttpError(404, "Not found");
@@ -204,6 +210,16 @@ async function fetchMojangKeys() {
 }
 
 // Helpers
+
+/**
+ * Limits requests per client IP before any database work, so a single client can't use up the D1 quota or CPU time.
+ * Rejected requests still count as Worker requests. Relays deployed without the binding aren't limited.
+ */
+async function rateLimit(limiter, request) {
+  if (!limiter) return;
+  const { success } = await limiter.limit({ key: request.headers.get("CF-Connecting-IP") ?? "unknown" });
+  if (!success) throw new HttpError(429, "Too many requests");
+}
 
 /** Reads at most [limit] bytes, rejecting larger bodies without buffering them first. */
 async function readBody(request, limit) {
