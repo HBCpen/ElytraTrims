@@ -23,7 +23,9 @@ Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to ope
   Only the looks change: gliding still needs a real elytra.
 - **Trim / Material**: any armor trim pattern and material.
 - **Dye**: click to cycle through dye colors (Shift+click to go back) or type a hex color such as `#3355FF`.
-- **Effects**: rainbow and glow in the dark (the decorations stay fully lit in the dark).
+- **Effects**: rainbow and glow in the dark (the decorations stay fully lit in the dark). With
+  [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) installed, glowing elytras also faintly light up
+  their surroundings, including those of other players.
 - **Patterns**: *Edit Patterns* opens a loom-like editor. Click *+ New Layer*, then pick its color and pattern;
   select a layer to change it, and use the buttons on its row to move or remove it. Layers can also be copied from a
   banner or shield in your hand. *Style* switches between the shield and the high-resolution banner textures.
@@ -57,6 +59,7 @@ for other players, including the cosmic and animation effects, which aren't offe
 - Minecraft 26.3 with Fabric Loader
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+- Optional: [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights), for glowing elytras to light up their surroundings
 
 This mod replaces the original Elytra Trims and can't be installed together with it.
 Resource packs made for Elytra Trims keep working.

@@ -46,6 +46,10 @@ repositories {
     mavenLocal()
     maven("https://maven.bawnorton.com/releases")
     maven("https://api.modrinth.com/maven")
+    maven("https://maven.gegy.dev/releases") {
+        content { includeGroup("dev.lambdaurora.lambdynamiclights") }
+    }
+    mavenCentral()
 }
 
 dependencies {
@@ -59,6 +63,10 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric-api")}")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric-kotlin")}")
+
+    // Optional: lets glowing cosmetics light up their surroundings when LambDynamicLights is installed.
+    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${property("deps.lambdynamiclights")}")
+    modLocalRuntime("maven.modrinth:lambdynamiclights:${property("deps.lambdynamiclights")}")
 
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
     fletchingTable.modrinth("iris")?.let {

@@ -105,7 +105,68 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             context.runOnClient<Throwable> { it.options.guiScale().set(guiScale); it.resizeGui() }
         }
 
+        testGlowLight(context)
         context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data()) }
+    }
+
+    /**
+     * Glowing wings are a light source for LambDynamicLights (installed in the dev client): in a dark room, the floor
+     * around the player gets brighter when the cosmetic glows.
+     */
+    private fun TestSingleplayerContext.testGlowLight(context: ClientGameTestContext) {
+        context.runOnClient<Throwable> { client ->
+            val player = client.player!!
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
+            check(ElytraCosmetics.hasGlowingWings(player)) { "Glowing wings were not detected" }
+            CosmeticSettings.update(CosmeticSettings.Data(false, COSMETIC))
+            check(!ElytraCosmetics.hasGlowingWings(player)) { "A disabled cosmetic must not glow" }
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC.copy(glow = false)))
+            check(!ElytraCosmetics.hasGlowingWings(player)) { "Wings without glow were taken as glowing" }
+            client.options.cameraType = CameraType.THIRD_PERSON_BACK
+            player.yRot = 0F
+            player.xRot = 20F
+        }
+        server.runCommand("item replace entity @a armor.chest with minecraft:diamond_chestplate")
+        context.waitTicks(2)
+        context.runOnClient<Throwable> { client ->
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
+            check(!ElytraCosmetics.hasGlowingWings(client.player!!)) { "Wings that aren't drawn must not glow" }
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC.copy(visibility = ElytraCosmetic.Visibility.OVER_ARMOR)))
+            check(ElytraCosmetics.hasGlowingWings(client.player!!)) { "Wings drawn over a chestplate must glow" }
+        }
+        server.runCommand("item replace entity @a armor.chest with minecraft:elytra")
+        // Without it, glowing wings only glow themselves; the rest of the tests check that the mod works that way too.
+        if (!net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("lambdynlights")) return
+
+        server.runCommand("time set midnight")
+        server.runCommand("fill ~-4 ~-1 ~-4 ~4 ~5 ~4 minecraft:stone hollow")
+        try {
+            context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC.copy(glow = false))) }
+            context.waitTicks(40)
+            val dark = floorBrightness(context.takeScreenshot("cosmetic_glow_off"))
+            context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC)) }
+            context.waitTicks(40)
+            val lit = floorBrightness(context.takeScreenshot("cosmetic_glow_light"))
+            check(lit - dark > 4) { "Glowing wings didn't light up the floor: $dark without glow, $lit with it" }
+        } finally {
+            server.runCommand("fill ~-4 ~ ~-4 ~4 ~5 ~4 minecraft:air")
+            server.runCommand("fill ~-4 ~-1 ~-4 ~4 ~-1 ~4 minecraft:grass_block")
+            server.runCommand("time set day")
+        }
+    }
+
+    /** Mean brightness (0-255) of the floor to the lower left of the player, seen from behind. */
+    private fun floorBrightness(screenshot: java.nio.file.Path): Double {
+        val image = javax.imageio.ImageIO.read(screenshot.toFile())
+        var sum = 0.0
+        var count = 0
+        for (y in (image.height * 0.65).toInt() until (image.height * 0.85).toInt())
+            for (x in (image.width * 0.15).toInt() until (image.width * 0.35).toInt()) {
+                val rgb = image.getRGB(x, y)
+                sum += ((rgb shr 16 and 0xFF) + (rgb shr 8 and 0xFF) + (rgb and 0xFF)) / 3.0
+                count++
+            }
+        return sum / count
     }
 
     /**

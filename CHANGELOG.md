@@ -10,6 +10,7 @@ Earlier builds numbered 0.1.0 were only shared for testing.
 - Saved designs: save a look under a name, load it later, and copy it to or paste it from the clipboard.
 - Elytra visibility: draw the elytra only while worn, also on top of a chestplate, or always.
 - Preview that can be rotated and tilted, in standing, sneaking and gliding poses.
+- With LambDynamicLights installed, glowing elytras faintly light up their surroundings.
 - Syncing with other players of this mod through a relay server. Cosmetics are signed with the player's Mojang chat
   signing key and verified by every client. Choose between sharing, only showing others, or turning syncing off.
 - Removed recipes, cauldron interactions and all other server-side features. The cosmic and animation effects can't

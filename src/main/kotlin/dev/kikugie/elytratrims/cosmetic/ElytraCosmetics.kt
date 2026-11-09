@@ -2,12 +2,16 @@ package dev.kikugie.elytratrims.cosmetic
 
 import dev.kikugie.elytratrims.MINECRAFT
 import dev.kikugie.elytratrims.cosmetic.sync.CosmeticSync
+import dev.kikugie.elytratrims.item.ETItemFlag
+import dev.kikugie.elytratrims.item.has
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState
 import net.minecraft.client.resources.model.EquipmentClientInfo
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import java.util.UUID
@@ -50,6 +54,19 @@ object ElytraCosmetics {
     fun forEntity(entity: Entity): ElytraCosmetic? = when {
         isLocalPlayer(entity.uuid) -> CosmeticSettings.active
         else -> CosmeticSync.cosmeticFor(entity.uuid)
+    }
+
+    /**
+     * Whether the entity shows glowing wings: a glowing cosmetic while its elytra is drawn, or else a worn elytra
+     * that is really decorated with the glow effect.
+     */
+    @JvmStatic
+    fun hasGlowingWings(entity: Entity): Boolean {
+        if (entity !is LivingEntity || entity.isInvisible) return false
+        val chest = entity.getItemBySlot(EquipmentSlot.CHEST)
+        val wearsWings = chest.has(DataComponents.GLIDER)
+        val cosmetic = forEntity(entity) ?: return wearsWings && chest has ETItemFlag.GLOW
+        return cosmetic.glow && (wearsWings || cosmetic.visibility.showsWithout(chest.isEmpty))
     }
 
     /** Replaces the rendered wings stack if the render state carries a cosmetic. */
