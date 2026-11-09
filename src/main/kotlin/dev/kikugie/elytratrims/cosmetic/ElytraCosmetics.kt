@@ -62,7 +62,8 @@ object ElytraCosmetics {
      */
     @JvmStatic
     fun hasGlowingWings(entity: Entity): Boolean {
-        if (entity !is LivingEntity || entity.isInvisible) return false
+        // Like the renderer: invisible players still show their wings, spectators don't.
+        if (entity !is LivingEntity || entity.isSpectator) return false
         val chest = entity.getItemBySlot(EquipmentSlot.CHEST)
         val wearsWings = chest.has(DataComponents.GLIDER)
         val cosmetic = forEntity(entity) ?: return wearsWings && chest has ETItemFlag.GLOW

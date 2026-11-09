@@ -139,6 +139,13 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
             check(ElytraCosmetics.hasGlowingWings(client.player!!)) { "Wings drawn over a chestplate must glow" }
         }
         server.runCommand("item replace entity @a armor.chest with minecraft:elytra")
+        server.runCommand("effect give @a minecraft:invisibility 5 0 true")
+        context.waitTicks(2)
+        context.runOnClient<Throwable> { client ->
+            CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
+            check(client.player!!.isInvisible && ElytraCosmetics.hasGlowingWings(client.player!!)) { "Wings stay visible, and glowing, on invisible players" }
+        }
+        server.runCommand("effect clear @a minecraft:invisibility")
         // Without it, glowing wings only glow themselves; the rest of the tests check that the mod works that way too.
         if (!net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("lambdynlights")) return
 
