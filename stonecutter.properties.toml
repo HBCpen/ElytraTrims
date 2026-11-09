@@ -11,11 +11,10 @@ deps.kotlin-coroutines="1.11.0"
 loomx.loom_version="1.17-SNAPSHOT"
 
 publish.status="beta"
-# The fork has no Modrinth/CurseForge projects yet. Don't reuse the upstream IDs;
-# set the fork's own project IDs and enable the destinations before publishing.
-publish.modrinth=false
+# The fork's own projects; don't reuse the upstream IDs. There is no CurseForge project yet.
+publish.modrinth=true
 publish.curseforge=false
-publish.modrinth_id=""
+publish.modrinth_id="1x1PafPg"
 publish.curseforge_id=""
 
 ["26.3"]

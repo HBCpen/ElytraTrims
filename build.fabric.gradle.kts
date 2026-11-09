@@ -153,7 +153,15 @@ publishMods {
 
     displayName = "Elytra Trims Cosmetic Fabric ${property("mod.version")} for ${sc.current.version}"
     version = sc.properties.get<String>("mod.version")
-    changelog = providers.fileContents { file("../../CHANGELOG.md") }.asText
+    // Only the section of the version being published, without its heading.
+    val modVersion = property("mod.version") as String
+    changelog = providers.fileContents { file("../../CHANGELOG.md") }.asText.map { text ->
+        val lines = text.lines()
+        val start = lines.indexOfFirst { it.trim() == "## $modVersion" }
+        check(start >= 0) { "CHANGELOG.md has no section for $modVersion" }
+        val end = lines.drop(start + 1).indexOfFirst { it.startsWith("## ") }
+        lines.subList(start + 1, if (end < 0) lines.size else start + 1 + end).joinToString("\n").trim()
+    }
     modLoaders.add("fabric")
     
     val versions = sc.properties.raw("mod:releases").to<List<String>>()
@@ -163,6 +171,8 @@ publishMods {
         accessToken = mrToken
         minecraftVersions.addAll(versions)
         requires("fabric-api", "fabric-language-kotlin")
+        optional("lambdynamiclights")
+        incompatible("elytra-trims")
     }
 
     if (publishCf) curseforge {
