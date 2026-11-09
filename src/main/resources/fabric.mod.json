@@ -7,6 +7,7 @@
     "KikuGie"
   ],
   "contributors": [
+    "masik16u",
     "HBCpen"
   ],
   "contact": {
@@ -16,7 +17,7 @@
   },
   "description": "Client-side fork of Elytra Trims: decorate your elytra with trims, dyes and banner patterns as a pure cosmetic, without consuming items or needing the mod on the server.",
   "icon": "assets/elytratrims/icon.png",
-  "license": "LGPL 3.0",
+  "license": "LGPL-3.0-or-later",
   "environment": "client",
   "accessWidener": "elytratrims.classtweaker",
   "depends": {

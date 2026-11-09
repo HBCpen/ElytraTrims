@@ -1,6 +1,6 @@
 # Elytra Trims Cosmetic
 
-A client-side fork of [Elytra Trims](https://modrinth.com/mod/elytra-trims) by KikuGie
+A client-side fork of [Elytra Trims](https://modrinth.com/mod/elytra-trims) by KikuGie, with textures by masik16u
 ([source](https://codeberg.org/KikuGie/elytra-trims)), modified from its version 4.9.1 since November 2026.
 See the [changelog](CHANGELOG.md) for what was changed.
 
@@ -72,4 +72,4 @@ Run `./gradlew :26.3-fabric:runClientGameTest` to run the client game tests.
 
 ## License
 
-[LGPL-3.0](LICENSE), same as the original mod. The LGPL supplements the [GPL-3.0](COPYING), whose text is included as well.
+[LGPL-3.0-or-later](LICENSE), same as the original mod. The LGPL supplements the [GPL-3.0](COPYING), whose text is included as well.
