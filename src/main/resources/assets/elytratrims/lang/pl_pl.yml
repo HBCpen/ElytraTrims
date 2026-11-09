@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Usuń"
   reset: "Resetuj"
   preview_hint: "Przeciągnij, aby obrócić"
+  preview_needs_world: "Wejdź do świata, aby zobaczyć podgląd i wzory sztandarów"
   visibility: "Pokaż elytrę"
   visibility.worn: "Gdy założona"
   visibility.over_armor: "Na napierśniku"

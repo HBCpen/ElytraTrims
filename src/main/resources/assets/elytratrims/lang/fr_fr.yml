@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Retirer"
   reset: "Réinitialiser"
   preview_hint: "Faites glisser pour pivoter"
+  preview_needs_world: "Rejoignez un monde pour voir l'aperçu et les motifs de bannière"
   visibility: "Afficher les élytres"
   visibility.worn: "Si portées"
   visibility.over_armor: "Sur le plastron"

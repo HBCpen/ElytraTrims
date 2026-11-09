@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Quitar"
   reset: "Restablecer"
   preview_hint: "Arrastrá para girar"
+  preview_needs_world: "Entrá a un mundo para ver la vista previa y los diseños de estandarte"
   visibility: "Mostrar élitros"
   visibility.worn: "Al equiparlos"
   visibility.over_armor: "Sobre la pechera"

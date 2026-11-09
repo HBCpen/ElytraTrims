@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "移除"
   reset: "重置"
   preview_hint: "拖动以旋转"
+  preview_needs_world: "进入世界后即可查看预览和旗帜图案"
   visibility: "显示鞘翅"
   visibility.worn: "穿戴时"
   visibility.over_armor: "胸甲上方"

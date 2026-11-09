@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Entfernen"
   reset: "Zurücksetzen"
   preview_hint: "Zum Drehen ziehen"
+  preview_needs_world: "Betritt eine Welt, um die Vorschau und die Bannermuster zu sehen"
   visibility: "Elytra zeigen"
   visibility.worn: "Wenn getragen"
   visibility.over_armor: "Über Brustpanzer"

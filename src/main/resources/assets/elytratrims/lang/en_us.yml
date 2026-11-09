@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Remove"
   reset: "Reset"
   preview_hint: "Drag to rotate"
+  preview_needs_world: "Join a world to see the preview and banner patterns"
   visibility: "Show Elytra"
   visibility.worn: "When Worn"
   visibility.over_armor: "Over Chestplate"

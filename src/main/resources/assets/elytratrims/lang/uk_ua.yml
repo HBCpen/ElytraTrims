@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Видалити"
   reset: "Скинути"
   preview_hint: "Перетягніть, щоб обернути"
+  preview_needs_world: "Увійдіть у світ, щоб побачити попередній перегляд і візерунки прапорів"
   visibility: "Показувати елітри"
   visibility.worn: "Коли вдягнені"
   visibility.over_armor: "Поверх нагрудника"

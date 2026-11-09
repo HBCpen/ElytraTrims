@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "제거"
   reset: "초기화"
   preview_hint: "드래그하여 회전"
+  preview_needs_world: "월드에 들어가면 미리보기와 현수막 무늬가 표시됩니다"
   visibility: "겉날개 표시"
   visibility.worn: "착용 시"
   visibility.over_armor: "흉갑 위에도"

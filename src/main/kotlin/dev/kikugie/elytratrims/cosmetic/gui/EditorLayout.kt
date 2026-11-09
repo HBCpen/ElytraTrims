@@ -1,5 +1,6 @@
 package dev.kikugie.elytratrims.cosmetic.gui
 
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphicsExtractor
 
@@ -75,10 +76,13 @@ class EditorLayout private constructor(
         return IntArray(count) { start + it * (width + 4) }
     }
 
-    /** Draws the drag hint below the preview if it fits; it is also the pose button's tooltip. */
+    /**
+     * Draws the drag hint below the preview if it fits; it is also the pose button's tooltip.
+     * Outside a world there is no preview to rotate, so it is left out.
+     */
     fun extractPreviewHint(graphics: GuiGraphicsExtractor, font: Font) {
         val hint = tr("preview_hint")
-        if (font.width(hint) <= previewX1 - previewX0)
+        if (Minecraft.getInstance().player != null && font.width(hint) <= previewX1 - previewX0)
             graphics.centeredText(font, hint, (previewX0 + previewX1) / 2, previewBottom + 2, HINT_COLOR)
     }
 }

@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Rimuovi"
   reset: "Ripristina"
   preview_hint: "Trascina per ruotare"
+  preview_needs_world: "Entra in un mondo per vedere l'anteprima e i motivi degli stendardi"
   visibility: "Mostra elitre"
   visibility.worn: "Se indossate"
   visibility.over_armor: "Sopra la corazza"

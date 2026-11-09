@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Kaldır"
   reset: "Sıfırla"
   preview_hint: "Döndürmek için sürükleyin"
+  preview_needs_world: "Önizlemeyi ve sancak desenlerini görmek için bir dünyaya girin"
   visibility: "Elytra'yı Göster"
   visibility.worn: "Giyildiğinde"
   visibility.over_armor: "Göğüslüğün Üstünde"

@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "削除"
   reset: "リセット"
   preview_hint: "ドラッグで回転"
+  preview_needs_world: "ワールドに入るとプレビューと旗の模様が表示されます"
   visibility: "エリトラ表示"
   visibility.worn: "装備中のみ"
   visibility.over_armor: "チェストプレートの上にも"

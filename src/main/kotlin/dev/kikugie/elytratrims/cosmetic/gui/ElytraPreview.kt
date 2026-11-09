@@ -4,6 +4,7 @@ import dev.kikugie.elytratrims.Text
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetic
 import dev.kikugie.elytratrims.cosmetic.ElytraCosmetics
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.CycleButton
 import net.minecraft.client.input.MouseButtonEvent
@@ -59,7 +60,7 @@ class ElytraPreview {
 
     fun extract(graphics: GuiGraphicsExtractor, cosmetic: ElytraCosmetic?, partialTick: Float) {
         val minecraft = Minecraft.getInstance()
-        val player = minecraft.player ?: return
+        val player = minecraft.player ?: return extractNeedsWorld(graphics, minecraft.font)
         val state = minecraft.entityRenderDispatcher.getRenderer(player).createRenderState(player, partialTick)
         if (state !is AvatarRenderState) return
 
@@ -93,6 +94,13 @@ class ElytraPreview {
         val rotation = Quaternionf().rotateZ(PI.toFloat()).rotateX(-pitchRad)
         val camera = Quaternionf().rotateX(-pitchRad)
         graphics.entity(state, size, centerOffset(rotation), rotation, camera, x0, y0, x1, y1)
+    }
+
+    /** Without a player, e.g. when opened from ModMenu on the title screen, there is nothing to draw. */
+    private fun extractNeedsWorld(graphics: GuiGraphicsExtractor, font: Font) {
+        val lines = font.split(Text.translatable("screen.elytratrims.cosmetic.preview_needs_world"), (x1 - x0 - 8).coerceAtLeast(1))
+        val top = (y0 + y1) / 2 - lines.size * font.lineHeight / 2
+        lines.forEachIndexed { i, line -> graphics.centeredText(font, line, (x0 + x1) / 2, top + i * font.lineHeight, PanelDrawing.HINT_COLOR) }
     }
 
     /**

@@ -23,6 +23,7 @@ screen.elytratrims.cosmetic:
   remove_layer: "Verwijderen"
   reset: "Herstellen"
   preview_hint: "Sleep om te draaien"
+  preview_needs_world: "Betreed een wereld om de voorvertoning en bannerpatronen te zien"
   visibility: "Elytra tonen"
   visibility.worn: "Indien gedragen"
   visibility.over_armor: "Over borstplaat"
