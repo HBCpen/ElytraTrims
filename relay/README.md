@@ -44,7 +44,12 @@ When a daily limit is reached, requests fail until 00:00 UTC; nothing is charged
 at most once per 10 seconds, so this leaves room for several players behind one address. Limited requests are answered
 with `429 Too Many Requests` before the database is touched, which keeps one client from using up the D1 quota and CPU
 time. They still count as Worker requests, though: blocking floods before they reach the Worker needs a custom domain
-with Cloudflare's WAF rate limiting rules. See the current
+with Cloudflare's WAF rate limiting rules.
+
+On the Free plan with a `workers.dev` address, the bindings were found not to limit anything: hundreds of requests
+per minute from one IP all passed. Counting in the Worker's own memory doesn't help either, since Cloudflare spreads
+one client's requests over many Worker instances. On the Free plan this only risks the relay running out of its daily
+requests, not any charges. See the current
 [Workers](https://developers.cloudflare.com/workers/platform/pricing/) and
 [D1](https://developers.cloudflare.com/d1/platform/pricing/) pricing.
 
