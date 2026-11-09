@@ -1,7 +1,8 @@
 # Elytra Trims Cosmetic
 
 A client-side fork of [Elytra Trims](https://modrinth.com/mod/elytra-trims) by KikuGie
-([source](https://codeberg.org/KikuGie/elytra-trims)).
+([source](https://codeberg.org/KikuGie/elytra-trims)), modified from its version 4.9.1 since November 2026.
+See the [changelog](CHANGELOG.md) for what was changed.
 
 Customize how your elytra looks — armor trims, dye colors, banner/shield patterns and the glow, cosmic and
 rainbow effects — as a pure cosmetic:
