@@ -68,6 +68,10 @@ dependencies {
     modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${property("deps.lambdynamiclights")}")
     modLocalRuntime("maven.modrinth:lambdynamiclights:${property("deps.lambdynamiclights")}")
 
+    // Optional: ModMenu's config button opens the cosmetic editor when ModMenu is installed.
+    modCompileOnly("maven.modrinth:modmenu:${property("deps.modmenu")}")
+    modLocalRuntime("maven.modrinth:modmenu:${property("deps.modmenu")}")
+
     fapi("client-gametest-api-v1") { "modGametestImplementation"(it) }
     fletchingTable.modrinth("iris")?.let {
         modImplementation(it)
@@ -171,7 +175,7 @@ publishMods {
         accessToken = mrToken
         minecraftVersions.addAll(versions)
         requires("fabric-api", "fabric-language-kotlin")
-        optional("lambdynamiclights")
+        optional("lambdynamiclights", "modmenu")
         incompatible("elytra-trims")
     }
 

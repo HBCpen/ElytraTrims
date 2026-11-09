@@ -16,6 +16,7 @@ import dev.kikugie.elytratrims.elytratrims
 import dev.kikugie.elytratrims.item.ETItemFlag
 import dev.kikugie.elytratrims.item.has
 import dev.kikugie.elytratrims.vanilla
+import com.terraformersmc.modmenu.api.ModMenuApi
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext
@@ -26,6 +27,8 @@ import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.CycleButton
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.TitleScreen
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.EquipmentSlot
@@ -52,7 +55,28 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         glow = true,
     )
 
-    override fun runTest(context: ClientGameTestContext): Unit = context.runInWorld {
+    override fun runTest(context: ClientGameTestContext) {
+        testModMenu(context)
+        context.runInWorld { runInWorld(context) }
+    }
+
+    /** ModMenu (installed in the dev client) opens the editor from the title screen, where there is no world yet. */
+    private fun testModMenu(context: ClientGameTestContext) {
+        context.setScreen {
+            val factory = FabricLoader.getInstance().getEntrypointContainers("modmenu", ModMenuApi::class.java)
+                .single { it.provider.metadata.id == "elytratrims_cosmetic" }.entrypoint.modConfigScreenFactory
+            factory.create(TitleScreen())
+        }
+        context.waitTicks(2)
+        check(context.computeOnClient<Boolean, Throwable> { it.gui.screen() is ElytraCosmeticScreen }) { "ModMenu didn't open the editor" }
+        context.takeScreenshot("cosmetic_editor_no_world")
+        val patterns = CosmeticSettings.data.cosmetic.patterns.size
+        context.click { it.widget<Button>(translated("edit_patterns", patterns)) }
+        context.takeScreenshot("cosmetic_patterns_no_world")
+        context.setScreen { null }
+    }
+
+    private fun TestSingleplayerContext.runInWorld(context: ClientGameTestContext) {
         server.runCommand("item replace entity @a armor.chest with minecraft:elytra")
         context.waitTicks(5)
 

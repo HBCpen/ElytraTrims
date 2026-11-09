@@ -24,3 +24,4 @@ mod.releases=["26.3"]
 deps.minecraft="26.3"
 deps.fabric-api="0.160.5+26.3"
 deps.lambdynamiclights="4.13.0+26.3"
+deps.modmenu="21.0.0"

@@ -27,7 +27,8 @@
     "minecraft": "${minecraft}"
   },
   "suggests": {
-    "lambdynlights": "*"
+    "lambdynlights": "*",
+    "modmenu": "*"
   },
   "breaks": {
     "elytratrims": "*"
