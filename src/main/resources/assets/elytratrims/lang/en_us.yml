@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "Effects"
   rainbow: "Rainbow"
   glow: "Glow"
-  gateway: "Cosmic"
-  animation: "Animation"
   patterns: "Patterns"
   pattern_style: "Style"
   pattern_style.banner: "Banner"

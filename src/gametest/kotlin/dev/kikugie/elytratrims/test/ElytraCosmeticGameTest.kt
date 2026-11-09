@@ -32,6 +32,8 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import com.google.gson.JsonParser
+import com.mojang.serialization.JsonOps
 import java.util.Optional
 
 /**
@@ -61,6 +63,8 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
 
             val worn = client.player!!.getItemBySlot(EquipmentSlot.CHEST)
             check(worn.get(DataComponents.TRIM) == null) { "The real item must stay untouched" }
+
+            testRemovedEffects(registries)
 
             CosmeticSettings.update(CosmeticSettings.Data(true, COSMETIC))
             client.options.cameraType = CameraType.THIRD_PERSON_BACK
@@ -102,6 +106,21 @@ object ElytraCosmeticGameTest : FabricClientGameTest {
         }
 
         context.runOnClient<Throwable> { CosmeticSettings.update(CosmeticSettings.Data()) }
+    }
+
+    /**
+     * The cosmic and animation effects are no longer cosmetics: configs, designs and synced records that still have
+     * them load without them, and the cosmetic replaces them on a real elytra decorated with them.
+     */
+    private fun testRemovedEffects(registries: net.minecraft.core.RegistryAccess) {
+        val legacy = JsonParser.parseString("""{"color":3364351,"glow":true,"gateway":true,"animation":true}""")
+        val loaded = ElytraCosmetic.CODEC.parse(JsonOps.INSTANCE, legacy).result().orElse(null)
+        check(loaded == ElytraCosmetic(color = 0x3355FF, glow = true)) { "A cosmetic with removed effects didn't load: $loaded" }
+
+        val decorated = ItemStack(Items.ELYTRA).also { ETItemFlag.GATEWAY[it] = true; ETItemFlag.BAD_APPLE[it] = true }
+        val stack = CosmeticStacks.apply(COSMETIC, decorated, registries)
+        check(!(stack has ETItemFlag.GATEWAY) && !(stack has ETItemFlag.BAD_APPLE)) { "The cosmetic kept effects of the real item" }
+        check(decorated has ETItemFlag.GATEWAY) { "The real item must stay untouched" }
     }
 
     private fun testEditor(context: ClientGameTestContext) {

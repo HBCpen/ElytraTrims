@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "効果"
   rainbow: "虹色"
   glow: "発光"
-  gateway: "コズミック"
-  animation: "アニメーション"
   patterns: "模様"
   pattern_style: "形式"
   pattern_style.banner: "旗"

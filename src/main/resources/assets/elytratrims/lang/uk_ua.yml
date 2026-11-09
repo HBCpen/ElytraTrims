@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "Ефекти"
   rainbow: "Веселка"
   glow: "Сяйво"
-  gateway: "Космічний"
-  animation: "Анімація"
   patterns: "Візерунки"
   pattern_style: "Стиль"
   pattern_style.banner: "Прапор"

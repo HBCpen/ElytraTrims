@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "Effecten"
   rainbow: "Regenboog"
   glow: "Gloed"
-  gateway: "Kosmisch"
-  animation: "Animatie"
   patterns: "Patronen"
   pattern_style: "Stijl"
   pattern_style.banner: "Banier"

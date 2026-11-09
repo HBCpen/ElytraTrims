@@ -4,7 +4,7 @@ A client-side fork of [Elytra Trims](https://modrinth.com/mod/elytra-trims) by K
 ([source](https://codeberg.org/KikuGie/elytra-trims)), modified from its version 4.9.1 since November 2026.
 See the [changelog](CHANGELOG.md) for what was changed.
 
-Customize how your elytra looks — armor trims, dye colors, banner/shield patterns and the glow, cosmic and
+Customize how your elytra looks — armor trims, dye colors, banner/shield patterns and the glow and
 rainbow effects — as a pure cosmetic:
 
 - **Client-side only.** Works on any server, including vanilla ones. Nothing is sent to the server.
@@ -23,7 +23,7 @@ Press <kbd>K</kbd> in-game (rebindable under *Controls → Elytra Trims*) to ope
   Only the looks change: gliding still needs a real elytra.
 - **Trim / Material**: any armor trim pattern and material.
 - **Dye**: click to cycle through dye colors (Shift+click to go back) or type a hex color such as `#3355FF`.
-- **Effects**: rainbow, glow in the dark, cosmic (end portal) and an animation easter egg.
+- **Effects**: rainbow and glow in the dark (the decorations stay fully lit in the dark).
 - **Patterns**: *Edit Patterns* opens a loom-like editor. Click *+ New Layer*, then pick its color and pattern;
   select a layer to change it, and use the buttons on its row to move or remove it. Layers can also be copied from a
   banner or shield in your hand. *Style* switches between the shield and the high-resolution banner textures.
@@ -50,7 +50,7 @@ own, see [`relay/`](relay/README.md) and set its URL as `sync.relay_url` in the 
   was near you, and when. Turning sharing off withdraws your cosmetic from the relay.
 
 Elytras that are really decorated (for example on a server running the original Elytra Trims) are still rendered as-is
-for other players.
+for other players, including the cosmic and animation effects, which aren't offered as cosmetics.
 
 ## Requirements
 

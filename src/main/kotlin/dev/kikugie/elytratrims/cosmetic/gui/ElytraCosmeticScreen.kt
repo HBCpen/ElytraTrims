@@ -33,7 +33,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
     private companion object {
-        const val ROWS = 9
+        const val ROWS = 8
         const val TEXT_COLOR = -1
         const val ERROR_COLOR = 0xFFFF5555.toInt()
         const val HINT_COLOR = 0xFFA0A0A0.toInt()
@@ -147,21 +147,19 @@ class ElytraCosmeticScreen(private val parent: Screen?) : Screen(tr("title")) {
         swatchX = l.controlsX + l.controlsWidth - h
         swatchY = l.rowY(4)
 
-        // Row 5-6: effects
+        // Row 5: effects
         label(5, "effects")
         toggle(l.controlsX, l.rowY(5), "rainbow", draft.rainbow) { draft = draft.copy(rainbow = it) }
         toggle(l.secondColumn, l.rowY(5), "glow", draft.glow) { draft = draft.copy(glow = it) }
-        toggle(l.controlsX, l.rowY(6), "gateway", draft.gateway) { draft = draft.copy(gateway = it) }
-        toggle(l.secondColumn, l.rowY(6), "animation", draft.animation) { draft = draft.copy(animation = it) }
 
-        // Row 7-8: banner patterns and saved designs, on their own screens
-        label(7, "patterns")
+        // Row 6-7: banner patterns and saved designs, on their own screens
+        label(6, "patterns")
         add("edit_patterns", Button.builder(tr("edit_patterns", draft.patterns.size)) { openPatternEditor() }
-            .bounds(l.controlsX, l.rowY(7), l.controlsWidth, h)
+            .bounds(l.controlsX, l.rowY(6), l.controlsWidth, h)
             .build())
-        label(8, "designs")
+        label(7, "designs")
         add("designs", Button.builder(tr("designs.open")) { openDesigns() }
-            .bounds(l.controlsX, l.rowY(8), l.controlsWidth, h)
+            .bounds(l.controlsX, l.rowY(7), l.controlsWidth, h)
             .build())
 
         add("pose", preview.poseButton(l.previewX0, l.footerY, l.previewX1 - l.previewX0, h)

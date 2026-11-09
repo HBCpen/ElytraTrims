@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "효과"
   rainbow: "무지개"
   glow: "발광"
-  gateway: "우주"
-  animation: "애니메이션"
   patterns: "무늬"
   pattern_style: "형식"
   pattern_style.banner: "현수막"

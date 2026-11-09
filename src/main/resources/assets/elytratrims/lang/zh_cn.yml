@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "效果"
   rainbow: "彩虹"
   glow: "发光"
-  gateway: "宇宙"
-  animation: "动画"
   patterns: "图案"
   pattern_style: "样式"
   pattern_style.banner: "旗帜"

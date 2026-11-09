@@ -24,8 +24,6 @@ data class ElytraCosmetic(
     /** Uses the high-resolution banner textures for [patterns] instead of the shield ones. */
     val bannerStyle: Boolean = false,
     val glow: Boolean = false,
-    val gateway: Boolean = false,
-    val animation: Boolean = false,
     val visibility: Visibility = Visibility.WORN,
 ) {
     /** When the elytra is drawn. Purely visual: gliding still needs a real elytra. */
@@ -84,11 +82,10 @@ data class ElytraCosmetic(
             PatternLayer.CODEC.sizeLimitedListOf(MAX_PATTERN_LAYERS).optionalFieldOf("patterns", emptyList()).forGetter(ElytraCosmetic::patterns),
             Codec.BOOL.optionalFieldOf("banner_style", false).forGetter(ElytraCosmetic::bannerStyle),
             Codec.BOOL.optionalFieldOf("glow", false).forGetter(ElytraCosmetic::glow),
-            Codec.BOOL.optionalFieldOf("gateway", false).forGetter(ElytraCosmetic::gateway),
-            Codec.BOOL.optionalFieldOf("animation", false).forGetter(ElytraCosmetic::animation),
+            // "gateway" and "animation" (the cosmic and Bad Apple effects) were removed; old data with them still loads.
             Visibility.CODEC.optionalFieldOf("visibility", Visibility.WORN).forGetter(ElytraCosmetic::visibility),
-        ).apply(it) { trim, color, rainbow, patterns, bannerStyle, glow, gateway, animation, visibility ->
-            ElytraCosmetic(trim.getOrNull(), color.getOrNull(), rainbow, patterns, bannerStyle, glow, gateway, animation, visibility)
+        ).apply(it) { trim, color, rainbow, patterns, bannerStyle, glow, visibility ->
+            ElytraCosmetic(trim.getOrNull(), color.getOrNull(), rainbow, patterns, bannerStyle, glow, visibility)
         } }
     }
 }

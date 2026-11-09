@@ -65,8 +65,9 @@ object CosmeticStacks {
 
         ETItemFlag.GLOW[this] = cosmetic.glow
         ETItemFlag.BANNER[this] = cosmetic.bannerStyle
-        ETItemFlag.GATEWAY[this] = cosmetic.gateway
-        ETItemFlag.BAD_APPLE[this] = cosmetic.animation
+        // Not offered as cosmetics, but still drawn for really decorated elytras.
+        ETItemFlag.GATEWAY[this] = false
+        ETItemFlag.BAD_APPLE[this] = false
     }
 
     @JvmStatic

@@ -12,8 +12,6 @@ screen.elytratrims.cosmetic:
   effects: "Efekty"
   rainbow: "Tęcza"
   glow: "Świecenie"
-  gateway: "Kosmiczny"
-  animation: "Animacja"
   patterns: "Wzory"
   pattern_style: "Styl"
   pattern_style.banner: "Sztandar"
