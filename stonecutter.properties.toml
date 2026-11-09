@@ -1,7 +1,7 @@
 mod.id="elytratrims_cosmetic"
 mod.name="Elytra Trims Cosmetic"
 mod.group="dev.kikugie"
-mod.version="0.1.0"
+mod.version="0.2.0"
 
 deps.fabric-loader="0.19.5"
 deps.fabric-kotlin="1.14.1+kotlin.2.4.20"
@@ -10,7 +10,7 @@ deps.kotlin-coroutines="1.11.0"
 
 loomx.loom_version="1.17-SNAPSHOT"
 
-publish.status="stable"
+publish.status="beta"
 # The fork has no Modrinth/CurseForge projects yet. Don't reuse the upstream IDs;
 # set the fork's own project IDs and enable the destinations before publishing.
 publish.modrinth=false
